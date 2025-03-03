@@ -28,7 +28,7 @@ useEffect(() => {
 
 const fetchUser = async () => {
   try {
-    const response = await fetch("http://localhost:5050/api/users");
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`);
     if (!response.ok) throw new Error("Failed to fetch users");
 
     const data = await response.json();
@@ -39,12 +39,16 @@ const fetchUser = async () => {
   }
 };
 
+fetch("https://asl-topaz.vercel.app/api/users")
+  .then((res) => res.json())
+  .then((data) => console.log("Users:", data))
+  .catch((error) => console.error("Error fetching users:", error));
 
 
 
   return (
     <div className="p-10">
-{/* <h1>{user}</h1> */}
+<h1>{process.env.NODE_ENV}</h1>
 <button onClick={()=>fetchUser()} className="bg-red-500">CLICK</button>
 
       <h1 className="text-xl font-bold">Supabase Data</h1>
