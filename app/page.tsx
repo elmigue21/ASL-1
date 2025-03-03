@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import dotenv from "dotenv";
 dotenv.config();
 export default function Home() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<{ id: number; name: string }[]>([]);
 useEffect(() => {
   const fetchData = async () => {
     console.log(supabase);
 
-    let { data, error } = await supabase.from("users").select("*");
+    const { data, error } = await supabase.from("users").select("*");
 
     console.log("Fetched Data:", data);
     console.log("Fetch Error:", error);
@@ -24,7 +24,7 @@ useEffect(() => {
   fetchData();
 }, []);
 
-const [user,setUser] = useState<any[]>([]);
+// const [user,setUser] = useState<any[]>([]);
 
 const fetchUser = async () => {
   try {
@@ -44,7 +44,7 @@ const fetchUser = async () => {
 
   return (
     <div className="p-10">
-<h1>{user}</h1>
+{/* <h1>{user}</h1> */}
 <button onClick={()=>fetchUser()} className="bg-red-500">CLICK</button>
 
       <h1 className="text-xl font-bold">Supabase Data</h1>

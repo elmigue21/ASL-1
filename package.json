@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"ts-node ./backend/index.ts\" \"next dev\" ",
-    "build": "next build",
-    "start": "next start",
+    "dev": "concurrently \"ts-node ./backend/index.ts\" \"next dev\"",
+    "build": "cross-env NODE_ENV=production next build",
+    "start": "concurrently \"ts-node ./backend/index.ts\" \"next start\"",
     "lint": "next lint"
   },
   "dependencies": {
@@ -24,6 +24,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
     "eslint": "^9",
     "eslint-config-next": "15.2.0",
     "tailwindcss": "^4",
