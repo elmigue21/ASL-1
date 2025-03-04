@@ -42,7 +42,6 @@ interface Subscription{
 
 
 export default function Home() {
-  const [data, setData] = useState<{ id: number; name: string }[]>([]);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 useEffect(() => {
   const fetchData = async () => {
@@ -60,7 +59,7 @@ useEffect(() => {
   fetchData();
 },[]);
 
-setData([...data, { id: 1, name: "Item 1" }]);
+
 
 
   const login = async () => {
@@ -126,7 +125,6 @@ checkTokenExpiry();
       </button>
 
       <h1 className="text-xl font-bold">Supabase Data</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   );
 }
