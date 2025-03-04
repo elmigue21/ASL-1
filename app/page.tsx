@@ -28,6 +28,7 @@ useEffect(() => {
   fetchData();
 },[]);
 
+setData([...data, { id: 1, name: "Item 1" }]);
 
 
   const login = async () => {
