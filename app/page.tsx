@@ -1,28 +1,28 @@
 'use client'
 import { supabase } from "@/lib/supabase";
-import { useEffect, useState } from "react";
+import { useEffect/* , useState  */} from "react";
 
 import { signIn , logout} from "../utils/auth";
-import {jwtDecode} from "jwt-decode";
+// import {jwtDecode} from "jwt-decode";
 import { SubscriptionsTable } from "./components/SubscriptionsTable";
-import { Subscription } from './../types/subscription';
+// import { Subscription } from './../types/subscription';
 import { verifySupabaseToken } from "@/utils/verifyToken";
 // import { sendBulkEmails, emailData } from "@/utils/nodemailer";
 
 export default function Home() {
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  // const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 useEffect(() => {
 },[]);
 
 
-const fetchSubscriptions = async () => {
-  const {data, error} = await supabase.from('subscriptions').select('*');
-  if(error){
-    console.log('error', error);
-    return;
-  }
-  setSubscriptions(data);
-}
+// const fetchSubscriptions = async () => {
+//   const {data, error} = await supabase.from('subscriptions').select('*');
+//   if(error){
+//     console.log('error', error);
+//     return;
+//   }
+//   setSubscriptions(data);
+// }
 
 // const sendd = () =>{
 //   awa
@@ -82,16 +82,16 @@ supabase.auth.onAuthStateChange((event, session) => {
         <button onClick={() => logSession()} className="bg-red-500">
           LOG SESSION
         </button>
-        <button
+        {/* <button
           onClick={() => {
             console.log(subscriptions);
           }}
         >
           FETCH SUBSCRIPTIONS
-        </button>
+        </button> */}
       </div>
 
-      <p>{subscriptions.map((sub) => sub.full_name).join(", ")}</p>
+      {/* <p>{subscriptions.map((sub) => sub.full_name).join(", ")}</p> */}
 
       <h1 className="text-xl font-bold">Supabase Data</h1>
 

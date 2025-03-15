@@ -12,5 +12,5 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey,{auth:{
-  autoRefreshToken:false
+  autoRefreshToken:false,persistSession:false
 }});
