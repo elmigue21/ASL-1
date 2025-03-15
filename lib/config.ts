@@ -9,9 +9,9 @@ dotenv.config({
   debug: process.env.NODE_ENV !== "production", // Enable debug mode only in development
 });
 
-console.log('node env', process.env.NODE_ENV);
+// console.log('node env', process.env.NODE_ENV);
 
-console.log(`Loaded environment: ${envFile}`);
+// console.log(`Loaded environment: ${envFile}`);
 
 
-console.log("✅ Environment variables loaded.");
+// console.log("✅ Environment variables loaded.");

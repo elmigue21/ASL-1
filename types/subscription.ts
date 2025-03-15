@@ -1,0 +1,29 @@
+export interface Subscription {
+    id: number;
+    updated_from_linkedin: Date;
+    full_name: string;
+    first_name: string;
+    last_name: string;
+    current_position: string;
+    Field1: string;
+    person_linkedin_url: string;
+    company_name: string;
+    person_city: string;
+    person_state: string;
+    person_country: string;
+    person_industry: string;
+    tags: string;
+    company_website: string;
+    email1: string;
+    email2: string;
+    email3: string;
+    email4: string;
+    phone1: string;
+    phone2: string;
+    phone3: string;
+    phone4: string;
+    person_facebook_url: string;
+    company_linkedin_url: string;
+    created_by: string;
+    lead_status: string;
+}
