@@ -47,15 +47,15 @@ export const sendBulkEmails = async (options: EmailOptions): Promise<void> => {
   }
 };
 
-// Example usage
-export const emailData: EmailOptions = {
-  from: "awtsguegue12345",
-  recipients: [
-    "gueljohnc@gmail.com",
-  ],
-  subject: "Bulk Email Test",
-  text: "Hello, this is a test bulk email!",
-  delayBetweenEmails: 1000, // 1-second delay to prevent rate limiting
-};
+// // Example usage
+// export const emailData: EmailOptions = {
+//   from: "awtsguegue12345",
+//   recipients: [
+//     "gueljohnc@gmail.com",
+//   ],
+//   subject: "Bulk Email Test",
+//   text: "Hello, this is a test bulk email!",
+//   delayBetweenEmails: 1000, // 1-second delay to prevent rate limiting
+// };
 
-sendBulkEmails(emailData).catch(console.error);
+// sendBulkEmails(emailData).catch(console.error);

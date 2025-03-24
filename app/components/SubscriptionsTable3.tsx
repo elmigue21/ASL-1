@@ -40,9 +40,17 @@ import { Subscription } from "@/types/subscription";
 import { supabase } from "@/lib/supabase";
 
 import { RootState } from "@/store/store";
-import { useSelector , useDispatch} from "react-redux";
-import { addSelectedSubscription, removeSelectedSubscription } from "@/store/slices/subscriptionSlice";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addSelectedSubscription,
+  removeSelectedSubscription,
+} from "@/store/slices/subscriptionSlice";
+import { useQuery,keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 
+
+interface PaginatedSubscription extends Subscription {
+  page: number; // Add the page field
+}
 
 export function SubscriptionsTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -58,48 +66,84 @@ export function SubscriptionsTable() {
     pageSize: 10, // Set max rows per page
   });
 
-  const [data, setData] = useState<Subscription[]>([]);
+  const [subsData, setSubsData] = useState<PaginatedSubscription[]>([]);
+  const [pages, setPages] = useState([]);
   const dispatch = useDispatch();
   const selectedSubscriptionIds = useSelector(
     (state: RootState) => state.SubscriptionSlice.selectedSubscriptionIds
   );
 
-  const fetchSubscriptions = async (pageIndex: number, pageSize: number) => {
-    const start = pageIndex * pageSize;
-    const end = start - 1 + pageSize; // Adjusted for Supabase's inclusive range
-
-    const { data, error } = await supabase
-      .from("subscriptions")
-      .select("*")
-      .range(start, end);
-
-    if (error) {
-      console.error("Error fetching subscriptions:", error);
-      return;
+  const fetchSubscriptions = async () => {
+    
+    if(subsData.some(subscription => subscription.page === pagination.pageIndex)){
+        return subsData.filter(subscription => subscription.page === pagination.pageIndex)
     }
 
-    setData(data);
+    const start = (pagination.pageIndex + 1) * pagination.pageSize;
+    const end = ((pagination.pageIndex + 1) * pagination.pageSize) + pagination.pageSize -1;
+    const {data, error} = await supabase.from('subscriptions').select("*").range(start,end);
+
+        if (error) {
+          console.error(error);
+          return;
+        }
+            const updatedData = data.map((subscription) => ({
+              ...subscription,
+              page: pagination.pageIndex, // Add page property to each subscription
+            }));
+
+        setSubsData((prevData) =>[...prevData, ...updatedData])
   };
 
-  const handleNextPage = () => {
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: prev.pageIndex + 1,
-    }));
-    console.log("Updated Pagination (Next Page):", pagination);
-  };
+const fetchSubscriptions2 = async () => {
+  // Pagination calculation
+  const pageSize = 10; // or dynamically set based on your need
+  const start = pagination.pageIndex * pageSize;
+  const end = (pagination.pageIndex + 1) * pageSize - 1;
 
-  const handlePreviousPage = () => {
-    console.log("prev page clicked");
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: Math.max(prev.pageIndex - 1, 0), // Ensure it doesn't go below 0
-    }));
-  };
+  // Fetch data from Supabase
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("*")
+    .range(start, end);
 
-  useEffect(() => {
-    console.log("Updated selectedSubscriptionIds:", selectedSubscriptionIds);
-  }, [selectedSubscriptionIds]);
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+const [page, setPage] = useState(0);
+
+  const { data, fetchNextPage, hasNextPage, isLoading,fetchPreviousPage } = useInfiniteQuery({
+    queryKey: ["subscriptions"],
+    queryFn: fetchSubscriptions2,
+    initialPageParam: 1, // Starting with the first page
+    getNextPageParam: (lastPage, allPages, lastPageParam, allPageParams) => {
+      // Example: If the last page has less than 10 items, it's the last page
+      return lastPage?.length === 10 ? lastPageParam + 1 : undefined;
+    },
+  });
+
+  const handleNextPage = async() =>{
+    const result = await fetchNextPage();
+    console.log(result.data?.pages);
+    setPagination({pageIndex: pagination.pageIndex + 1,
+        pageSize: pagination.pageSize})
+    table.nextPage();
+    console.log('NEXTED')
+  }
+
+  const handlePreviousPage = async() =>{
+    await fetchPreviousPage();
+    setPagination({pageIndex:pagination.pageIndex - 1, pageSize: pagination.pageSize});
+    table.previousPage();
+    console.log('PREVV')
+
+  }
+
+
 
 
   const [tableCount, setTableCount] = useState<number | null>(null);
@@ -121,9 +165,8 @@ export function SubscriptionsTable() {
   }, []);
 
   useEffect(() => {
-    console.log(pagination.pageIndex);
-    fetchSubscriptions(pagination.pageIndex, pagination.pageSize);
-    console.log(pagination.pageIndex);
+    console.log('changed page')
+    fetchSubscriptions();
   }, [pagination.pageIndex]);
 
   const columns = React.useMemo<ColumnDef<Subscription>[]>(
@@ -145,7 +188,7 @@ export function SubscriptionsTable() {
         ),
         cell: ({ row }) => {
           const rowId = row.original.id;
-          const isChecked = selectedSubscriptionIds.includes(rowId);  
+          const isChecked = selectedSubscriptionIds.includes(rowId);
 
           return (
             <Checkbox
@@ -232,7 +275,7 @@ export function SubscriptionsTable() {
   ); // Memoized with dependencies
 
   const table = useReactTable({
-    data,
+    data : subsData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -247,7 +290,7 @@ export function SubscriptionsTable() {
       columnFilters,
       columnVisibility,
       rowSelection,
-      // pagination,
+      pagination,
     },
     // onPaginationChange: setPagination,
   });
@@ -260,7 +303,8 @@ export function SubscriptionsTable() {
     const allSelectedRows = getAllSelectedRows();
     console.log("all selected rowsss", allSelectedRows);
   };
-
+  
+  
   const setSelectedSubscriptionIds = (
     checkboxValue: boolean,
     rowId: number
@@ -278,7 +322,7 @@ export function SubscriptionsTable() {
     <div className="w-full">
       <Button
         onClick={() => {
-          console.log(console.log(selectedSubscriptionIds));
+          console.log(pagination.pageIndex);
         }}
       ></Button>
       <div className="flex items-center py-4">
@@ -391,15 +435,15 @@ export function SubscriptionsTable() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => handlePreviousPage()}
-            // disabled={!table.getCanPreviousPage()}
+            onClick={() => {handlePreviousPage()}}
+            disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => handleNextPage()}
+            onClick={() => {handleNextPage()}}
             // disabled={!table.getCanNextPage()}
           >
             Next

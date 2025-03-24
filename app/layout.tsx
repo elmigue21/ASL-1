@@ -1,7 +1,13 @@
+'use client'
 // import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Provider } from "react-redux";
+import {store} from "@/store/store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+// Create a QueryClient instance
+const queryClient = new QueryClient();
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
@@ -23,6 +29,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
     <html lang="en">
       <body
         // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -30,5 +38,7 @@ export default function RootLayout({
         {children}
       </body>
     </html>
+    </QueryClientProvider>
+    </Provider>
   );
 }

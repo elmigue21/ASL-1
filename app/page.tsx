@@ -4,7 +4,8 @@ import { useEffect/* , useState  */} from "react";
 
 import { signIn , logout} from "../utils/auth";
 // import {jwtDecode} from "jwt-decode";
-import { SubscriptionsTable } from "./components/SubscriptionsTable";
+// import { SubscriptionsTable } from "./components/SubscriptionTable2";
+import {SubscriptionsTable} from './components/SubscriptionsTable3'
 // import { Subscription } from './../types/subscription';
 import { verifySupabaseToken } from "@/utils/verifyToken";
 // import { sendBulkEmails, emailData } from "@/utils/nodemailer";
@@ -96,6 +97,8 @@ supabase.auth.onAuthStateChange((event, session) => {
       <h1 className="text-xl font-bold">Supabase Data</h1>
 
       <SubscriptionsTable />
+
+      <div className="sm:bg-red-500 md:bg-blue-500 lg:bg-amber-500 xl:bg-black">ASDFASDFASDF</div>
     </div>
   );
 }
