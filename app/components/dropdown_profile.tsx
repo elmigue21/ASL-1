@@ -4,7 +4,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
-import Image from 'next/image'
+// import img from 'next/img'
 
 export default function MyDropdown() {
   return (
@@ -19,7 +19,7 @@ export default function MyDropdown() {
                 <h1 className='text-sm font-medium'>Miguel Caacbay</h1>
                 <h1 className='text-xs'>Admin</h1>
                 </div>
-                <Image src="down_arrow.png" alt="Inbox" className="w-5 h-5 items-center mt-3 -ml-2"/>
+                <img src="down_arrow.png" alt="Inbox" className="w-5 h-5 items-center mt-3 -ml-2"/>
                 </div>
         
       </DropdownMenuTrigger>
