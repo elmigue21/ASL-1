@@ -1,13 +1,10 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -48,7 +45,7 @@ export function SubsAreaChart() {
       <CardContent className="h-[200px]">
         <ChartContainer
           config={chartConfig}
-          style={{ width: "100%", height: "130%" }}
+          style={{ width: "100%", height: "150%" }}
         >
           <AreaChart
             accessibilityLayer

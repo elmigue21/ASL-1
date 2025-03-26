@@ -1,10 +1,10 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import Image from 'next/image'
 
 export default function MyDropdown() {
   return (
@@ -19,7 +19,7 @@ export default function MyDropdown() {
                 <h1 className='text-sm font-medium'>Miguel Caacbay</h1>
                 <h1 className='text-xs'>Admin</h1>
                 </div>
-                <img src="down_arrow.png" alt="Inbox" className="w-5 h-5 items-center mt-3 -ml-2"/>
+                <Image src="down_arrow.png" alt="Inbox" className="w-5 h-5 items-center mt-3 -ml-2"/>
                 </div>
         
       </DropdownMenuTrigger>
