@@ -2,6 +2,7 @@
 'use client'
 import React from 'react'
 import Dropdown_Profie from './dropdown_profile'
+import Link from 'next/link'
 
 
 
@@ -28,8 +29,8 @@ const Navbar = () => {
       
       </div>
        <div style={{ fontFamily: 'Inter, sans-serif' }} className="fixed left-0 top-25 h-full w-40 bg-[#1e2e80] text-white flex flex-col py-12  z-40 text-m gap-y-12 font-bold">
-          <div className='flex flex-row justify-center gap-x-3'> <img src="layout-fluid.png" alt="Dashboard Icon" className="w-8 h-8"/><h2 className='items-center mt-1'>Dashboard</h2></div>
-          <div className='flex flex-row justify-center gap-x-3 ms-4 -my-3'> <img src="chart-histogram.png" alt="Subscription Stats" className="w-8 h-8 mt-3"/><h2 className='items-center mt-1'>Subscription Stats</h2></div>
+          <Link href="/dashboardPage"><div className='flex flex-row justify-center gap-x-3'> <img src="layout-fluid.png" alt="Dashboard Icon" className="w-8 h-8"/><h2 className='items-center mt-1'>Dashboard</h2></div></Link>
+          <Link href="/tablesPage"><div className='flex flex-row justify-center gap-x-3 ms-4 -my-3'> <img src="chart-histogram.png" alt="Subscription Stats" className="w-8 h-8 mt-3"/><h2 className='items-center mt-1'>Subscription Stats</h2></div></Link>
           <div className='flex flex-row justify-center gap-x-3'> <img src="refresh.png" alt="User Update" className="w-8 h-8"/><h2 className='items-center mt-1'>User Update</h2></div>
           <div className='flex flex-row justify-center gap-x-3'> <img src="user-add.png" alt="Add Account" className="w-8 h-8"/><h2 className='items-center mt-1'>Add Account</h2></div>
           <div><hr className="border-t-2 border-white my-4 w-35 mx-auto opacity-50" /></div>

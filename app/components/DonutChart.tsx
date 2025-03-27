@@ -16,28 +16,28 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
+  { browser: "Philippines", visitors: 160, fill: "var(--color-chrome)" },
+  { browser: "Japan", visitors: 5860, fill: "var(--color-safari)" },
+  { browser: "South Korea", visitors: 463, fill: "var(--color-firefox)" },
+  { browser: "China", visitors: 173, fill: "var(--color-edge)" },
   { browser: "other", visitors: 190, fill: "var(--color-other)" },
 ];
 
 const chartConfig = {
   chrome: {
-    label: "Chrome",
+    label: "Philippines",
     color: getRandomColor(),
   },
   safari: {
-    label: "Safari",
+    label: "Japan",
     color: getRandomColor(),
   },
   firefox: {
-    label: "Firefox",
+    label: "South Korea",
     color: getRandomColor(),
   },
   edge: {
-    label: "Edge",
+    label: "China",
     color: getRandomColor(),
   },
   other: {

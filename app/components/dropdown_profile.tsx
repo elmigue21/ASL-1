@@ -25,7 +25,7 @@ export default function MyDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem onClick={() => console.log("Profile Clicked")}>Profile</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => console.log("Settings Clicked")}>Settings</DropdownMenuItem>
+        {/* <DropdownMenuItem onClick={() => console.log("Settings Clicked")}>Settings</DropdownMenuItem> */}
         <DropdownMenuItem onClick={() => console.log("Logout Clicked")}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
