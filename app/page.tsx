@@ -1,3 +1,4 @@
+
 import React from 'react'
 
 function page() {
@@ -11,11 +12,7 @@ function page() {
       </div>
 
       <button className="px-8 py-2 bg-red-600 rounded-full text-white text-2xl cursor-pointer hover:bg-red-700 absolute bottom-15 right-20">LOGIN</button>
-    </div>
-
     
     
   )
 }
-
-export default page

@@ -22,8 +22,6 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  // DropdownMenuLabel,
-  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -40,9 +38,14 @@ import { Subscription } from "@/types/subscription";
 import { supabase } from "@/lib/supabase";
 
 import { RootState } from "@/store/store";
-import { useSelector , useDispatch} from "react-redux";
-import { addSelectedSubscription, removeSelectedSubscription } from "@/store/slices/subscriptionSlice";
-
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addSelectedSubscription,
+  removeSelectedSubscription,
+} from "@/store/slices/subscriptionSlice";
+import {  useInfiniteQuery } from '@tanstack/react-query';
+import { Skeleton } from "@/components/ui/skeleton";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function SubscriptionsTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -54,55 +57,69 @@ export function SubscriptionsTable() {
   const [rowSelection, setRowSelection] = React.useState({});
 
   const [pagination, setPagination] = React.useState({
-    pageIndex: 0, // Default to first page
-    pageSize: 10, // Set max rows per page
+    pageIndex: 0,
+    pageSize: 10, 
   });
 
-  const [data, setData] = useState<Subscription[]>([]);
   const dispatch = useDispatch();
   const selectedSubscriptionIds = useSelector(
     (state: RootState) => state.SubscriptionSlice.selectedSubscriptionIds
   );
 
-  const fetchSubscriptions = async (pageIndex: number, pageSize: number) => {
-    const start = pageIndex * pageSize;
-    const end = start - 1 + pageSize; // Adjusted for Supabase's inclusive range
+  const [searchBarValue, setSearchBarValue] = useState<string>("john");
+  const [appliedSearchBarValue, setAppliedSearchBarValue] = useState<string>("");
+const queryClient = useQueryClient();
 
-    const { data, error } = await supabase
-      .from("subscriptions")
-      .select("*")
-      .range(start, end);
 
-    if (error) {
-      console.error("Error fetching subscriptions:", error);
-      return;
-    }
+const fetchSubscriptions2 = async ({pageParam = 1}) => {
+  const pageSize = 10; 
+  const start = (pageParam - 1) * pageSize;
+  const end = start + pageSize - 1;
 
-    setData(data);
-  };
+  const query = supabase.from("subscriptions").select("*").range(start, end);
 
-  const handleNextPage = () => {
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: prev.pageIndex + 1,
-    }));
-    console.log("Updated Pagination (Next Page):", pagination);
-  };
 
-  const handlePreviousPage = () => {
-    console.log("prev page clicked");
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: Math.max(prev.pageIndex - 1, 0), // Ensure it doesn't go below 0
-    }));
-  };
+  if (appliedSearchBarValue) {
+    query.ilike("full_name", `%${appliedSearchBarValue}%`);
+  }
+    const { data, error } = await query
 
-  useEffect(() => {
-    console.log("Updated selectedSubscriptionIds:", selectedSubscriptionIds);
-  }, [selectedSubscriptionIds]);
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
+  const { data, fetchNextPage,fetchPreviousPage } = useInfiniteQuery({
+    queryKey: ["subscriptions"],
+    queryFn: fetchSubscriptions2,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages,lastPageParam) => {
+      return lastPage?.length === 10 ? lastPageParam + 1 : undefined;
+    },
+  });
+
+  const handleNextPage = async() =>{
+    const result = await fetchNextPage();
+    console.log(result.data?.pages);
+    setPagination({pageIndex: pagination.pageIndex + 1,
+        pageSize: pagination.pageSize})
+    table.nextPage();
+  }
+
+  const handlePreviousPage = async() =>{
+    await fetchPreviousPage();
+    setPagination({pageIndex:pagination.pageIndex - 1, pageSize: pagination.pageSize});
+    table.previousPage();
+
+  }
+
+
 
 
   const [tableCount, setTableCount] = useState<number | null>(null);
+
   useEffect(() => {
     const getTableCount = async () => {
       const { count, error } = await supabase
@@ -120,11 +137,6 @@ export function SubscriptionsTable() {
     getTableCount();
   }, []);
 
-  useEffect(() => {
-    console.log(pagination.pageIndex);
-    fetchSubscriptions(pagination.pageIndex, pagination.pageSize);
-    console.log(pagination.pageIndex);
-  }, [pagination.pageIndex]);
 
   const columns = React.useMemo<ColumnDef<Subscription>[]>(
     () => [
@@ -145,13 +157,13 @@ export function SubscriptionsTable() {
         ),
         cell: ({ row }) => {
           const rowId = row.original.id;
-          const isChecked = selectedSubscriptionIds.includes(rowId);  
+          const isChecked = selectedSubscriptionIds.includes(rowId);
 
           return (
             <Checkbox
               checked={isChecked}
               onCheckedChange={(value) => {
-                setSelectedSubscriptionIds(!!value, rowId); // Dispatch Redux action
+                setSelectedSubscriptionIds(!!value, rowId);
               }}
               aria-label="Select row"
               className="border-black"
@@ -172,7 +184,7 @@ export function SubscriptionsTable() {
           </Button>
         ),
         cell: ({ row }) => (
-          <div className="lowercase">{row.getValue("full_name")}</div>
+          <div className="">{row.getValue("full_name")}</div>
         ),
       },
       {
@@ -228,11 +240,16 @@ export function SubscriptionsTable() {
         },
       },
     ],
-    [selectedSubscriptionIds]
-  ); // Memoized with dependencies
+    []
+  );
 
+
+  const subscriptions = React.useMemo(
+    () => data?.pages?.flatMap((page) => page) ?? [],
+    [data]
+  );
   const table = useReactTable({
-    data,
+    data: subscriptions,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -247,20 +264,20 @@ export function SubscriptionsTable() {
       columnFilters,
       columnVisibility,
       rowSelection,
-      // pagination,
+      pagination,
     },
-    // onPaginationChange: setPagination,
   });
 
-  const getAllSelectedRows = () => {
-    return table.getSelectedRowModel().rows.map((row) => row.original);
-  };
+  // const getAllSelectedRows = () => {
+  //   return table.getSelectedRowModel().rows.map((row) => row.original);
+  // };
 
-  const setAllSelectedSubscriptionIds = (checkboxValue: boolean) => {
-    const allSelectedRows = getAllSelectedRows();
-    console.log("all selected rowsss", allSelectedRows);
-  };
-
+  // const setAllSelectedSubscriptionIds = (checkboxValue: boolean) => {
+  //   const allSelectedRows = getAllSelectedRows();
+  //   console.log("all selected rowsss", allSelectedRows);
+  // };
+  
+  
   const setSelectedSubscriptionIds = (
     checkboxValue: boolean,
     rowId: number
@@ -268,30 +285,34 @@ export function SubscriptionsTable() {
     console.log("CHECKBOX ROW ID ", rowId);
 
     if (checkboxValue) {
-      dispatch(addSelectedSubscription(rowId)); // ✅ Using action creator
+      dispatch(addSelectedSubscription(rowId));
     } else {
-      dispatch(removeSelectedSubscription(rowId)); // ✅ Now using correct action creator
+      dispatch(removeSelectedSubscription(rowId));
     }
   };
 
+  const searchButtonClicked = async () =>{
+          await queryClient.removeQueries({ queryKey: ["subscriptions"] });
+          setPagination({ pageIndex: 0, pageSize: 10 });
+  }
+
   return (
     <div className="w-full">
-      <Button
-        onClick={() => {
-          console.log(console.log(selectedSubscriptionIds));
-        }}
-      ></Button>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
-          value={
-            (table.getColumn("full_name")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("full_name")?.setFilterValue(event.target.value)
-          }
+          placeholder="Search by name..."
+          value={searchBarValue}
+          onChange={(event) => setSearchBarValue(event.target.value)}
           className="max-w-sm"
         />
+        <Button
+          onClick={() => {
+            setAppliedSearchBarValue(searchBarValue);
+            searchButtonClicked();
+          }}
+        >
+          Search
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -350,35 +371,39 @@ export function SubscriptionsTable() {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className="truncate overflow-hidden whitespace-nowrap"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
+            {table.getRowModel().rows?.length
+              ? table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className="truncate overflow-hidden whitespace-nowrap"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              : [...Array(10)].map(
+                  (
+                    _,
+                    index
+                  ) => (
+                    <TableRow key={index}>
+                      {columns.map((_, colIndex) => (
+                        <TableCell key={colIndex}>
+                          <Skeleton className="h-8 w-full rounded-md bg-gray-300 dark:bg-gray-700" />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  )
+                )}
           </TableBody>
         </Table>
       </div>
@@ -391,16 +416,19 @@ export function SubscriptionsTable() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => handlePreviousPage()}
-            // disabled={!table.getCanPreviousPage()}
+            onClick={() => {
+              handlePreviousPage();
+            }}
+            disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => handleNextPage()}
-            // disabled={!table.getCanNextPage()}
+            onClick={() => {
+              handleNextPage();
+            }}
           >
             Next
           </Button>
