@@ -1,104 +1,21 @@
-'use client'
-import { supabase } from "@/lib/supabase";
-import { useEffect/* , useState  */} from "react";
+import React from 'react'
 
-import { signIn , logout} from "../utils/auth";
-// import {jwtDecode} from "jwt-decode";
-// import { SubscriptionsTable } from "./components/SubscriptionTable2";
-import {SubscriptionsTable} from './components/SubscriptionsTable3'
-// import { Subscription } from './../types/subscription';
-import { verifySupabaseToken } from "@/utils/verifyToken";
-// import { sendBulkEmails, emailData } from "@/utils/nodemailer";
-
-export default function Home() {
-  // const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-useEffect(() => {
-},[]);
-
-
-// const fetchSubscriptions = async () => {
-//   const {data, error} = await supabase.from('subscriptions').select('*');
-//   if(error){
-//     console.log('error', error);
-//     return;
-//   }
-//   setSubscriptions(data);
-// }
-
-// const sendd = () =>{
-//   awa
-// }
-
-
-
-  const login = async () => {
-    try{
-      const user = await signIn('user@example.com','12345');
-      console.log(user);
-    }catch(e){
-      console.log(e)
-    }
-  }
-
-const logSession = async () => {
-  const { data } = await supabase.auth.getSession();
-  const token = data?.session?.access_token;
-
-  if (token) {
-    // Decode JWT to extract the expiration timestamp
-    const [, payloadBase64] = token.split(".");
-    const payloadJson = atob(payloadBase64);
-    const payload = JSON.parse(payloadJson);
-
-    // Convert expiration timestamp (exp) to a readable date
-    const expirationDate = new Date(payload.exp * 1000);
-    console.log("JWT Token:", token);
-    console.log("CHECKING TOKIENN", verifySupabaseToken(token));
-    console.log(
-      "Token Expiration Date & Time:",
-      expirationDate.toLocaleString()
-    );
-  } else {
-    console.log("No active session or token found.");
-  }
-};
-
-
-// console.log("USERRRR", supabase.auth.getUser());
-supabase.auth.onAuthStateChange((event, session) => {
-  if (event === "SIGNED_OUT" || !session) {
-    console.log("User signed out or session expired");
-    // Redirect to login page or show login modal
-  }
-});
-
-
+function page() {
   return (
-    <div className="p-10">
-      <div className="flex w-full bg-blue-500 justify-evenly">
-        <button onClick={() => logout()}>LOGOUT</button>
-        <button onClick={() => login()} className="bg-red-500">
-          LOGIN
-        </button>
-        <button onClick={() => logSession()} className="bg-red-500">
-          LOG SESSION
-        </button>
-        {/* <button
-          onClick={() => {
-            console.log(subscriptions);
-          }}
-        >
-          FETCH SUBSCRIPTIONS
-        </button> */}
+    <div className="h-screen w-full bg-cover bg-center bg-[url(/img/whiteAbstractBg.jpg)] filter brightness-108">
+      
+      <div className=" flex-col items-center justify-items-center">
+      
+        <img  src="/img/dempaLogo.png" alt="Dempa Logo" className="drop-shadow-lg shadow-black/90 h-125"></img>
+        <img src="/img/dempaLogoTxt.png" alt="Logo Text" className="h-25 drop-shadow-lg shadow-black/90"></img>
       </div>
 
-      {/* <p>{subscriptions.map((sub) => sub.full_name).join(", ")}</p> */}
-
-      <h1 className="text-xl font-bold">Supabase Data</h1>
-
-      <SubscriptionsTable />
-
-      <div className="sm:bg-red-500 md:bg-blue-500 lg:bg-amber-500 xl:bg-black">ASDFASDFASDF</div>
+      <button className="px-8 py-2 bg-red-600 rounded-full text-white text-2xl cursor-pointer hover:bg-red-700 absolute bottom-15 right-20">LOGIN</button>
     </div>
-  );
+
+    
+    
+  )
 }
+
+export default page
