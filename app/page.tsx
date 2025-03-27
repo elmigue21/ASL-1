@@ -1,6 +1,6 @@
 
 import React from 'react'
-
+import Link from 'next/link'
 function page() {
   return (
     <div className="h-screen w-full bg-cover bg-center bg-[url(/img/whiteAbstractBg.jpg)] filter brightness-108">
@@ -11,8 +11,10 @@ function page() {
         <img src="/img/dempaLogoTxt.png" alt="Logo Text" className="h-25 drop-shadow-lg shadow-black/90"></img>
       </div>
 
-      <button className="px-8 py-2 bg-red-600 rounded-full text-white text-2xl cursor-pointer hover:bg-red-700 absolute bottom-15 right-20">LOGIN</button>
+      <Link href={"/loginPage"}><button className="px-8 py-2 bg-red-600 rounded-full text-white text-2xl cursor-pointer hover:bg-red-700 absolute bottom-15 right-20">LOGIN</button></Link>
     
-    
+    </div>  
   )
+
 }
+export default page

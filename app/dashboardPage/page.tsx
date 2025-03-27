@@ -1,52 +1,54 @@
-import React from 'react'
+import React from "react";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
-import {DonutChart} from '../components/DonutChart';
-import {SubsAreaChart} from '../components/SubsAreaChart'
-import Navbar from '../components/Navbar';
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { DonutChart } from "../components/DonutChart";
+import { SubsAreaChart } from "../components/SubsAreaChart";
+import Navbar from "../components/Navbar";
+import DateDisplay from "../components/DateDisplay";
 
 const Dashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="z-45 fixed top-25 left-40 w-7/8 h=2/3">
+      <div className="z-45 fixed top-25 left-40 w-8/9 h=2/3">
         <div
           className="m-10"
           style={{ fontFamily: "'Nunito Sans', sans-serif" }}
         >
-          <div className="flex justify-evenly gap-20">
-            <Card className="flex-1">
-              <CardHeader className="font-bold">Total Subscribers</CardHeader>
-              <CardContent className="text-4xl text-center text-blue-900 font-bold">
-                40,000
-              </CardContent>
-            </Card>
-            <Card className="flex-1">
-              <CardHeader className="font-bold">Active Subscribers</CardHeader>
-              <CardContent className="text-4xl text-center font-bold text-blue-900">
-                40,000
-              </CardContent>
-            </Card>
-            <Card className="flex-1">
-              <CardHeader className="font-bold">
-                Inactive Subscribers
-              </CardHeader>
-              <CardContent className="text-4xl text-center font-bold text-blue-900">
-                40,000
-              </CardContent>
-            </Card>
-            <Card className="flex-1">
-              <CardHeader className="font-bold">Countries</CardHeader>
-              <CardContent className="text-4xl text-center font-bold text-blue-900">
-                40,000
-              </CardContent>
+          <div className="flex justify-evenly gap-1">
+            <Card className="flex-1 p-4">
+              <div className="flex">
+                <CardHeader className="flex-1 text-center font-bold">
+                  Total Subscribers
+                </CardHeader>
+                <CardHeader className="flex-1 text-center font-bold">
+                  Active Subscribers
+                </CardHeader>
+                <CardHeader className="flex-1 text-center font-bold">
+                  Inactive Subscribers
+                </CardHeader>
+                <CardHeader className="flex-1 text-center font-bold">
+                  Countries
+                </CardHeader>
+              </div>
+              <div className="flex">
+                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">10,240</CardContent>
+                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">7,036
+                </CardContent>
+                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">
+                  3,204
+                </CardContent>
+                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">
+                  19
+                </CardContent>
+              </div>
+            <div className="h-15 -mt-5">
+            <DateDisplay />
+            </div>
             </Card>
           </div>
-          <h1>Wed, Jul 20</h1>
+
+          
         </div>
 
         <div className="flex">
@@ -60,6 +62,6 @@ const Dashboard = () => {
       </div>
     </>
   );
-}
+};
 
-export default Dashboard
+export default Dashboard;

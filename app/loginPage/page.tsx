@@ -1,7 +1,11 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import Link from 'next/link'
+import {signIn} from '@/utils/auth'
 function loginPage() {
+  const [username, setUsername]= useState("")
+  const [password, setPassword]= useState("")
   return (
     <div className="relative h-screen">
       <div className="bg-[#1A3DB2] h-9 w-full"></div>
@@ -18,11 +22,15 @@ function loginPage() {
             type="text"
             className="bg-[#CFCECE] text-white border text-3xl border-gray-300 p-2 rounded-lg placeholder-white w-125 h-20 my-10 pl-8"
             placeholder="Username"
+            value={username}
+            onChange={(e)=>{setUsername(e.target.value)}}
           />
           <input
             type="password"
             className="bg-[#CFCECE] text-white border text-3xl border-gray-300 p-2 rounded-lg placeholder-white w-125 h-20 pl-8"
             placeholder="Password"
+            value={password}
+            onChange={(e)=>{setPassword(e.target.value)}}
           />
           
           
@@ -40,7 +48,7 @@ function loginPage() {
             <div className="text-[#686565] text-base font-medium">Forgot Password?</div>
 
           </div>
-          <div className="bg-[#1A3DB2] w-50 h-13 rounded-full flex items-center justify-center text-white text-3xl mt-15">Login</div>
+          <Link href={"/dashboardPage"}><div className="bg-[#1A3DB2] w-50 h-13 rounded-full flex items-center justify-center text-white text-3xl mt-15">Login</div></Link>
         </div>
       </div>
 

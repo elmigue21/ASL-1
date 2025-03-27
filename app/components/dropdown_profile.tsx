@@ -5,6 +5,8 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 // import img from 'next/img'
+import Link from 'next/link'
+
 
 export default function MyDropdown() {
   return (
@@ -26,7 +28,7 @@ export default function MyDropdown() {
       <DropdownMenuContent>
         <DropdownMenuItem onClick={() => console.log("Profile Clicked")}>Profile</DropdownMenuItem>
         {/* <DropdownMenuItem onClick={() => console.log("Settings Clicked")}>Settings</DropdownMenuItem> */}
-        <DropdownMenuItem onClick={() => console.log("Logout Clicked")}>Logout</DropdownMenuItem>
+        <Link href={"/"}><DropdownMenuItem onClick={() => console.log("Logout Clicked")}>Logout</DropdownMenuItem></Link>
       </DropdownMenuContent>
     </DropdownMenu>
   );
