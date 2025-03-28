@@ -21,20 +21,19 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-const generateFakeSubscriptions = (count = 40000) => {
+const generateFakeSubscriptions = (count = 50) => {
   return Array.from({ length: count }, () => ({
-    full_name: faker.person.fullName(),
-    email1: faker.internet.email(),
-    person_country: faker.location.country(),
-    company_name: faker.company.name(),
-    person_industry: faker.commerce.department(),
+    // id: faker.number.bigInt({ min: 1n, max: 9223372036854775807n }),
+    first_name: faker.person.firstName(),
+    last_name: faker.person.lastName(),
+    active_status: faker.datatype.boolean(),
   }));
 };
 
 const seedSupabase = async () => {
-  const fakeData = generateFakeSubscriptions(40000); // Change number if needed
+  const fakeData = generateFakeSubscriptions(50); // Change number if needed
 
-  const { data, error } = await supabase.from("subscriptions").insert(fakeData);
+  const { data, error } = await supabase.from("subscribers").insert(fakeData);
 
   if (error) {
     console.error("❌ Error seeding data:", error);

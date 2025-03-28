@@ -46,8 +46,12 @@ import {
 import {  useInfiniteQuery } from '@tanstack/react-query';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
+import { signIn } from "@/utils/auth";
 
 export function SubscriptionsTable() {
+
+  // signIn('user@example.com','12345')
+  
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -71,29 +75,84 @@ export function SubscriptionsTable() {
 const queryClient = useQueryClient();
 
 
-const fetchSubscriptions2 = async ({pageParam = 1}) => {
-  const pageSize = 10; 
-  const start = (pageParam - 1) * pageSize;
-  const end = start + pageSize - 1;
+// const fetchSubscriptions2 = async ({pageParam = 1}) => {
+//   const pageSize = 10; 
+//   const start = (pageParam - 1) * pageSize;
+//   const end = start + pageSize - 1;
 
-  const query = supabase.from("subscriptions").select("*").range(start, end);
+//   const query = supabase.from("subscriptions").select("*").range(start, end);
 
 
-  if (appliedSearchBarValue) {
-    query.ilike("full_name", `%${appliedSearchBarValue}%`);
+//   if (appliedSearchBarValue) {
+//     query.ilike("full_name", `%${appliedSearchBarValue}%`);
+//   }
+//     const { data, error } = await query
+
+//   if (error) {
+//     throw new Error(error.message);
+//   }
+
+//   return data;
+// };
+
+const fetchSubscriptions = async ({ pageParam = 1 }) => {
+  const pageSize = 10; // Fixed page size
+
+  const response = await fetch(
+    `http://localhost:5050/api/subscriptions?page=${pageParam}&pageSize=${pageSize}&search=${appliedSearchBarValue}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
   }
-    const { data, error } = await query
 
-  if (error) {
-    throw new Error(error.message);
-  }
+  const result = await response.json();
 
-  return data;
+
+  const {data:emailData,error} = await supabase.from("emails").select("*");
+  const {data:addressData, error: error2} = await supabase.from('addresses').select('*');
+  const {data:countryData, error:error3} = await supabase.from('companies').select('*');
+  // console.log(data);
+
+  const emails = emailData || [];
+  const addresses = addressData || [];
+  const companies = countryData || [];
+
+  console.log(companies);
+
+  const people = result.data;
+        const mergedData = people.map((person : any) => {
+          const personEmails = emails
+            .filter((email: any) => email.person_id === person.id) // Assuming the foreign key is person_id
+            .map((email: any) => email.email);
+
+          const personCountry = addresses
+            .filter((address: any) => address.person_id === person.id)
+            .map((address: any) => address.country)[0]; // Assuming the foreign key is person_id
+
+          const personCompany = companies
+            .filter((company: any) => company.person_id === person.id)
+            .map((company: any) => company.name)[0]; // Assuming the foreign key is person_id
+
+          return {
+            ...person,
+            emails: personEmails.join(", "), // Joining emails into a single string
+            country: personCountry || "",
+            company:personCompany || "",
+          };
+        });
+
+    console.log(mergedData);
+console.log('MERGGEEDDD')
+
+
+return mergedData;
+  // return result.data; // { data: [...], nextCursor: <number | null> }
 };
 
   const { data, fetchNextPage,fetchPreviousPage } = useInfiniteQuery({
     queryKey: ["subscriptions"],
-    queryFn: fetchSubscriptions2,
+    queryFn: fetchSubscriptions,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages,lastPageParam) => {
       return lastPage?.length === 10 ? lastPageParam + 1 : undefined;
@@ -174,7 +233,8 @@ const fetchSubscriptions2 = async ({pageParam = 1}) => {
         enableHiding: false,
       },
       {
-        accessorKey: "full_name",
+        accessorFn: (row) => `${row.first_name ?? ""} ${row.last_name ?? ""}`, // ✅ Handles missing names safely
+        id: "full_name", // We use `id` instead of `accessorKey` since it's computed
         header: ({ column }) => (
           <Button
             variant="ghost"
@@ -183,36 +243,44 @@ const fetchSubscriptions2 = async ({pageParam = 1}) => {
             Name <ArrowUpDown />
           </Button>
         ),
-        cell: ({ row }) => (
-          <div className="">{row.getValue("full_name")}</div>
-        ),
+        cell: ({ row }) => <div>{row.getValue("full_name")}</div>,
       },
       {
-        accessorKey: "email1",
+        accessorKey: "emails",
         header: "Email",
         cell: ({ row }) => (
-          <div className="capitalize">{row.getValue("email1")}</div>
+          <div className="capitalize">{row.getValue("emails")}</div>
         ),
       },
       {
-        accessorKey: "person_country",
+        accessorKey: "country",
         header: "Country",
         cell: ({ row }) => (
-          <div className="capitalize">{row.getValue("person_country")}</div>
+          <div className="capitalize">{row.getValue("country")}</div>
         ),
       },
       {
-        accessorKey: "company_name",
+        accessorKey: "company",
         header: "Company",
         cell: ({ row }) => (
-          <div className="capitalize">{row.getValue("company_name")}</div>
+          <div className="capitalize">{row.getValue("company")}</div>
         ),
       },
       {
-        accessorKey: "person_industry",
-        header: "Industry",
+        accessorKey: "active_status",
+        header: "Active",
         cell: ({ row }) => (
-          <div className="capitalize">{row.getValue("person_industry")}</div>
+          <div className="capitalize">
+            {row.getValue("active_status") ? (
+              <div className="bg-green-200 text-center rounded-full mx-5">
+                Active
+              </div>
+            ) : (
+              <div className="bg-red-200 text-center rounded-full mx-5">
+                Inactive
+              </div>
+            )}
+          </div>
         ),
       },
       {
@@ -229,9 +297,9 @@ const fetchSubscriptions2 = async ({pageParam = 1}) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => console.log(subscription.id)}>
+                {/* <DropdownMenuItem onClick={() => console.log(subscription.id)}>
                   View
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem>Edit Details</DropdownMenuItem>
                 <DropdownMenuItem>Delete</DropdownMenuItem>
               </DropdownMenuContent>
@@ -313,6 +381,7 @@ const fetchSubscriptions2 = async ({pageParam = 1}) => {
         >
           Search
         </Button>
+        {/* <Button onClick={async ()=>{signIn('user@example.com','12345'); const user = await supabase.auth.getUser();console.log(user)}}></Button> */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

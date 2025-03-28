@@ -20,18 +20,41 @@ export const createSubscription = async (req: Request, res: Response) => {
 
 // Get All Subscriptions
 export const getAllSubscriptions = async (req: Request, res: Response) => {
-  console.log("getttt");
   try {
-    console.log("qweqwe");
-    const { data, error } = await supabase.from("subscriptions").select("*");
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
 
-    if (error) res.status(400).json({ error: error.message });
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize - 1;
 
-    res.json(data);
+    let query = supabase.from("subscribers").select("*").range(start, end);
+
+    if(req.query.search){
+      console.log('LOGGING SEARCH')
+      console.log(req.query.search);
+      query = query.or(
+        `first_name.ilike.%${req.query.search}%,last_name.ilike.%${req.query.search}%`
+      );
+        // .or(`last_name.ilike.%${req.query.search}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+    }
+    console.log('ASDFASDFASDFADSF', data)
+
+    res.json({
+      data: data || [], // ✅ This is an array
+      nextCursor: data && data.length === pageSize ? page + 1 : null, // ✅ Corrected check
+    });
   } catch (err) {
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: (err as Error).message });
   }
 };
+
+
 
 // Get Single Subscription
 export const getSubscriptionById = async (req: Request, res: Response) => {

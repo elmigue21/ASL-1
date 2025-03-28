@@ -14,7 +14,9 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://asl-topaz.vercel.app", // ✅ Change this to your frontend URL
+    origin:
+      process.env.NODE_ENV?.trim() === "production" ? "https://asl-topaz.vercel.app"
+        : "*", // ✅ Change this to your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type"],
   })
@@ -34,7 +36,7 @@ app.get("/postman", async (req, res) => {
     });
     if (error) throw error; // Handle authentication error
 
-    res.redirect("/api/subscriptions/countryCount");
+    res.redirect("/api/subscriptions");
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: "Sign-in failed", details: error.message });

@@ -1,11 +1,27 @@
 "use client";
 import React, { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import Link from 'next/link'
-import {signIn} from '@/utils/auth'
+import Link from "next/link";
+import { signIn } from "@/utils/auth";
+import { Button } from "@/components/ui/button";
 function loginPage() {
-  const [username, setUsername]= useState("")
-  const [password, setPassword]= useState("")
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async () => {
+    try{
+    console.log("SUBMIT");
+    const result = await signIn(username, password);
+    console.log(result);
+    if(result != null){
+      window.location.href= "/dashboardPage";
+    }
+
+    }catch(e){
+      console.error(e);
+    }
+  };
+
   return (
     <div className="relative h-screen">
       <div className="bg-[#1A3DB2] h-9 w-full"></div>
@@ -17,27 +33,30 @@ function loginPage() {
             <img src="dempaLogoTxt.png" alt="Logo Text" className="w-80 h-20" />
           </div>
           <div className="mt-10 text-4xl font-normal">LOGIN</div>
-          
+
           <input
             type="text"
             className="bg-[#CFCECE] text-white border text-3xl border-gray-300 p-2 rounded-lg placeholder-white w-125 h-20 my-10 pl-8"
             placeholder="Username"
             value={username}
-            onChange={(e)=>{setUsername(e.target.value)}}
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
           />
           <input
             type="password"
             className="bg-[#CFCECE] text-white border text-3xl border-gray-300 p-2 rounded-lg placeholder-white w-125 h-20 pl-8"
             placeholder="Password"
             value={password}
-            onChange={(e)=>{setPassword(e.target.value)}}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
           />
-          
-          
+
           <div className="flex flex-row gap-x-52 mt-5 tracking-wide">
             {/*shad*/}
             <div className="flex items-center gap-x-2">
-              <Checkbox id="terms" className="bg-[#FFFFFF]"/>
+              <Checkbox id="terms" className="bg-[#FFFFFF]" />
               <label
                 htmlFor="terms"
                 className="text-[#828282] text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -45,10 +64,17 @@ function loginPage() {
                 Remember me
               </label>
             </div>
-            <div className="text-[#686565] text-base font-medium">Forgot Password?</div>
-
+            <div className="text-[#686565] text-base font-medium">
+              Forgot Password?
+            </div>
           </div>
-          <Link href={"/dashboardPage"}><div className="bg-[#1A3DB2] w-50 h-13 rounded-full flex items-center justify-center text-white text-3xl mt-15">Login</div></Link>
+
+          <Button
+          onClick={()=>{handleSubmit()}}
+            className="bg-[#1A3DB2] w-50 h-13 rounded-full flex items-center justify-center text-white text-3xl mt-15 hover:cursor-pointer"
+          >
+            Login
+          </Button>
         </div>
       </div>
 

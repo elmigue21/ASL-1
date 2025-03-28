@@ -16,38 +16,55 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 const chartData = [
-  { browser: "Philippines", visitors: 160, fill: "var(--color-chrome)" },
-  { browser: "Japan", visitors: 5860, fill: "var(--color-safari)" },
-  { browser: "South Korea", visitors: 463, fill: "var(--color-firefox)" },
-  { browser: "China", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 190, fill: "var(--color-other)" },
+  { browser: "Philippines", visitors: 160, fill: "" },
+  { browser: "Japan", visitors: 5860, fill: "" },
+  { browser: "South Korea", visitors: 463, fill: "" },
+  { browser: "China", visitors: 173, fill: "" },
+  { browser: "Other", visitors: 190, fill: "" },
 ];
+
 
 const chartConfig = {
   chrome: {
     label: "Philippines",
-    color: getRandomColor(),
+    color: "",
   },
   safari: {
     label: "Japan",
-    color: getRandomColor(),
+    color: "",
   },
   firefox: {
     label: "South Korea",
-    color: getRandomColor(),
+    color: "",
   },
   edge: {
     label: "China",
-    color: getRandomColor(),
+    color: "",
   },
   other: {
     label: "Other",
-    color: getRandomColor(),
+    color: "",
   },
-
 } satisfies ChartConfig;
 
+
+
 export function DonutChart() {
+
+    const [isClient, setIsClient] = React.useState(false);
+ React.useEffect(() => {
+   setIsClient(true);
+ }, []);
+
+    if (isClient) {
+      chartData.forEach((item) => {
+        item.fill = getRandomColor();
+      });
+
+      Object.values(chartConfig).forEach((config) => {
+        config.color = getRandomColor();
+      });
+    }
 
 
   return (

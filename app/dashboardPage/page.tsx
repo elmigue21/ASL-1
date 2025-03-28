@@ -15,7 +15,7 @@ const Dashboard = () => {
           className="m-10"
           style={{ fontFamily: "'Nunito Sans', sans-serif" }}
         >
-          <div className="flex justify-evenly gap-1">
+          <div className="flex justify-evenly gap-1 h-40">
             <Card className="flex-1 p-4">
               <div className="flex">
                 <CardHeader className="flex-1 text-center font-bold">
