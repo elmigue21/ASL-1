@@ -8,6 +8,7 @@ import { supabase } from "../lib/supabase";
 import profileRoutes from "./routes/ProfileRoutes";
 import { EmailRequest } from "@/types/emailRequest";
 import { transporter } from "../lib/emailTransporter";
+import dashboardRoutes from "./routes/dashboardRoutes";
 
 dotenv.config();
 const app = express();
@@ -18,7 +19,7 @@ app.use(
       process.env.NODE_ENV?.trim() === "production" ? "https://asl-topaz.vercel.app"
         : "*", // ✅ Change this to your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type, Authorization"],
   })
 );
 
@@ -36,7 +37,7 @@ app.get("/postman", async (req, res) => {
     });
     if (error) throw error; // Handle authentication error
 
-    res.redirect("/api/subscriptions");
+    res.redirect("/api/dashboard/countryCount");
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: "Sign-in failed", details: error.message });
@@ -91,6 +92,7 @@ app.get("/debug-token", async (req, res) => {
 
 apiRouter.use("/profiles", profileRoutes);
 apiRouter.use("/subscriptions", subscriptionRoutes);
+apiRouter.use("/dashboard", dashboardRoutes)
 
 app.use("/api", apiRouter);
 
