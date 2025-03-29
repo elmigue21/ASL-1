@@ -5,8 +5,8 @@ import Link from "next/link";
 import { signIn } from "@/utils/auth";
 import { Button } from "@/components/ui/button";
 function loginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("user@example.com");
+  const [password, setPassword] = useState("12345");
 
   const handleSubmit = async () => {
     try{

@@ -34,7 +34,7 @@ export const authenticateUser: RequestHandler = async (req, res, next) => {
     if (error || !user) {
        res.status(401).json({ error: "Unauthorized: Invalid token" });
     }
-
+// console.log('supabase userr',supabaseUser);
     req.supabaseUser = supabaseUser; // ✅ Store client for use in routes
     req.user = user; // ✅ Store authenticated user
 

@@ -14,14 +14,8 @@ export interface Subscription {
     person_industry: string;
     tags: string;
     company_website: string;
-    email1: string;
-    email2: string;
-    email3: string;
-    email4: string;
-    phone1: string;
-    phone2: string;
-    phone3: string;
-    phone4: string;
+    emails: {email:string,id:number}[];
+    phones:string[];
     person_facebook_url: string;
     company_linkedin_url: string;
     created_by: string;

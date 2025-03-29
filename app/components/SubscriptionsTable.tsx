@@ -12,6 +12,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  getExpandedRowModel,
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
 
@@ -50,6 +51,7 @@ import { useQueryClient } from "@tanstack/react-query";
 export function SubscriptionsTable() {
 
 
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -71,13 +73,17 @@ export function SubscriptionsTable() {
   const [searchBarValue, setSearchBarValue] = useState<string>("");
   const [appliedSearchBarValue, setAppliedSearchBarValue] = useState<string>("");
 const queryClient = useQueryClient();
-
 const fetchSubscriptions = async ({ pageParam = 1 }) => {
   const pageSize = 10; // Fixed page size
 
 
     const { data: sessionData, error } = await supabase.auth.getSession();
     const token = sessionData.session?.access_token;
+
+if(!token){
+  return;
+}
+
 
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/table?page=${pageParam}&pageSize=${pageSize}&search=${appliedSearchBarValue}`,
@@ -152,31 +158,42 @@ return result.data;
     () => [
       {
         id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) =>{
-              table.toggleAllPageRowsSelected(!!value)
-              setAllSelectedSubscriptionIds(!!value);
-              console.log(value);
-            }
-            }
-            aria-label="Select all"
-            className="border-black"
-          />
-        ),
+        header: ({ table }) => {
+          return (
+            <Checkbox
+              checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && "indeterminate")
+              }
+              onCheckedChange={(value) => {
+                table.toggleAllPageRowsSelected(!!value);
+                setAllSelectedSubscriptionIds(!!value);
+                // console.log(value);
+              }}
+              aria-label="Select all"
+              className="border-black"
+            />
+          );
+        },
         cell: ({ row }) => {
           const rowId = row.original.id;
-          const isChecked = selectedSubscriptionIds.includes(rowId);
+          const isChecked = row.original.emails.every((email: { id: number }) =>
+            selectedSubscriptionIds.includes(email.id)
+          );
+          // console.log('IS CHECKED?', isChecked)
+          // console.log('CHECKED????' ,row.getIsSelected())
 
           return (
             <Checkbox
               checked={isChecked}
               onCheckedChange={(value) => {
-                setSelectedSubscriptionIds(!!value, rowId);
+                console.log(row.original.emails);
+              row.original.emails.forEach((email: { email: string; id: number }) => {
+                console.log(email.email, email.id)
+                setSelectedSubscriptionIds(!!value, email.id);
+              });
+
+                // setSelectedSubscriptionIds(!!value, rowId);
                 console.log(rowId);
               }}
               aria-label="Select row"
@@ -187,6 +204,15 @@ return result.data;
         enableSorting: false,
         enableHiding: false,
       },
+      // {
+      //   id: "expander",
+      //   header: () => null,
+      //   cell: ({ row }: { row: any }) => (
+      //     <button {...{ onClick: row.getToggleExpandedHandler() }}>
+      //       {row.getIsExpanded() ? "▼" : "▶"}
+      //     </button>
+      //   ),
+      // },
       {
         accessorFn: (row) => `${row.first_name ?? ""} ${row.last_name ?? ""}`, // ✅ Handles missing names safely
         id: "full_name", // We use `id` instead of `accessorKey` since it's computed
@@ -204,35 +230,40 @@ return result.data;
         accessorKey: "emails",
         header: "Email",
         cell: ({ row }) => {
-            const emails =
-              (row.getValue("emails") as { email: string }[]) || [];
-              return(
-      <div className="">
-        {emails.length > 0 ? emails[0].email : "No Email"}
-      </div>);
+          const emails = (row.getValue("emails") as { email: string }[]) || [];
+          return (
+            <div className="">
+              {emails.length > 1 && (
+                <button
+                  className="bg-slate-200 p-1 rounded-md border  shadow-lg transition-transform duration-300 hover:shadow-xl hover:bg-slate-500 h-1/2 w-auto"
+                  {...{ onClick: row.getToggleExpandedHandler() }}
+                >
+                  {row.getIsExpanded() ? "🢄" : "🢂"}
+                </button>
+              )}
+              {emails.length > 0 ? emails[0].email : "No Email"}
+            </div>
+          );
         },
       },
       {
         accessorKey: "addresses",
         header: "Country",
-        cell: ({ row }) => 
-        {
+        cell: ({ row }) => {
           // console.log(row.getValue());
           // console.log(row.getValue("addresses"));
           const address = row.getValue("addresses") as { country: string };
-          
-          return(
-          <div className="capitalize">{address.country}</div>
-  )},
+
+          return <div className="capitalize">{address.country}</div>;
+        },
       },
       {
         accessorKey: "companies",
         header: "Company",
         cell: ({ row }) => {
           const company = row.getValue("companies") as { name: string };
-          return(
-          <div className="capitalize">{company.name}</div>)
-      },
+          return <div className="capitalize">{company.name}</div>;
+        },
       },
       {
         accessorKey: "active_status",
@@ -244,7 +275,7 @@ return result.data;
                 Active
               </div>
             ) : (
-              <div className="bg-red-200 text-center rounded-full mx-5">
+              <div className="bg-slate-200 text-center rounded-full mx-5">
                 Inactive
               </div>
             )}
@@ -265,9 +296,9 @@ return result.data;
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                {/* <DropdownMenuItem onClick={() => console.log(subscription.id)}>
+                <DropdownMenuItem onClick={() => console.log(subscription.id)}>
                   View
-                </DropdownMenuItem> */}
+                </DropdownMenuItem>
                 <DropdownMenuItem>Edit Details</DropdownMenuItem>
                 <DropdownMenuItem>Delete</DropdownMenuItem>
               </DropdownMenuContent>
@@ -286,16 +317,6 @@ return result.data;
   );
 
 
-  useEffect(() => {
-    const currentPageSubscriptions = data?.pages[pagination.pageIndex] || [];
-    const subIds = currentPageSubscriptions.map((sub : Subscription) => sub.id);
-    setRowSelection(subIds); // Update the rowSelection state
-  }, [subscriptions]);
-
-  useEffect(() => {
-    console.log("Updated rowSelection:", rowSelection);
-  }, [rowSelection]);
-
   const table = useReactTable({
     data: subscriptions,
     columns,
@@ -307,6 +328,9 @@ return result.data;
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    getExpandedRowModel: getExpandedRowModel(), // ✅ Enable expanded row model
+    getRowCanExpand: () => true,
+    enableRowSelection: true,
     state: {
       sorting,
       columnFilters,
@@ -321,12 +345,11 @@ return result.data;
   };
 
   const setAllSelectedSubscriptionIds = (checkboxValue: boolean) => {
-    console.log(' set all running')
-
-    const allRows = table.getSelectedRowModel().rows;
-    console.log(allRows)
+    const allRows = table.getRowModel().rows;
     allRows.map(row =>{
-      setSelectedSubscriptionIds(checkboxValue,row.original.id)
+      row.original.emails.map((email: {email:string,id:number})=>{
+        setSelectedSubscriptionIds(checkboxValue, email.id);
+      })
     })
   };
   
@@ -335,8 +358,6 @@ return result.data;
     checkboxValue: boolean,
     rowId: number
   ) => {
-    console.log("CHECKBOX ROW ID ", rowId);
-
     if (checkboxValue) {
       dispatch(addSelectedSubscription(rowId));
     } else {
@@ -344,10 +365,12 @@ return result.data;
     }
   };
 
+
   const searchButtonClicked = async () =>{
           await queryClient.removeQueries({ queryKey: ["subscriptions"] });
           setPagination({ pageIndex: 0, pageSize: 10 });
   }
+  
 
   return (
     <div className="w-full">
@@ -366,9 +389,12 @@ return result.data;
         >
           Search
         </Button>
-        <Button onClick={()=>{console.log(selectedSubscriptionIds)}}></Button>
-        {/* <Button onClick={async ()=>{signIn('user@example.com','12345'); const user = await supabase.auth.getUser();console.log(user)}}></Button> */}
-        <DropdownMenu>
+        <Button
+          onClick={() => {
+            console.log(selectedSubscriptionIds);
+          }}
+        ></Button>
+       <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
               Columns <ChevronDown />
@@ -428,37 +454,55 @@ return result.data;
           <TableBody>
             {table.getRowModel().rows?.length
               ? table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className="truncate overflow-hidden whitespace-nowrap"
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              : [...Array(10)].map(
-                  (
-                    _,
-                    index
-                  ) => (
-                    <TableRow key={index}>
-                      {columns.map((_, colIndex) => (
-                        <TableCell key={colIndex}>
-                          <Skeleton className="h-8 w-full rounded-md bg-gray-300 dark:bg-gray-700" />
+                  <React.Fragment key={row.id}>
+                    <TableRow data-state={row.getIsSelected() && "selected"}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className="truncate overflow-hidden whitespace-nowrap"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
                         </TableCell>
                       ))}
                     </TableRow>
-                  )
-                )}
+
+                    {row.getIsExpanded() && (
+
+                      
+                      row.original.emails.map((email:{id:number,email:string},index:number)=>{
+                       
+                        const isChecked= selectedSubscriptionIds.includes(email.id);
+                        return (
+                          <TableRow key={email.id}>
+
+                            <TableCell>
+                              <Checkbox className="border-slate-500"
+                               checked={isChecked}
+                                onCheckedChange={(value)=>{setSelectedSubscriptionIds(!!value, email.id)}
+                              }>
+
+                              </Checkbox>
+                            </TableCell>
+                            <TableCell></TableCell>
+                            <TableCell>{email.email}</TableCell>
+                          </TableRow>
+                        );
+                      })
+                    )}
+                  </React.Fragment>
+                ))
+              : [...Array(10)].map((_, index) => (
+                  <TableRow key={index}>
+                    {columns.map((_, colIndex) => (
+                      <TableCell key={colIndex}>
+                        <Skeleton className="h-8 w-full rounded-md bg-gray-300 dark:bg-gray-700" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
           </TableBody>
         </Table>
       </div>
