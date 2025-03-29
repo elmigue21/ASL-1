@@ -107,7 +107,7 @@ const fetchActiveSubs = async () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar/>
 
       <div className="z-45 fixed top-25 left-40 w-8/9 h=2/3">
         <div
