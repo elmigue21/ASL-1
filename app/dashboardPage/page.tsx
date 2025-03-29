@@ -23,7 +23,7 @@ const Dashboard = () => {
 const fetchCountryCount = async () => {
   const {data:sessionData,error} = await supabase.auth.getSession(); 
   const token = sessionData.session?.access_token; 
-
+  
 
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/countrycount`, {
     method: "GET",
