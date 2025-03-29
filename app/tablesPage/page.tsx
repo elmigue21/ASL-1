@@ -1,13 +1,46 @@
+'use client'
 import React from 'react'
 import { SubscriptionsTable } from '../components/SubscriptionsTable'
 import Navbar from '../components/Navbar'
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/lib/supabase';
+import EmailWindow from '../components/EmailWindow';
+
+
+const fetchEmail = async () => {
+
+  console.log('fetch email')
+
+  const {data:sessionData,error} = await supabase.auth.getSession(); 
+  const token = sessionData.session?.access_token; 
+
+  console.log('token', token)
+
+const response = await fetch(
+  `${process.env.NEXT_PUBLIC_API_URL}/email/sendEmails`,
+  {
+    method: "POST", // ✅ Use POST instead of GET
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ emailIds: [51, 52, 53] }), // ✅ Convert to JSON string
+  }
+);
+  const data = await response.json();
+  console.log(data);
+
+}
+
 function TablesPage() {
   return (
     <div>
       <Navbar />      
       <div className="z-45 fixed top-25 left-40 p-5">
         <SubscriptionsTable />
+        <Button onClick={()=>{fetchEmail()}}>qweqwe</Button>
       </div>
+  <EmailWindow/>
     </div>
   );
 }

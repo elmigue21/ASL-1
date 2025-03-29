@@ -11,6 +11,7 @@ import { transporter } from "../lib/emailTransporter";
 import dashboardRoutes from "./routes/dashboardRoutes";
 import { authenticateUser } from "./middlewares/authenticateUser";
 import tableRoutes from "./routes/tableRoutes";
+import emailRoutes from "./routes/emailRoutes";
 
 dotenv.config();
 const app = express();
@@ -40,7 +41,7 @@ app.get("/postman", async (req, res) => {
     });
     if (error) throw error; // Handle authentication error
 
-    res.redirect("/api/table");
+    res.redirect("/api/email/sendEmails");
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: "Sign-in failed", details: error.message });
@@ -68,35 +69,13 @@ app.get("/debug-token", async (req, res) => {
   }
 });
 
-// app.post("/send-bulk-email", async (req: Request, res: Response) => {
-//   try {
-//     const { recipients, subject, text, html }: EmailRequest = req.body;
-
-//     if (!recipients || recipients.length === 0) {
-//        res.status(400).json({ error: "No recipients provided" });
-//     }
-
-//     for (const recipient of recipients) {
-//       await transporter.sendMail({
-//         from: "gueljohnc@gmail.com",
-//         to: recipient,
-//         subject,
-//         text,
-//         html,
-//       });
-//     }
-
-//      res.json({ message: "Emails sent successfully" });
-//   } catch (error) {
-//     console.error("Email sending failed:", error);
-//      res.status(500).json({ error: "Email sending failed" });
-//   }
-// });
 
 apiRouter.use("/profiles", profileRoutes);
 apiRouter.use("/subscriptions", subscriptionRoutes);
 apiRouter.use("/dashboard",authenticateUser, dashboardRoutes)
 apiRouter.use("/table", authenticateUser,tableRoutes);
+apiRouter.use("/email",authenticateUser,emailRoutes);
+
 
 app.use("/api", apiRouter);
 

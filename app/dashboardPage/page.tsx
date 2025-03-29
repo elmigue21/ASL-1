@@ -23,7 +23,7 @@ const Dashboard = () => {
 const fetchCountryCount = async () => {
   const {data:sessionData,error} = await supabase.auth.getSession(); 
   const token = sessionData.session?.access_token; 
-  
+
 
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/countrycount`, {
     method: "GET",
@@ -42,7 +42,9 @@ const fetchCountryCount = async () => {
 const fetchTotalSubs = async () => {
   const { data: sessionData, error } = await supabase.auth.getSession();
   const token = sessionData.session?.access_token;
-
+  if (!token) {
+    return;
+  }
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/dashboard/subCount`,
     {
@@ -62,7 +64,9 @@ const fetchTotalSubs = async () => {
 const fetchInactiveSubs = async () => {
   const { data: sessionData, error } = await supabase.auth.getSession();
   const token = sessionData.session?.access_token;
-
+  if (!token) {
+    return;
+  }
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/dashboard/inactiveCount`,
     {
@@ -82,6 +86,10 @@ const fetchInactiveSubs = async () => {
 const fetchActiveSubs = async () => {
   const { data: sessionData, error } = await supabase.auth.getSession();
   const token = sessionData.session?.access_token;
+
+  if(!token){
+    return;
+  }
 
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/dashboard/activeCount`,
