@@ -122,8 +122,6 @@ const fetchActiveSubs = async () => {
           className="m-10"
           style={{ fontFamily: "'Nunito Sans', sans-serif" }}
         >
-          <Button onClick={async ()=>{signIn('user@example.com','12345'); console.log('sign in')}}>qwe</Button>
-          <Button onClick={()=>{fetchCountryCount()}}>eeee</Button>
           <div className="flex justify-evenly gap-1 h-40">
             <Card className="flex-1 p-4">
               <div className="flex">
