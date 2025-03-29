@@ -9,6 +9,8 @@ import profileRoutes from "./routes/ProfileRoutes";
 import { EmailRequest } from "@/types/emailRequest";
 import { transporter } from "../lib/emailTransporter";
 import dashboardRoutes from "./routes/dashboardRoutes";
+import { authenticateUser } from "./middlewares/authenticateUser";
+import tableRoutes from "./routes/tableRoutes";
 
 dotenv.config();
 const app = express();
@@ -20,6 +22,7 @@ app.use(
         : "*", // ✅ Change this to your frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type, Authorization"],
+    credentials:true
   })
 );
 
@@ -37,7 +40,7 @@ app.get("/postman", async (req, res) => {
     });
     if (error) throw error; // Handle authentication error
 
-    res.redirect("/api/dashboard/countryCount");
+    res.redirect("/api/table");
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: "Sign-in failed", details: error.message });
@@ -92,13 +95,15 @@ app.get("/debug-token", async (req, res) => {
 
 apiRouter.use("/profiles", profileRoutes);
 apiRouter.use("/subscriptions", subscriptionRoutes);
-apiRouter.use("/dashboard", dashboardRoutes)
+apiRouter.use("/dashboard",authenticateUser, dashboardRoutes)
+apiRouter.use("/table", authenticateUser,tableRoutes);
 
 app.use("/api", apiRouter);
 
 // ✅ Start the server in development mode only
 
 console.log(process.env.NODE_ENV);
+// console.log(process.env.NEXT_PUBLIC_SUPABASE_URL);
 
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5000;

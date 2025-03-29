@@ -15,12 +15,15 @@ import { supabase } from './../../lib/supabase';
 const Dashboard = () => {
 
   const [countryCount, setCountryCount] = useState(0);
+    const [totalSub, setTotalSub] = useState(0);
+      const [activeSub, setActiveSub] = useState(0);
+        const [inactiveSub, setInactiveSub] = useState(0);
+        const [countryData, setCountryData] = useState([]);
 
 const fetchCountryCount = async () => {
-  const {data:sessionData,error} = await supabase.auth.getSession(); // Get session
-  const token = sessionData.session?.access_token; // Get access token
+  const {data:sessionData,error} = await supabase.auth.getSession(); 
+  const token = sessionData.session?.access_token; 
 
-  console.log('token', token);
 
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/countrycount`, {
     method: "GET",
@@ -31,11 +34,76 @@ const fetchCountryCount = async () => {
   });
 
   const data = await response.json();
+  setCountryCount(data.length);
+  setCountryData(data);
   console.log("Countries:", data);
 };
-  // useEffect(()=>{
-  //   fetchCountryCount()
-  // })
+
+const fetchTotalSubs = async () => {
+  const { data: sessionData, error } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/dashboard/subCount`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, // ✅ Attach token in request
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  const data = await response.json();
+  setTotalSub(data);
+  console.log("total:", data);
+};
+
+const fetchInactiveSubs = async () => {
+  const { data: sessionData, error } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/dashboard/inactiveCount`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, // ✅ Attach token in request
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  const data = await response.json();
+  setInactiveSub(data);
+  console.log("inactive:", data);
+};
+
+const fetchActiveSubs = async () => {
+  const { data: sessionData, error } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/dashboard/activeCount`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, // ✅ Attach token in request
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  const data = await response.json();
+  setActiveSub(data.count);
+  console.log("active:", data);
+};
+  useEffect(()=>{
+    fetchCountryCount()
+    fetchActiveSubs();
+    fetchInactiveSubs();
+    fetchTotalSubs();
+  },[])
 
   return (
     <>
@@ -65,11 +133,11 @@ const fetchCountryCount = async () => {
                 </CardHeader>
               </div>
               <div className="flex">
-                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">10,240</CardContent>
-                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">7,036
+                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">{totalSub}</CardContent>
+                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">{activeSub}
                 </CardContent>
                 <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">
-                  3,204
+                  {inactiveSub}
                 </CardContent>
                 <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">
                   {countryCount}
@@ -86,7 +154,7 @@ const fetchCountryCount = async () => {
 
         <div className="flex">
           <div className="flex-1/4">
-            <DonutChart />
+            <DonutChart chartData={countryData} />
           </div>
           <div className="flex-2/3">
             <SubsAreaChart />

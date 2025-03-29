@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/avatar"
 // import img from 'next/img'
 import Link from 'next/link'
+import { logout } from "@/utils/auth";
 
 
 export default function MyDropdown() {
@@ -41,7 +42,7 @@ export default function MyDropdown() {
         </DropdownMenuItem>
         {/* <DropdownMenuItem onClick={() => console.log("Settings Clicked")}>Settings</DropdownMenuItem> */}
         <Link href={"/"}>
-          <DropdownMenuItem onClick={() => console.log("Logout Clicked")}>
+          <DropdownMenuItem onClick={() => logout()}>
             Logout
           </DropdownMenuItem>
         </Link>

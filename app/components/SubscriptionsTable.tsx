@@ -46,12 +46,10 @@ import {
 import {  useInfiniteQuery } from '@tanstack/react-query';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { signIn } from "@/utils/auth";
 
 export function SubscriptionsTable() {
 
-  // signIn('user@example.com','12345')
-  
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -70,36 +68,26 @@ export function SubscriptionsTable() {
     (state: RootState) => state.SubscriptionSlice.selectedSubscriptionIds
   );
 
-  const [searchBarValue, setSearchBarValue] = useState<string>("john");
+  const [searchBarValue, setSearchBarValue] = useState<string>("");
   const [appliedSearchBarValue, setAppliedSearchBarValue] = useState<string>("");
 const queryClient = useQueryClient();
-
-
-// const fetchSubscriptions2 = async ({pageParam = 1}) => {
-//   const pageSize = 10; 
-//   const start = (pageParam - 1) * pageSize;
-//   const end = start + pageSize - 1;
-
-//   const query = supabase.from("subscriptions").select("*").range(start, end);
-
-
-//   if (appliedSearchBarValue) {
-//     query.ilike("full_name", `%${appliedSearchBarValue}%`);
-//   }
-//     const { data, error } = await query
-
-//   if (error) {
-//     throw new Error(error.message);
-//   }
-
-//   return data;
-// };
 
 const fetchSubscriptions = async ({ pageParam = 1 }) => {
   const pageSize = 10; // Fixed page size
 
+
+    const { data: sessionData, error } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+
   const response = await fetch(
-    `http://localhost:5050/api/subscriptions?page=${pageParam}&pageSize=${pageSize}&search=${appliedSearchBarValue}`
+    `${process.env.NEXT_PUBLIC_API_URL}/table?page=${pageParam}&pageSize=${pageSize}&search=${appliedSearchBarValue}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, // ✅ Attach token in request
+        "Content-Type": "application/json",
+      },
+    }
   );
 
   if (!response.ok) {
@@ -107,47 +95,9 @@ const fetchSubscriptions = async ({ pageParam = 1 }) => {
   }
 
   const result = await response.json();
+  console.log('table data:',result.data)
+return result.data;
 
-
-  const {data:emailData,error} = await supabase.from("emails").select("*");
-  const {data:addressData, error: error2} = await supabase.from('addresses').select('*');
-  const {data:countryData, error:error3} = await supabase.from('companies').select('*');
-  // console.log(data);
-
-  const emails = emailData || [];
-  const addresses = addressData || [];
-  const companies = countryData || [];
-
-  console.log(companies);
-
-  const people = result.data;
-        const mergedData = people.map((person : any) => {
-          const personEmails = emails
-            .filter((email: any) => email.person_id === person.id) // Assuming the foreign key is person_id
-            .map((email: any) => email.email);
-
-          const personCountry = addresses
-            .filter((address: any) => address.person_id === person.id)
-            .map((address: any) => address.country)[0]; // Assuming the foreign key is person_id
-
-          const personCompany = companies
-            .filter((company: any) => company.person_id === person.id)
-            .map((company: any) => company.name)[0]; // Assuming the foreign key is person_id
-
-          return {
-            ...person,
-            emails: personEmails.join(", "), // Joining emails into a single string
-            country: personCountry || "",
-            company:personCompany || "",
-          };
-        });
-
-    console.log(mergedData);
-console.log('MERGGEEDDD')
-
-
-return mergedData;
-  // return result.data; // { data: [...], nextCursor: <number | null> }
 };
 
   const { data, fetchNextPage,fetchPreviousPage } = useInfiniteQuery({
@@ -182,7 +132,7 @@ return mergedData;
   useEffect(() => {
     const getTableCount = async () => {
       const { count, error } = await supabase
-        .from("subscriptions")
+        .from("subscribers")
         .select("*", { count: "exact", head: true });
 
       if (error) {
@@ -195,6 +145,7 @@ return mergedData;
     };
     getTableCount();
   }, []);
+  
 
 
   const columns = React.useMemo<ColumnDef<Subscription>[]>(
@@ -207,8 +158,11 @@ return mergedData;
               table.getIsAllPageRowsSelected() ||
               (table.getIsSomePageRowsSelected() && "indeterminate")
             }
-            onCheckedChange={(value) =>
+            onCheckedChange={(value) =>{
               table.toggleAllPageRowsSelected(!!value)
+              setAllSelectedSubscriptionIds(!!value);
+              console.log(value);
+            }
             }
             aria-label="Select all"
             className="border-black"
@@ -223,6 +177,7 @@ return mergedData;
               checked={isChecked}
               onCheckedChange={(value) => {
                 setSelectedSubscriptionIds(!!value, rowId);
+                console.log(rowId);
               }}
               aria-label="Select row"
               className="border-black"
@@ -248,23 +203,36 @@ return mergedData;
       {
         accessorKey: "emails",
         header: "Email",
-        cell: ({ row }) => (
-          <div className="capitalize">{row.getValue("emails")}</div>
-        ),
+        cell: ({ row }) => {
+            const emails =
+              (row.getValue("emails") as { email: string }[]) || [];
+              return(
+      <div className="">
+        {emails.length > 0 ? emails[0].email : "No Email"}
+      </div>);
+        },
       },
       {
-        accessorKey: "country",
+        accessorKey: "addresses",
         header: "Country",
-        cell: ({ row }) => (
-          <div className="capitalize">{row.getValue("country")}</div>
-        ),
+        cell: ({ row }) => 
+        {
+          // console.log(row.getValue());
+          // console.log(row.getValue("addresses"));
+          const address = row.getValue("addresses") as { country: string };
+          
+          return(
+          <div className="capitalize">{address.country}</div>
+  )},
       },
       {
-        accessorKey: "company",
+        accessorKey: "companies",
         header: "Company",
-        cell: ({ row }) => (
-          <div className="capitalize">{row.getValue("company")}</div>
-        ),
+        cell: ({ row }) => {
+          const company = row.getValue("companies") as { name: string };
+          return(
+          <div className="capitalize">{company.name}</div>)
+      },
       },
       {
         accessorKey: "active_status",
@@ -308,7 +276,7 @@ return mergedData;
         },
       },
     ],
-    []
+    [selectedSubscriptionIds]
   );
 
 
@@ -316,6 +284,18 @@ return mergedData;
     () => data?.pages?.flatMap((page) => page) ?? [],
     [data]
   );
+
+
+  useEffect(() => {
+    const currentPageSubscriptions = data?.pages[pagination.pageIndex] || [];
+    const subIds = currentPageSubscriptions.map((sub : Subscription) => sub.id);
+    setRowSelection(subIds); // Update the rowSelection state
+  }, [subscriptions]);
+
+  useEffect(() => {
+    console.log("Updated rowSelection:", rowSelection);
+  }, [rowSelection]);
+
   const table = useReactTable({
     data: subscriptions,
     columns,
@@ -336,14 +316,19 @@ return mergedData;
     },
   });
 
-  // const getAllSelectedRows = () => {
-  //   return table.getSelectedRowModel().rows.map((row) => row.original);
-  // };
+  const getAllSelectedRows = () => {
+    return table.getSelectedRowModel().rows.map((row) => row.original);
+  };
 
-  // const setAllSelectedSubscriptionIds = (checkboxValue: boolean) => {
-  //   const allSelectedRows = getAllSelectedRows();
-  //   console.log("all selected rowsss", allSelectedRows);
-  // };
+  const setAllSelectedSubscriptionIds = (checkboxValue: boolean) => {
+    console.log(' set all running')
+
+    const allRows = table.getSelectedRowModel().rows;
+    console.log(allRows)
+    allRows.map(row =>{
+      setSelectedSubscriptionIds(checkboxValue,row.original.id)
+    })
+  };
   
   
   const setSelectedSubscriptionIds = (
@@ -381,6 +366,7 @@ return mergedData;
         >
           Search
         </Button>
+        <Button onClick={()=>{console.log(selectedSubscriptionIds)}}></Button>
         {/* <Button onClick={async ()=>{signIn('user@example.com','12345'); const user = await supabase.auth.getUser();console.log(user)}}></Button> */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

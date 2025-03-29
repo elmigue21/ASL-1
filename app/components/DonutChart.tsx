@@ -15,61 +15,51 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-const chartData = [
-  { browser: "Philippines", visitors: 160, fill: "" },
-  { browser: "Japan", visitors: 5860, fill: "" },
-  { browser: "South Korea", visitors: 463, fill: "" },
-  { browser: "China", visitors: 173, fill: "" },
-  { browser: "Other", visitors: 190, fill: "" },
-];
+// const chartData = [
+//   { country: "Philippines", visitors: 160, fill: "" },
+//   { country: "Japan", visitors: 5860, fill: "" },
+//   { country: "South Korea", visitors: 463, fill: "" },
+//   { country: "China", visitors: 173, fill: "" },
+//   { country: "Other", visitors: 190, fill: "" },
+// ];
 
 
-const chartConfig = {
-  chrome: {
-    label: "Philippines",
-    color: "",
-  },
-  safari: {
-    label: "Japan",
-    color: "",
-  },
-  firefox: {
-    label: "South Korea",
-    color: "",
-  },
-  edge: {
-    label: "China",
-    color: "",
-  },
-  other: {
-    label: "Other",
-    color: "",
-  },
-} satisfies ChartConfig;
+interface CountryData {
+  country: string;
+  count: number;
+  fill?: string;
+}
 
+interface DonutChartProps {
+  chartData: CountryData[];
+}
 
+export function DonutChart({ chartData }: DonutChartProps) {
+  const [isClient, setIsClient] = React.useState(false);
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
 
-export function DonutChart() {
-
-    const [isClient, setIsClient] = React.useState(false);
- React.useEffect(() => {
-   setIsClient(true);
- }, []);
-
-    if (isClient) {
-      chartData.forEach((item) => {
-        item.fill = getRandomColor();
-      });
-
-      Object.values(chartConfig).forEach((config) => {
-        config.color = getRandomColor();
-      });
-    }
-
+  if (isClient) {
+    chartData.forEach((item) => {
+      item.fill = getRandomColor();
+    });
+  }
+  const chartConfig: ChartConfig = React.useMemo(
+    () =>
+      chartData.reduce((config, item) => {
+        config[item.country.toLowerCase().replace(/\s/g, "_")] = {
+          label: item.country,
+          color: item.fill,
+        };
+        return config;
+      }, {} as ChartConfig),
+    [chartData]
+  );
 
   return (
     <Card className="flex flex-col shadow-none border-0">
-<CardHeader className="font-bold">Countries Subscribers</CardHeader>
+      <CardHeader className="font-bold">Countries Subscribers</CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
@@ -82,8 +72,8 @@ export function DonutChart() {
             />
             <Pie
               data={chartData}
-              dataKey="visitors"
-              nameKey="browser"
+              dataKey="count"
+              nameKey="country"
               innerRadius={60}
               strokeWidth={5}
             >

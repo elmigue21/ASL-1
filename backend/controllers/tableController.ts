@@ -1,6 +1,13 @@
 import { Request, Response, RequestHandler } from "express";
 import { supabase } from "../../lib/supabase"; // ✅ Ensure correct path
 
+import { SupabaseClient, User } from "@supabase/supabase-js";
+
+interface AuthenticatedRequest extends Request {
+  supabaseUser?: SupabaseClient;
+  user?: User | null;
+}
+
 // Create Subscription
 export const createSubscription = async (req: Request, res: Response) => {
   try {
@@ -21,22 +28,34 @@ export const createSubscription = async (req: Request, res: Response) => {
 // Get All Subscriptions
 export const getAllSubscriptions : RequestHandler = async (req, res) => {
 
-
-  const supabaseUser = req.supabaseUser;
-  console.log('SUPABASE USER', supabaseUser)
-  if (!supabaseUser) {
-    return;
-  }
-
-
   try {
+
+    
+const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+if (!supabaseUser) {
+  res.status(401).json({ error: "Unauthorized" });
+  return;
+}
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;
 
     const start = (page - 1) * pageSize;
     const end = start + pageSize - 1;
 
-    let query = supabaseUser.from("subscribers").select("*").range(start, end);
+let query = supabaseUser
+  .from("subscribers")
+  .select(
+    `
+    id,
+    first_name,
+    last_name,
+    active_status,
+    companies!inner(id,name),
+    emails!inner (id, email),
+    addresses!inner (id, state, city, country)
+  `
+  )
+  .range(start, end);
 
     if(req.query.search){
       console.log('LOGGING SEARCH')

@@ -1,11 +1,23 @@
-import { Request, Response } from "express";
-import { supabase } from "../../lib/supabase"; // ✅ Ensure correct path
 
+import { Request, Response, RequestHandler } from "express";
+import { supabase } from "../../lib/supabase"; // ✅ Ensure correct path
+import { createClient } from "@supabase/supabase-js";
+import { SupabaseClient, User } from "@supabase/supabase-js";
+
+interface AuthenticatedRequest extends Request {
+  supabaseUser?: SupabaseClient;
+  user?: User | null;
+}
 
 export const getActiveSubsCount = async (req: Request, res: Response) => {
   try {
+
+        const supabaseUser = req.supabaseUser;
+        if (!supabaseUser) {
+          return;
+        }
     const { count, error } = await supabase
-      .from("subscriptions")
+      .from("subscribers")
       .select(undefined, { count: "exact" }) // Get only the count
       .eq("active_status", true);
 
@@ -24,8 +36,14 @@ export const getActiveSubsCount = async (req: Request, res: Response) => {
 };
 export const getInactiveSubsCount = async (req: Request, res: Response) => {
   try {
+
+        const supabaseUser = req.supabaseUser;
+        if (!supabaseUser) {
+          return;
+        }
+
     const { data, error, count } = await supabase
-      .from("subscriptions")
+      .from("subscribers")
       .select(undefined, { count: "exact" })
       .eq("active_status", false);
 
@@ -43,10 +61,16 @@ export const getInactiveSubsCount = async (req: Request, res: Response) => {
   }
 };
 
-export const getSubCount = async (req: Request, res: Response) => {
+export const getSubCount: RequestHandler = async (req, res) => {
   try {
-    const { data, error, count } = await supabase
-      .from("subscriptions")
+
+    const supabaseUser = req.supabaseUser;
+    if(!supabaseUser){
+      return;
+    }
+    
+    const { data, error, count } = await supabaseUser
+      .from("subscribers")
       .select(undefined, { count: "exact" });
 
     if (error) {
@@ -63,26 +87,18 @@ export const getSubCount = async (req: Request, res: Response) => {
   }
 };
 
-export const getCountryCount = async (req: Request, res: Response) => {
+export const getCountryCount :RequestHandler = async (req, res) => {
   try {
-    const { data,count, error } = await supabase
-      .rpc("count_countries");
-      console.log('countries',data);
 
-      console.log("Authorization Header:", req.headers.authorization); 
+const supabaseUser = req.supabaseUser;
+console.log('supabase user',supabaseUser);
 
-      const { data: user, error: error2 } = await supabase.auth.getUser();
-
-if (error2) {
-  console.error("Error fetching user:", error2);
-} else {
-  console.log("Current user:", user);
-
-  
+if(!supabaseUser){
+  return;
 }
 
-const { data: session, error: erro3 } = await supabase.auth.getSession();
-console.log("Session Data:", session);
+    const { data,count, error } = await supabaseUser
+      .rpc("count_countries");
 
 
       res.status(200).json(data);
