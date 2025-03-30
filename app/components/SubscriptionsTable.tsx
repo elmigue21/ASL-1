@@ -47,6 +47,7 @@ import {
 import {  useInfiniteQuery } from '@tanstack/react-query';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
+import {Email} from "@/types/email"
 
 export function SubscriptionsTable() {
 
@@ -177,8 +178,8 @@ return result.data;
         },
         cell: ({ row }) => {
           const rowId = row.original.id;
-          const isChecked = row.original.emails.every((email: { id: number }) =>
-            selectedSubscriptionIds.includes(email.id)
+          const isChecked = row.original.emails.every((email: Email) =>
+            selectedSubscriptionIds.includes(email)
           );
           // console.log('IS CHECKED?', isChecked)
           // console.log('CHECKED????' ,row.getIsSelected())
@@ -188,9 +189,9 @@ return result.data;
               checked={isChecked}
               onCheckedChange={(value) => {
                 console.log(row.original.emails);
-              row.original.emails.forEach((email: { email: string; id: number }) => {
+              row.original.emails.forEach((email:  Email ) => {
                 console.log(email.email, email.id)
-                setSelectedSubscriptionIds(!!value, email.id);
+                setSelectedSubscriptionIds(!!value, email);
               });
 
                 // setSelectedSubscriptionIds(!!value, rowId);
@@ -348,7 +349,7 @@ return result.data;
     const allRows = table.getRowModel().rows;
     allRows.map(row =>{
       row.original.emails.map((email: {email:string,id:number})=>{
-        setSelectedSubscriptionIds(checkboxValue, email.id);
+        setSelectedSubscriptionIds(checkboxValue, email);
       })
     })
   };
@@ -356,12 +357,12 @@ return result.data;
   
   const setSelectedSubscriptionIds = (
     checkboxValue: boolean,
-    rowId: number
+    emailObj: {email:string, id:number}
   ) => {
     if (checkboxValue) {
-      dispatch(addSelectedSubscription(rowId));
+      dispatch(addSelectedSubscription(emailObj));
     } else {
-      dispatch(removeSelectedSubscription(rowId));
+      dispatch(removeSelectedSubscription(emailObj));
     }
   };
 
@@ -472,16 +473,16 @@ return result.data;
                     {row.getIsExpanded() && (
 
                       
-                      row.original.emails.map((email:{id:number,email:string},index:number)=>{
+                      row.original.emails.map((email:Email,index:number)=>{
                        
-                        const isChecked= selectedSubscriptionIds.includes(email.id);
+                        const isChecked= selectedSubscriptionIds.includes(email);
                         return (
                           <TableRow key={email.id}>
 
                             <TableCell>
                               <Checkbox className="border-slate-500"
                                checked={isChecked}
-                                onCheckedChange={(value)=>{setSelectedSubscriptionIds(!!value, email.id)}
+                                onCheckedChange={(value)=>{setSelectedSubscriptionIds(!!value, email)}
                               }>
 
                               </Checkbox>
