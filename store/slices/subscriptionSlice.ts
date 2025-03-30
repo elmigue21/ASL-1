@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Subscription } from "../../types/subscription"; // Ensure correct import path
+import { Email } from "@/types/email";
 
 // Define initial state correctly
 interface SubscriptionState {
   subscriptionIds: number[];
-  selectedSubscriptionIds: number[];
+  selectedSubscriptionIds: Email[];
 }
 
 const initialState: SubscriptionState = {
@@ -19,7 +20,7 @@ const subscriptionSlice = createSlice({
     setSubscriptions(state, action: PayloadAction<number[]>) {
       state.subscriptionIds = action.payload;
     },
-    addSelectedSubscription(state, action: PayloadAction<number>) {
+    addSelectedSubscription(state, action: PayloadAction<Email>) {
       // Prevent duplicates
       const exists = state.selectedSubscriptionIds.some(
         (subId) => subId === action.payload
@@ -28,9 +29,9 @@ const subscriptionSlice = createSlice({
         state.selectedSubscriptionIds.push(action.payload);
       }
     },
-    removeSelectedSubscription(state, action: PayloadAction<number>) {
+    removeSelectedSubscription(state, action: PayloadAction<Email>) {
       state.selectedSubscriptionIds = state.selectedSubscriptionIds.filter(
-        (subId) => subId !== action.payload
+        (sub) => sub.id !== action.payload.id
       );
     },
   },

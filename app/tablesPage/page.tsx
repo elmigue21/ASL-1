@@ -5,6 +5,9 @@ import Navbar from '../components/Navbar'
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import EmailWindow from '../components/EmailWindow';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setOpenState } from "@/store/slices/emailWindowSlice";
 
 
 const fetchEmail = async () => {
@@ -15,6 +18,7 @@ const fetchEmail = async () => {
   const token = sessionData.session?.access_token; 
 
   console.log('token', token)
+
 
 const response = await fetch(
   `${process.env.NEXT_PUBLIC_API_URL}/email/sendEmails`,
@@ -32,15 +36,23 @@ const response = await fetch(
 
 }
 
+
+
 function TablesPage() {
+
+  const dispatch = useDispatch();
+  const openClicked = () => {
+    dispatch(setOpenState(true));
+  };
   return (
     <div>
       <Navbar />      
       <div className="z-45 fixed top-25 left-40 p-5">
+        <Button onClick={()=>{openClicked()}}>OPEN WINDOW</Button>
         <SubscriptionsTable />
         <Button onClick={()=>{fetchEmail()}}>qweqwe</Button>
       </div>
-  <EmailWindow/>
+  <EmailWindow />
     </div>
   );
 }
