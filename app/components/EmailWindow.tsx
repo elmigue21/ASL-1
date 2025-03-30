@@ -23,8 +23,8 @@ function EmailWindow() {
         <h2>X</h2>
       </div>
       <div className="overflow-x-auto overflow-y-clip whitespace-nowrap gap-2 h-15 touch-auto flex">
-        {emails.map((email)=>{
-            return(<div className="bg-slate-500 rounded-3xl m-1 p-2 flex items-center justify-center">{email.email}<p className="mx-2 hover:cursor-pointer hover:bg-white rounded-full">X</p></div>)
+        {emails.map((email,index)=>{
+            return(<div key={index} className="bg-slate-500 rounded-3xl m-1 p-2 flex items-center justify-center">{email.email}<p className="mx-2 hover:cursor-pointer hover:bg-white rounded-full">X</p></div>)
         })}
       </div>
       <Input
