@@ -71,7 +71,7 @@ app.get("/debug-token", async (req, res) => {
 
 
 apiRouter.use("/profiles", profileRoutes);
-apiRouter.use("/subscriptions", subscriptionRoutes);
+apiRouter.use("/subscriptions",authenticateUser, subscriptionRoutes);
 apiRouter.use("/dashboard",authenticateUser, dashboardRoutes)
 apiRouter.use("/table", authenticateUser,tableRoutes);
 apiRouter.use("/email",authenticateUser,emailRoutes);

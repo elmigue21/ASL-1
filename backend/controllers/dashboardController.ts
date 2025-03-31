@@ -91,7 +91,6 @@ export const getCountryCount :RequestHandler = async (req, res) => {
   try {
 
 const supabaseUser = req.supabaseUser;
-console.log('supabase user',supabaseUser);
 
 if(!supabaseUser){
   return;
@@ -106,3 +105,25 @@ if(!supabaseUser){
     console.error(e);
   }
 };
+
+export const getNewSubscribers: RequestHandler = async (req, res) => {
+  try {
+    const supabaseUser = req.supabaseUser;
+
+    if (!supabaseUser) {
+      return;
+    }
+
+    const { data, count, error } = await supabaseUser.rpc('get_new_subs_week');
+    console.log('data', data);
+    console.log('count', count);
+    console.log('error', error);
+
+    res.status(200).json(data);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+
+

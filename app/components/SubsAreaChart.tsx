@@ -14,29 +14,21 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-];
 
 const chartConfig = {
-  desktop: {
+  count: {
     label: "Subscribers",
     color: "#1A2B88",
   },
 } satisfies ChartConfig
 
-export function SubsAreaChart() {
+interface ChartDataProps {
+  day: Date,
+  count:number,
+}
+
+export function SubsAreaChart({chartData} : {chartData:ChartDataProps[]}) {
+  console.log('CHART DATAAAAAA', chartData)
   return (
     <Card className="shadow-none border-0">
       <CardHeader>
@@ -57,18 +49,25 @@ export function SubsAreaChart() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="month"
+              dataKey="day"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) =>  {
+                const date = new Date(value);
+                const month = date.toLocaleString("default", {
+                  month: "short",
+                }); // e.g., "Mar"
+                const day = date.getDate(); // e.g., 31
+                return `${month} ${day}`; // "Mar 31"
+              }}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="dot" hideLabel />}
             />
             <Area
-              dataKey="desktop"
+              dataKey="total_subscribers"
               type="linear"
               fill="blue"
               fillOpacity={0.1}

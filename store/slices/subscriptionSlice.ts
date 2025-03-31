@@ -5,12 +5,12 @@ import { Email } from "@/types/email";
 // Define initial state correctly
 interface SubscriptionState {
   subscriptionIds: number[];
-  selectedSubscriptionIds: Email[];
+  selectedEmails: Email[];
 }
 
 const initialState: SubscriptionState = {
   subscriptionIds: [],
-  selectedSubscriptionIds: [],
+  selectedEmails: [],
 };
 
 const subscriptionSlice = createSlice({
@@ -20,17 +20,17 @@ const subscriptionSlice = createSlice({
     setSubscriptions(state, action: PayloadAction<number[]>) {
       state.subscriptionIds = action.payload;
     },
-    addSelectedSubscription(state, action: PayloadAction<Email>) {
+    addSelectedEmails(state, action: PayloadAction<Email>) {
       // Prevent duplicates
-      const exists = state.selectedSubscriptionIds.some(
+      const exists = state.selectedEmails.some(
         (subId) => subId === action.payload
       );
       if (!exists) {
-        state.selectedSubscriptionIds.push(action.payload);
+        state.selectedEmails.push(action.payload);
       }
     },
-    removeSelectedSubscription(state, action: PayloadAction<Email>) {
-      state.selectedSubscriptionIds = state.selectedSubscriptionIds.filter(
+    removeSelectedEmails(state, action: PayloadAction<Email>) {
+      state.selectedEmails = state.selectedEmails.filter(
         (sub) => sub.id !== action.payload.id
       );
     },
@@ -40,8 +40,8 @@ const subscriptionSlice = createSlice({
 // Export actions
 export const {
   setSubscriptions,
-  addSelectedSubscription,
-  removeSelectedSubscription,
+  addSelectedEmails,
+  removeSelectedEmails,
 } = subscriptionSlice.actions;
 
 // Export reducer
