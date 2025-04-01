@@ -22,16 +22,18 @@ export const getActiveSubsCount = async (req: Request, res: Response) => {
       .eq("active_status", true);
 
     if (error) {
-      throw new Error(error.message);
+      res
+        .status(500)
+        .json({ message: "error getting active subs", details: error });
+      return;
     }
 
     res.status(200).json({ count }); // Return count in an object
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "An unknown error occurred." });
-    }
+  } catch (e) {
+    res
+      .status(500)
+      .json({ message: "error getting active subs", details: e });
+    return;
   }
 };
 export const getInactiveSubsCount = async (req: Request, res: Response) => {
@@ -48,16 +50,18 @@ export const getInactiveSubsCount = async (req: Request, res: Response) => {
       .eq("active_status", false);
 
     if (error) {
-      throw new Error(error.message);
+     res
+        .status(500)
+        .json({ message: "error getting inactive subs", details: error });
+        return;
     }
 
     res.status(200).json(count);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "An unknown error occurred." });
-    }
+  } catch (e) {
+    res
+      .status(500)
+      .json({ message: "error getting inactive subs", details: e });
+    return;
   }
 };
 
@@ -74,16 +78,18 @@ export const getSubCount: RequestHandler = async (req, res) => {
       .select(undefined, { count: "exact" });
 
     if (error) {
-      throw new Error(error.message);
+      res
+        .status(500)
+        .json({ message: "error getting sub count", details: error });
+      return;
     }
 
     res.status(200).json(count);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "An unknown error occurred." });
-    }
+  } catch (e) {
+    res
+      .status(500)
+      .json({ message: "error getting country count", details: e });
+    return;
   }
 };
 
@@ -103,6 +109,10 @@ if(!supabaseUser){
       res.status(200).json(data);
   } catch (e) {
     console.error(e);
+      res
+        .status(500)
+        .json({ message: "error getting country count", details: e });
+        return;
   }
 };
 
@@ -122,6 +132,8 @@ export const getNewSubscribers: RequestHandler = async (req, res) => {
     res.status(200).json(data);
   } catch (e) {
     console.error(e);
+    res.status(500).json({message:"error getting new subscribers",details:e});
+    return;
   }
 };
 

@@ -12,14 +12,11 @@ export const sendEmails: RequestHandler = async (req, res) => {
       res.json({ message: "no emails selected" });
     }
 
-    console.log("reached backend");
     const supabaseUser = req.supabaseUser;
     if (!supabaseUser) {
       console.log("no supabase user");
       return;
     }
-
-    console.log("email ids", emailIds);
     const { data, count, error } = await supabaseUser
       .from("emails")
       .select("*")
@@ -28,7 +25,6 @@ export const sendEmails: RequestHandler = async (req, res) => {
     if (error) {
       throw new Error(error.message);
     }
-    console.log(data);
 
     const { emailSubject, emailText, emailHtml, fromName } = req.body;
 
@@ -63,8 +59,10 @@ export const sendEmails: RequestHandler = async (req, res) => {
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
+      return;
     } else {
       res.status(500).json({ error: "An unknown error occurred." });
+      return;
     }
   }
 };

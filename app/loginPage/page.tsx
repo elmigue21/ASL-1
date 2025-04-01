@@ -1,7 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import Link from "next/link";
 import { signIn } from "@/utils/auth";
 import { Button } from "@/components/ui/button";
 function loginPage() {
@@ -34,7 +32,7 @@ function loginPage() {
           <div className="mt-[4vh] text-[1.9vw] font-normal">LOGIN</div>
           <input
             type="text"
-            className="bg-[#CFCECE] text-white border text-[1.58vw] p-[1vw] rounded-[0.56vw] placeholder-white w-[26vw] h-[9vh] my-[4.5vh] pl-[1.6vw]"
+            className="bg-[#CFCECE] text-black border text-[1.58vw] p-[1vw] rounded-[0.56vw] placeholder-white w-[26vw] h-[9vh] my-[4.5vh] pl-[1.6vw]"
             placeholder="Username"
             value={username}
             onChange={(e) => {
@@ -43,7 +41,7 @@ function loginPage() {
           />
           <input
             type="password"
-            className="bg-[#CFCECE] text-white border text-[1.58vw] p-[1vw] rounded-[0.56vw] placeholder-white w-[26vw] h-[9vh] pl-[1.6vw]"
+            className="bg-[#CFCECE] text-black border text-[1.58vw] p-[1vw] rounded-[0.56vw] placeholder-white w-[26vw] h-[9vh] pl-[1.6vw]"
             placeholder="Password"
             value={password}
             onChange={(e) => {

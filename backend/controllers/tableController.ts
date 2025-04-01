@@ -43,8 +43,6 @@ let query = supabaseUser
   .range(start, end);
 
     if(req.query.search){
-      // console.log('LOGGING SEARCH')
-      // console.log(req.query.search);
       query = query.or(
         `first_name.ilike.%${req.query.search}%,last_name.ilike.%${req.query.search}%`
       );
@@ -55,8 +53,8 @@ let query = supabaseUser
 
     if (error) {
       res.status(500).json({ error: error.message });
+      return;
     }
-    // console.log('ASDFASDFASDFADSF', data)
 
     res.json({
       data: data || [], // ✅ This is an array
@@ -64,6 +62,7 @@ let query = supabaseUser
     });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
+    return;
   }
 };
 

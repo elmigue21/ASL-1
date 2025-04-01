@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { createSubscription} from "../controllers/SubscriptionController";
+import { createSubscription,deleteSubscription,editSubscription} from "../controllers/SubscriptionController";
 
 const router = Router();
 
 router.post("/create", createSubscription);
+router.delete('/delete',deleteSubscription);
 
 
 
