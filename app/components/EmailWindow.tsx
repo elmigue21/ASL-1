@@ -9,7 +9,7 @@ import { RootState
  import { useDispatch } from 'react-redux';
 import { setOpenState } from '@/store/slices/emailWindowSlice';
 import { sendEmails } from './../../backend/controllers/emailController';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/supabase';
 import {
   addSelectedEmails,
   removeSelectedEmails,

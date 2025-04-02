@@ -3,7 +3,7 @@ import React, { Suspense } from 'react'
 import { SubscriptionsTable } from '../components/SubscriptionsTable'
 import Navbar from '../components/Navbar'
 import { Button } from '@/components/ui/button';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/supabase';
 import EmailWindow from '../components/EmailWindow';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -52,7 +52,6 @@ function TablesPage() {
         <Suspense fallback={<div>LOADING</div>}>
         <SubscriptionsTable />
         </Suspense>
-        <Button onClick={()=>{fetchEmail()}}>qweqwe</Button>
       </div>
   <EmailWindow />
     </div>
