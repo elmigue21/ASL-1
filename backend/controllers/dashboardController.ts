@@ -16,7 +16,7 @@ export const getActiveSubsCount = async (req: Request, res: Response) => {
         if (!supabaseUser) {
           return;
         }
-    const { count, error } = await supabase
+    const { data,count, error } = await supabaseUser
       .from("subscribers")
       .select(undefined, { count: "exact" }) // Get only the count
       .eq("active_status", true);
@@ -27,6 +27,8 @@ export const getActiveSubsCount = async (req: Request, res: Response) => {
         .json({ message: "error getting active subs", details: error });
       return;
     }
+
+    console.log('ACTIVE SUBS count:', data);
 
     res.status(200).json({ count }); // Return count in an object
   } catch (e) {
@@ -44,7 +46,7 @@ export const getInactiveSubsCount = async (req: Request, res: Response) => {
           return;
         }
 
-    const { data, error, count } = await supabase
+    const { data, error, count } = await supabaseUser
       .from("subscribers")
       .select(undefined, { count: "exact" })
       .eq("active_status", false);

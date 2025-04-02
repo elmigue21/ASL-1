@@ -2,8 +2,14 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "../../lib/supabase";
+import { getBackup } from "@/backend/controllers/backupController";
+import Navbar from "../components/Navbar";
+import { toast } from "sonner";
 
 function backupPage() {
+
+
+  
   const backupData = async () => {
     const { data: sessionData } = await supabase.auth.getSession();
     const token = sessionData.session?.access_token;
@@ -13,7 +19,7 @@ function backupPage() {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/backups/getBackups`,
+      `${process.env.NEXT_PUBLIC_API_URL}/backups/backupData`,
       {
         method: "GET",
         headers: {
@@ -25,6 +31,28 @@ function backupPage() {
     const data = await response.json();
     console.log(data);
   };
+   const getBackups = async () => {
+     const { data: sessionData } = await supabase.auth.getSession();
+     const token = sessionData.session?.access_token;
+
+     if (!token) {
+       return;
+     }
+
+     const response = await fetch(
+       `${process.env.NEXT_PUBLIC_API_URL}/backups/getBackups`,
+       {
+         method: "GET",
+         headers: {
+           Authorization: `Bearer ${token}`, // ✅ Attach token in request
+           "Content-Type": "application/json",
+         },
+       }
+     );
+     const data = await response.json();
+     console.log(data);
+     alert('BACKUPS GOT')
+   };
 
   const deleteData = async () => {
     const { data: sessionData } = await supabase.auth.getSession();
@@ -52,18 +80,32 @@ console.log('clicked delete;')
 
   return (
     <>
-      <div>backupPage</div>
+      <Navbar />
+      <div className="absolute top-[11vh] left-[8.35vw]">
+        <div>backupPage</div>
 
-      <Button
-        onClick={() => {
-          backupData();
-        }}
-      >BACKUP</Button>
-      <Button
-        onClick={() => {
-          deleteData();
-        }}
-      >DELETE</Button>
+        <Button
+          onClick={() => {
+            backupData();
+          }}
+        >
+          BACKUP DATA
+        </Button>
+        <Button
+          onClick={() => {
+            getBackups();}}
+          
+        >
+          GET BACKUP
+        </Button>
+        <Button
+          onClick={() => {
+            deleteData();
+          }}
+        >
+          DELETE
+        </Button>
+      </div>
     </>
   );
 }
