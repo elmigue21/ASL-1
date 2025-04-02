@@ -148,23 +148,23 @@ const Dashboard = () => {
           className="m-[5vh]"
           style={{ fontFamily: "'Nunito Sans', sans-serif" }}
         >
-          <div className="flex justify-evenly gap-1 h-[19vh]">
-            <Card className="flex-1 p-[0.70vw]">
-              <div className="flex text-[1vw]">
-                <CardHeader className="flex-1 text-center font-bold">
+          <div className="flex justify-evenly gap-[1vh] h-[19vh]">
+            <Card className="flex-1 p-[0.70vw] gap-[4vh] rounded-[1vh]">
+              <div className="flex text-[1vw] justify-center">
+                <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
                   Total Subscribers
                 </CardHeader>
-                <CardHeader className="flex-1 text-center font-bold">
+                <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
                   Active Subscribers
                 </CardHeader>
-                <CardHeader className="flex-1 text-center font-bold">
+                <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
                   Inactive Subscribers
                 </CardHeader>
-                <CardHeader className="flex-1 text-center font-bold">
+                <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
                   Countries
                 </CardHeader>
               </div>
-              <div className="flex text-[2vw] text-center font-bold text-blue-900 -mt-[1.8vh] height [1vh]">
+              <div className="flex text-[2vw] text-center font-bold text-blue-900 -mt-[1.8vh] height[1vh]">
                 <CardContent className="flex-1">{totalSub}</CardContent>
                 <CardContent className="flex-1">{activeSub}
                 </CardContent>
@@ -175,7 +175,7 @@ const Dashboard = () => {
                   {countryCount}
                 </CardContent>
               </div>
-            <div className="-mt-5">
+            <div className="-my-[3vh]">
             <DateDisplay />
             </div>
             </Card>
