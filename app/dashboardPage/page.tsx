@@ -182,12 +182,12 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="flex">
-          <div className="flex-1/4">
-            <DonutChart chartData={countryData} />
+        <div className="flex justify-evenly h-[50vh] max-h[50vh]">
+          <div className="w-[50vw]">
+            <DonutChart chartData={countryData} chartHeightVH={50} innerRadiusVW={40} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/>
           </div>
-          <div className="flex-2/3">
-            <SubsAreaChart chartData={newSubs} />
+          <div className="w-full">
+            <SubsAreaChart chartData={newSubs}  />
           </div>
         </div>
       </div>

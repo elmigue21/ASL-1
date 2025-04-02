@@ -15,14 +15,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-// const chartData = [
-//   { country: "Philippines", visitors: 160, fill: "" },
-//   { country: "Japan", visitors: 5860, fill: "" },
-//   { country: "South Korea", visitors: 463, fill: "" },
-//   { country: "China", visitors: 173, fill: "" },
-//   { country: "Other", visitors: 190, fill: "" },
-// ];
-
 
 interface CountryData {
   country: string;
@@ -32,9 +24,37 @@ interface CountryData {
 
 interface DonutChartProps {
   chartData: CountryData[];
+  chartWidthVW?: number;
+  chartHeightVH?: number;
+  innerRadiusVW?: number;
+  labelFontSize?: string;
+  secondaryLabelFontSize?: string;
+  cardHeader?: string;
+  cardWidthVW?: number;
+  cardHeightVH?: number;
+  cardPaddingVW?: number;
+  cardHeaderFontSize?: string;
+  tspanFontSize?: string;
+  cardHeaderFontSizeVH?: number; // Card header font size in vh
+  tspanFontSizeVH?: number; // Tspan font size in vh
 }
 
-export function DonutChart({ chartData }: DonutChartProps) {
+export function DonutChart({
+  chartData,
+  chartWidthVW,
+  chartHeightVH,
+  innerRadiusVW = 0,
+  labelFontSize = "text-xl",
+  secondaryLabelFontSize = "text-sm",
+  cardHeader = "Countries Subscribers",
+  cardWidthVW,
+  cardHeightVH,
+  cardPaddingVW = 0,
+  cardHeaderFontSize = "text-base",
+  tspanFontSize = "text-base",
+  cardHeaderFontSizeVH,
+  tspanFontSizeVH,
+}: DonutChartProps) {
   const [isClient, setIsClient] = React.useState(false);
   React.useEffect(() => {
     setIsClient(true);
@@ -58,12 +78,28 @@ export function DonutChart({ chartData }: DonutChartProps) {
   );
 
   return (
-    <Card className="flex flex-col shadow-none border-0">
-      <CardHeader className="font-bold">Countries Subscribers</CardHeader>
+    <Card
+      className="flex flex-col shadow-none border-0"
+      style={{
+        width: cardWidthVW ? `${cardWidthVW}vw` : undefined,
+        height: cardHeightVH ? `${cardHeightVH}vh` : undefined,
+        padding: cardPaddingVW ? `${cardPaddingVW}vw` : undefined,
+      }}
+    >
+      <CardHeader
+        className={`font-bold ${cardHeaderFontSize}`}
+        style={{ fontSize: cardHeaderFontSizeVH ? `${cardHeaderFontSizeVH}vh` : undefined }}
+      >
+        {cardHeader}
+      </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
+          className="aspect-square"
+          style={{
+            width: chartWidthVW ? `${chartWidthVW}vw` : undefined,
+            height: chartHeightVH ? `${chartHeightVH}vh` : undefined,
+          }}
         >
           <PieChart>
             <ChartTooltip
@@ -74,7 +110,7 @@ export function DonutChart({ chartData }: DonutChartProps) {
               data={chartData}
               dataKey="count"
               nameKey="country"
-              innerRadius={60}
+              innerRadius={innerRadiusVW ? `${innerRadiusVW}%` : 60}
               strokeWidth={5}
             >
               <Label
@@ -90,15 +126,16 @@ export function DonutChart({ chartData }: DonutChartProps) {
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-xl font-bold"
+                          className={`fill-foreground font-bold ${labelFontSize} ${tspanFontSize}`}
+                          style={{ fontSize: tspanFontSizeVH ? `${tspanFontSizeVH}vh` : undefined }}
                         >
-                          {/* {totalVisitors.toLocaleString()} */}
                           Subscribers
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
+                          className={`fill-muted-foreground ${secondaryLabelFontSize} ${tspanFontSize}`}
+                          style={{ fontSize: tspanFontSizeVH ? `${tspanFontSizeVH}vh` : undefined }}
                         >
                           per country
                         </tspan>
