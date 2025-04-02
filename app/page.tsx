@@ -1,58 +1,19 @@
-'use client'
-import { supabase } from "@/lib/supabase";
-import { useEffect, useState } from "react";
-import dotenv from "dotenv";
-dotenv.config();
-export default function Home() {
-  const [data, setData] = useState<{ id: number; name: string }[]>([]);
-useEffect(() => {
-  const fetchData = async () => {
-    console.log(supabase);
 
-    const { data, error } = await supabase.from("users").select("*");
-
-    console.log("Fetched Data:", data);
-    console.log("Fetch Error:", error);
-
-    if (error) {
-      console.error("Supabase Error:", error.message);
-    } else {
-      setData(data || []);
-    }
-  };
-
-  fetchData();
-}, []);
-
-// const [user,setUser] = useState<any[]>([]);
-
-const fetchUser = async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`);
-    if (!response.ok) throw new Error("Failed to fetch users");
-
-    const data = await response.json();
-    console.log(data); // Do something with the data
-    return data;
-  } catch (error) {
-    console.error("Error fetching users:", error);
-  }
-};
-
-fetch("https://asl-topaz.vercel.app/api/users")
-  .then((res) => res.json())
-  .then((data) => console.log("Users:", data))
-  .catch((error) => console.error("Error fetching users:", error));
-
-
-
+import React from 'react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+function page() {
   return (
-    <div className="p-10">
-<h1>{process.env.NODE_ENV}</h1>
-<button onClick={()=>fetchUser()} className="bg-red-500">CLICK</button>
+    <div className="h-screen w-full bg-cover bg-center bg-[url(/img/whiteAbstractBg.jpg)] filter brightness-108">
+      
+      <div className="flex flex-col items-center justify-center h-full">
+        <img  src="/img/dempaLogo.png" alt="Dempa Logo" className="drop-shadow-lg shadow-black/90 h-[60vh]"></img>
+        <img src="/img/dempaLogoTxt.png" alt="Logo Text" className="h-[11.4vh] drop-shadow-lg shadow-black/90"></img>
+      </div>
 
-      <h1 className="text-xl font-bold">Supabase Data</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
-    </div>
-  );
+      <Link href={"/loginPage"}><Button className="w-[7vw] h-[4vh] max-h-[4vh] max-w-[7vw] bg-red-600 rounded-full text-white text-[1.24vw] cursor-pointer hover:bg-red-700 absolute bottom-[6.5vh] right-[4.2vw]">LOGIN</Button></Link>
+    </div>  
+  )
+
 }
+export default page
