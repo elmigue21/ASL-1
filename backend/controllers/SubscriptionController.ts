@@ -64,6 +64,7 @@ export const editSubscription: RequestHandler = async (req, res) => {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
+    const {subscriberId} = req.body;
     const { firstName, lastName, personLinkedIn, personFacebook } = req.body;
     const { phoneNumbers, emails } = req.body;
     const { country, state, city } = req.body;
@@ -71,6 +72,7 @@ export const editSubscription: RequestHandler = async (req, res) => {
       req.body;
 
     const { data, error } = await supabaseUser.rpc("edit_subscription", {
+      sub_id:subscriberId,
       first_name: firstName,
       last_name: lastName,
       person_facebook_url: personFacebook,

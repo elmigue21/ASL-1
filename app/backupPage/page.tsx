@@ -13,7 +13,7 @@ function backupPage() {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/backups/backupData`,
+      `${process.env.NEXT_PUBLIC_API_URL}/backups/getBackups`,
       {
         method: "GET",
         headers: {
