@@ -93,6 +93,7 @@ const Navbar = () => {
         <div>
           <hr className="border-t-[0.3vh] border-white my-[1.50vh] w-[6.8vw] mx-auto opacity-50" />
         </div>
+        <Link href="/accountSettings">
         <div className="flex flex-row justify-center gap-x-[0.6vw] text-[1.09vw]">
           {" "}
           <img
@@ -101,7 +102,9 @@ const Navbar = () => {
             className="w-[2.08vw] h-[2vw]"
           />
           <h2 className="items-center mt-[0.50vh]">Account</h2>
-        </div>
+        </div>{" "}
+        </Link>
+
         <div
           className="flex flex-row justify-center gap-x-[0.6vw] text-[1.09vw] me-[0.50vw]"
           onClick={() => {
@@ -109,6 +112,7 @@ const Navbar = () => {
           }}
         >
           {" "}
+          
           <img
             src="mail-plus-circle.png"
             alt="Inbox"
