@@ -117,14 +117,14 @@ const fetchActiveSubs = async () => {
     <>
       <Navbar/>
 
-      <div className="z-45 fixed top-25 left-40 w-8/9 h=2/3">
+      <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh]">
         <div
-          className="m-10"
+          className="m-[5vh]"
           style={{ fontFamily: "'Nunito Sans', sans-serif" }}
         >
-          <div className="flex justify-evenly gap-1 h-40">
-            <Card className="flex-1 p-4">
-              <div className="flex">
+          <div className="flex justify-evenly gap-1 h-[19vh]">
+            <Card className="flex-1 p-[0.70vw]">
+              <div className="flex text-[1vw]">
                 <CardHeader className="flex-1 text-center font-bold">
                   Total Subscribers
                 </CardHeader>
@@ -138,18 +138,19 @@ const fetchActiveSubs = async () => {
                   Countries
                 </CardHeader>
               </div>
-              <div className="flex">
-                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">{totalSub}</CardContent>
-                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">{activeSub}
+              
+              <div className="flex -mt-[3vh] text-[1.75vw] text-blue-900 font-bold">
+                <CardContent className="flex-1 text-center">{totalSub}</CardContent>
+                <CardContent className="flex-1 text-center">{activeSub}
                 </CardContent>
-                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">
+                <CardContent className="flex-1 text-center">
                   {inactiveSub}
                 </CardContent>
-                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">
+                <CardContent className="flex-1 text-center">
                   {countryCount}
                 </CardContent>
               </div>
-            <div className="h-15 -mt-5">
+            <div className="h-[1vh] -mt-[0.24vh]">
             <DateDisplay />
             </div>
             </Card>

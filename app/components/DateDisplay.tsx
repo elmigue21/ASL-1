@@ -24,7 +24,7 @@ const DateDisplay: React.FC = () => {
 
   return (
       <div>
-        <h2 className="text-m font-bold mt-2 text-black">{date}</h2>
+        <h2 className="text-[1vw] font-bold text-black">{date}</h2>
       </div>
   );
 };
