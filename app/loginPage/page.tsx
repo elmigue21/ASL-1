@@ -6,7 +6,7 @@ import { supabase } from "@/supabase";
 import { useRouter } from "next/router";
 
 function loginPage() {
-   const router = useRouter();
+  //  const router = useRouter();
   const [username, setUsername] = useState("user@example.com");
   const [password, setPassword] = useState("12345");
   const handleSubmit = async () => {
@@ -18,9 +18,9 @@ function loginPage() {
         const token = sessionData.session?.access_token;
         if (token) {
           document.cookie = `token=${token}; path=/; Secure; SameSite=Lax`;
+           window.location.href = "/dashboardPage";
         }
 
-        router.push("/dashboardPage");
 
 
     }catch(e){
