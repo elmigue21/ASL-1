@@ -17,6 +17,13 @@ console.log('log token middleware', token)
    return NextResponse.redirect(new URL("/loginPage", request.url)); // Redirect if no token
  }
 
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
+
+  if (!token) {
+    // return NextResponse.redirect(new URL("/loginPage", request.url)); // Redirect to login if no token
+  }
+
 
   console.log("middleware!");
   return NextResponse.next();
