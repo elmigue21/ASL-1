@@ -34,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Link from "next/link";
 
 import { Subscription } from "@/types/subscription";
 import { supabase } from "@/lib/supabase";
@@ -41,8 +42,8 @@ import { supabase } from "@/lib/supabase";
 import { RootState } from "@/store/store";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  addSelectedSubscription,
-  removeSelectedSubscription,
+  addSelectedEmails,
+  removeSelectedEmails,
 } from "@/store/slices/subscriptionSlice";
 import {  useInfiniteQuery } from '@tanstack/react-query';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,8 +68,8 @@ export function SubscriptionsTable() {
   });
 
   const dispatch = useDispatch();
-  const selectedSubscriptionIds = useSelector(
-    (state: RootState) => state.SubscriptionSlice.selectedSubscriptionIds
+  const selectedEmails = useSelector(
+    (state: RootState) => state.SubscriptionSlice.selectedEmails
   );
 
   const [searchBarValue, setSearchBarValue] = useState<string>("");
@@ -107,14 +108,16 @@ return result.data;
 
 };
 
-  const { data, fetchNextPage,fetchPreviousPage } = useInfiniteQuery({
-    queryKey: ["subscriptions"],
-    queryFn: fetchSubscriptions,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages,lastPageParam) => {
-      return lastPage?.length === 10 ? lastPageParam + 1 : undefined;
-    },
-  });
+  const { data, fetchNextPage, fetchPreviousPage, isLoading } =
+    useInfiniteQuery({
+      queryKey: ["subscriptions"],
+      queryFn: fetchSubscriptions,
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, allPages, lastPageParam) => {
+        return lastPage?.length === 10 ? lastPageParam + 1 : undefined;
+      },
+      refetchOnWindowFocus: false,
+    });
 
   const handleNextPage = async() =>{
     const result = await fetchNextPage();
@@ -179,7 +182,7 @@ return result.data;
         cell: ({ row }) => {
           const rowId = row.original.id;
           const isChecked = row.original.emails.every((email: Email) =>
-            selectedSubscriptionIds.includes(email)
+            selectedEmails.includes(email)
           );
           // console.log('IS CHECKED?', isChecked)
           // console.log('CHECKED????' ,row.getIsSelected())
@@ -191,7 +194,7 @@ return result.data;
                 console.log(row.original.emails);
               row.original.emails.forEach((email:  Email ) => {
                 console.log(email.email, email.id)
-                setSelectedSubscriptionIds(!!value, email);
+                setSelectedEmails(!!value, email);
               });
 
                 // setSelectedSubscriptionIds(!!value, rowId);
@@ -297,9 +300,13 @@ return result.data;
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => console.log(subscription.id)}>
-                  View
-                </DropdownMenuItem>
+                <Link href={`/ViewPage/${subscription.id}`}>
+                  <DropdownMenuItem
+                    onClick={() => console.log(subscription.id)}
+                  >
+                    View
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem>Edit Details</DropdownMenuItem>
                 <DropdownMenuItem>Delete</DropdownMenuItem>
               </DropdownMenuContent>
@@ -308,7 +315,7 @@ return result.data;
         },
       },
     ],
-    [selectedSubscriptionIds]
+    [selectedEmails]
   );
 
 
@@ -349,20 +356,20 @@ return result.data;
     const allRows = table.getRowModel().rows;
     allRows.map(row =>{
       row.original.emails.map((email: {email:string,id:number})=>{
-        setSelectedSubscriptionIds(checkboxValue, email);
+        setSelectedEmails(checkboxValue, email);
       })
     })
   };
   
   
-  const setSelectedSubscriptionIds = (
+  const setSelectedEmails = (
     checkboxValue: boolean,
     emailObj: {email:string, id:number}
   ) => {
     if (checkboxValue) {
-      dispatch(addSelectedSubscription(emailObj));
+      dispatch(addSelectedEmails(emailObj));
     } else {
-      dispatch(removeSelectedSubscription(emailObj));
+      dispatch(removeSelectedEmails(emailObj));
     }
   };
 
@@ -392,10 +399,10 @@ return result.data;
         </Button>
         <Button
           onClick={() => {
-            console.log(selectedSubscriptionIds);
+            console.log(selectedEmails);
           }}
         ></Button>
-       <DropdownMenu>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
               Columns <ChevronDown />
@@ -453,57 +460,64 @@ return result.data;
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length
-              ? table.getRowModel().rows.map((row) => (
-                  <React.Fragment key={row.id}>
-                    <TableRow data-state={row.getIsSelected() && "selected"}>
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          className="truncate overflow-hidden whitespace-nowrap"
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-
-                    {row.getIsExpanded() && (
-
-                      
-                      row.original.emails.map((email:Email,index:number)=>{
-                       
-                        const isChecked= selectedSubscriptionIds.includes(email);
-                        return (
-                          <TableRow key={email.id}>
-
-                            <TableCell>
-                              <Checkbox className="border-slate-500"
-                               checked={isChecked}
-                                onCheckedChange={(value)=>{setSelectedSubscriptionIds(!!value, email)}
-                              }>
-
-                              </Checkbox>
-                            </TableCell>
-                            <TableCell></TableCell>
-                            <TableCell>{email.email}</TableCell>
-                          </TableRow>
-                        );
-                      })
-                    )}
-                  </React.Fragment>
-                ))
-              : [...Array(10)].map((_, index) => (
-                  <TableRow key={index}>
-                    {columns.map((_, colIndex) => (
-                      <TableCell key={colIndex}>
-                        <Skeleton className="h-8 w-full rounded-md bg-gray-300 dark:bg-gray-700" />
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <React.Fragment key={row.id}>
+                  <TableRow data-state={row.getIsSelected() && "selected"}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className="truncate overflow-hidden whitespace-nowrap"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
-                ))}
+
+                  {row.getIsExpanded() &&
+                    row.original.emails.map((email: Email, index: number) => {
+                      const isChecked = selectedEmails.includes(email);
+                      return (
+                        <TableRow key={email.id}>
+                          <TableCell>
+                            <Checkbox
+                              className="border-slate-500"
+                              checked={isChecked}
+                              onCheckedChange={(value) => {
+                                setSelectedEmails(!!value, email);
+                              }}
+                            ></Checkbox>
+                          </TableCell>
+                          <TableCell></TableCell>
+                          <TableCell>{email.email}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                </React.Fragment>
+              ))
+            ) : isLoading ? (
+              [...Array(10)].map((_, index) => (
+                <TableRow key={index}>
+                  {columns.map((_, colIndex) => (
+                    <TableCell key={colIndex}>
+                      <Skeleton className="h-8 w-full rounded-md bg-gray-300 dark:bg-gray-700" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-120 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>

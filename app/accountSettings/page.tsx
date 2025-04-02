@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from "../components/Navbar";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card} from "@/components/ui/card";
 
 function page() {
   return (

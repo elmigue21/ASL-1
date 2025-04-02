@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { SubscriptionsTable } from '../components/SubscriptionsTable'
 import Navbar from '../components/Navbar'
 import { Button } from '@/components/ui/button';
@@ -49,7 +49,9 @@ function TablesPage() {
       <Navbar />      
       <div className="z-45 fixed top-25 left-40 p-5">
         <Button onClick={()=>{openClicked()}}>OPEN WINDOW</Button>
+        <Suspense fallback={<div>LOADING</div>}>
         <SubscriptionsTable />
+        </Suspense>
         <Button onClick={()=>{fetchEmail()}}>qweqwe</Button>
       </div>
   <EmailWindow />

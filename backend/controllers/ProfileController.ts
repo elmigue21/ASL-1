@@ -7,7 +7,7 @@ export const createProfile = async (req: Request, res: Response) => {
       .from("profiles")
       .insert([req.body]);
 
-    if (error) res.status(400).json({ error: error.message });
+    if (error){ res.status(400).json({ error: error.message });return;}
 
     res
       .status(201)
@@ -22,11 +22,14 @@ export const getAllProfiles = async (req: Request, res: Response) => {
   try {
     const { data, error } = await supabase.from("profiles").select("*");
 
-    if (error) res.status(400).json({ error: error.message });
+    if (error) {res.status(400).json({ error: error.message });
+  return;
+  }
 
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
+    return;
   }
 };
 
@@ -39,11 +42,15 @@ export const getProfileById = async (req: Request, res: Response) => {
       .eq("id", req.params.id)
       .single();
 
-    if (error) res.status(400).json({ error: error.message });
+       if (error) {
+         res.status(400).json({ error: error.message });
+         return;
+       }
 
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
+    return;
   }
 };
 
@@ -71,7 +78,7 @@ export const deleteProfile = async (req: Request, res: Response) => {
       .delete()
       .eq("id", req.params.id);
 
-    if (error) res.status(400).json({ error: error.message });
+    if (error) {res.status(400).json({ error: error.message });return;}
 
     res.json({ message: "Profile deleted successfully", data });
   } catch (err) {

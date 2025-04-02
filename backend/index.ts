@@ -12,6 +12,7 @@ import dashboardRoutes from "./routes/dashboardRoutes";
 import { authenticateUser } from "./middlewares/authenticateUser";
 import tableRoutes from "./routes/tableRoutes";
 import emailRoutes from "./routes/emailRoutes";
+import backupRoutes from './routes/backupRoutes'
 
 dotenv.config();
 const app = express();
@@ -41,7 +42,7 @@ app.get("/postman", async (req, res) => {
     });
     if (error) throw error; // Handle authentication error
 
-    res.redirect("/api/email/sendEmails");
+    res.redirect("/api/subscriptions/delete");
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({ error: "Sign-in failed", details: error.message });
@@ -71,10 +72,11 @@ app.get("/debug-token", async (req, res) => {
 
 
 apiRouter.use("/profiles", profileRoutes);
-apiRouter.use("/subscriptions", subscriptionRoutes);
+apiRouter.use("/subscriptions",authenticateUser, subscriptionRoutes);
 apiRouter.use("/dashboard",authenticateUser, dashboardRoutes)
 apiRouter.use("/table", authenticateUser,tableRoutes);
 apiRouter.use("/email",authenticateUser,emailRoutes);
+apiRouter.use('/backups',authenticateUser,backupRoutes);
 
 
 app.use("/api", apiRouter);
