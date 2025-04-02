@@ -49,6 +49,7 @@ import {  useInfiniteQuery } from '@tanstack/react-query';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import {Email} from "@/types/email"
+import { useCallback } from "react";
 
 export function SubscriptionsTable() {
 
@@ -119,20 +120,24 @@ return result.data;
       refetchOnWindowFocus: false,
     });
 
-  const handleNextPage = async() =>{
+  const handleNextPage = useCallback(async () => {
     const result = await fetchNextPage();
     console.log(result.data?.pages);
-    setPagination({pageIndex: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize})
+    setPagination({
+      pageIndex: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
+    });
     table.nextPage();
-  }
+  }, [pagination.pageIndex, pagination.pageSize]);
 
-  const handlePreviousPage = async() =>{
+  const handlePreviousPage = useCallback(async () => {
     await fetchPreviousPage();
-    setPagination({pageIndex:pagination.pageIndex - 1, pageSize: pagination.pageSize});
+    setPagination({
+      pageIndex: pagination.pageIndex - 1,
+      pageSize: pagination.pageSize,
+    });
     table.previousPage();
-
-  }
+  }, [pagination.pageIndex, pagination.pageSize]);
 
 
 
@@ -362,7 +367,7 @@ return result.data;
   };
   
   
-  const setSelectedEmails = (
+  const setSelectedEmails = React.useCallback((
     checkboxValue: boolean,
     emailObj: {email:string, id:number}
   ) => {
@@ -371,7 +376,7 @@ return result.data;
     } else {
       dispatch(removeSelectedEmails(emailObj));
     }
-  };
+  },[dispatch]);
 
 
   const searchButtonClicked = async () =>{
