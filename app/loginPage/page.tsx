@@ -2,18 +2,26 @@
 import React, { useState } from "react";
 import { signIn } from "@/utils/auth";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/supabase";
+import { useRouter } from "next/router";
+
 function loginPage() {
+   const router = useRouter();
   const [username, setUsername] = useState("user@example.com");
   const [password, setPassword] = useState("12345");
-
   const handleSubmit = async () => {
     try{
     console.log("SUBMIT");
     const result = await signIn(username, password);
     console.log(result);
-    if(result != null){
-      window.location.href= "/dashboardPage";
-    }
+    const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (token) {
+          document.cookie = `token=${token}; path=/; Secure; SameSite=Lax`;
+        }
+
+        router.push("/dashboardPage");
+
 
     }catch(e){
       console.error(e);

@@ -1,5 +1,5 @@
 import { Request, Response, RequestHandler } from "express";
-import { supabase } from "../../lib/supabase"; // ✅ Ensure correct path
+import { supabase } from "../../supabase"; // ✅ Ensure correct path
 
 import { SupabaseClient, User } from "@supabase/supabase-js";
 

@@ -1,5 +1,5 @@
 // backend/lib/config.ts
-// import dotenv from "dotenv";
+import dotenv from "dotenv";
 // import path from "path";
 
 // const envFile = `.env.${process.env.NODE_ENV || "local"}`; // Defaults to `.env.local`
@@ -8,3 +8,7 @@
 //   path: path.resolve(process.cwd(), envFile),
 //   debug: process.env.NODE_ENV !== "production", // Enable debug mode only in development
 // });
+
+// if (process.env.NODE_ENV !== "production") {
+//   require("dotenv").config();
+// }

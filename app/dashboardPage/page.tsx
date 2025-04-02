@@ -8,7 +8,7 @@ import Navbar from "../components/Navbar";
 import DateDisplay from "../components/DateDisplay";
 import { useState, useEffect } from "react";
 
-import { supabase } from "./../../lib/supabase";
+import { supabase } from "../../supabase";
 
 const Dashboard = () => {
   const [countryCount, setCountryCount] = useState(0);

@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {TablePageState} from "../../types/tablePageState";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/supabase";
 import { Subscription } from "@/types/subscription";
 
 

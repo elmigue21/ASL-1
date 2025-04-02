@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "./../../lib/supabase";
+import { supabase } from "../../supabase";
 
 function backupPage() {
   const backupData = async () => {

@@ -4,7 +4,7 @@ import cors from "cors";
 
 import { Request, Response } from "express";
 import subscriptionRoutes from "./routes/SubscriptionRoutes";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../supabase";
 import profileRoutes from "./routes/ProfileRoutes";
 import { EmailRequest } from "@/types/emailRequest";
 import { transporter } from "../lib/emailTransporter";
