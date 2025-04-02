@@ -52,7 +52,7 @@ function TablesPage() {
         <Suspense fallback={<div>LOADING</div>}>
         <SubscriptionsTable />
         </Suspense>
-        <Button onClick={()=>{fetchEmail()}}>qweqwe</Button>
+        {/* <Button onClick={()=>{fetchEmail()}}>qweqwe</Button> */}
       </div>
   <EmailWindow />
     </div>

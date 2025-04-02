@@ -13,7 +13,7 @@ export async function middleware(request: Request) {
   const token = sessionData.session?.access_token;
 
   if (!token) {
-    return NextResponse.redirect(new URL("/loginPage", request.url)); // Redirect to login if no token
+    // return NextResponse.redirect(new URL("/loginPage", request.url)); // Redirect to login if no token
   }
 
   console.log("middleware!");

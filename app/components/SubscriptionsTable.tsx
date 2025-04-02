@@ -397,11 +397,11 @@ return result.data;
         >
           Search
         </Button>
-        <Button
+        {/* <Button
           onClick={() => {
             console.log(selectedEmails);
           }}
-        ></Button>
+        ></Button> */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

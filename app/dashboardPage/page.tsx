@@ -164,18 +164,18 @@ const Dashboard = () => {
                   Countries
                 </CardHeader>
               </div>
-              <div className="flex">
-                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">{totalSub}</CardContent>
-                <CardContent className="flex-1 text-4xl text-center font-bold text-blue-900">{activeSub}
+              <div className="flex text-[2vw] text-center font-bold text-blue-900 -mt-[1.8vh] height [1vh]">
+                <CardContent className="flex-1">{totalSub}</CardContent>
+                <CardContent className="flex-1">{activeSub}
                 </CardContent>
-                <CardContent className="flex-1 text-center">
+                <CardContent className="flex-1">
                   {inactiveSub}
                 </CardContent>
-                <CardContent className="flex-1 text-center">
+                <CardContent className="flex-1">
                   {countryCount}
                 </CardContent>
               </div>
-            <div className="h-15 -mt-5">
+            <div className="-mt-5">
             <DateDisplay />
             </div>
             </Card>
