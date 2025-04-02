@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { signIn } from "@/utils/auth";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/supabase";
+import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/router";
 
 function loginPage() {

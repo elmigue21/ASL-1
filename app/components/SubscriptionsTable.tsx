@@ -37,7 +37,7 @@ import {
 import Link from "next/link";
 
 import { Subscription } from "@/types/subscription";
-import { supabase } from "@/supabase";
+import { supabase } from "@/lib/supabase";
 
 import { RootState } from "@/store/store";
 import { useSelector, useDispatch } from "react-redux";

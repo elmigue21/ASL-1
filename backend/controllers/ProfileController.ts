@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { supabase } from "../../supabase"; // ✅ Ensure correct path
+import { supabase } from "../../lib/supabase"; // ✅ Ensure correct path
 
 export const createProfile = async (req: Request, res: Response) => {
   try {

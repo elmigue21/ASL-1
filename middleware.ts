@@ -1,5 +1,5 @@
 import { NextResponse,NextRequest } from "next/server";
-import { supabase } from "./supabase";
+import { supabase } from "./lib/supabase";
 
 export const config = {
   matcher: ["/dashboardPage","/regisPage"]

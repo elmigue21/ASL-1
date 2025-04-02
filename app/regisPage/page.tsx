@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { supabase } from '../../supabase';
+import { supabase } from '../../lib/supabase';
 
 function RegisPage() {
   const [firstName, setFirstName] = useState("Firsttt");
