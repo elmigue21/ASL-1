@@ -2,7 +2,7 @@ import { NextResponse,NextRequest } from "next/server";
 import { supabase } from "./supabase";
 
 export const config = {
-  matcher: ["/dashboardPage",],
+  matcher: ["/dashboardPage","/regisPage"]
 //   runtime:'nodejs'
 };
 
