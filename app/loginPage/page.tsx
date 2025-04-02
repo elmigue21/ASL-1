@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import { signIn } from "@/utils/auth";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 
-function loginPage() {
+function LoginPage() {
   //  const router = useRouter();
   const [username, setUsername] = useState("user@example.com");
   const [password, setPassword] = useState("12345");
@@ -91,4 +91,4 @@ function loginPage() {
   );
 }
 
-export default loginPage;
+export default LoginPage;

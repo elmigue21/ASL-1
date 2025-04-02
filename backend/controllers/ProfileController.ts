@@ -17,7 +17,6 @@ export const createProfile = async (req: Request, res: Response) => {
   }
 };
 
-// Get All Profiles
 export const getAllProfiles = async (req: Request, res: Response) => {
   try {
     const { data, error } = await supabase.from("profiles").select("*");
@@ -33,7 +32,6 @@ export const getAllProfiles = async (req: Request, res: Response) => {
   }
 };
 
-// Get Single Profile
 export const getProfileById = async (req: Request, res: Response) => {
   try {
     const { data, error } = await supabase
@@ -54,7 +52,6 @@ export const getProfileById = async (req: Request, res: Response) => {
   }
 };
 
-// Update Profile
 export const updateProfile = async (req: Request, res: Response) => {
   try {
     const { data, error } = await supabase
@@ -70,7 +67,6 @@ export const updateProfile = async (req: Request, res: Response) => {
   }
 };
 
-// Delete Profile
 export const deleteProfile = async (req: Request, res: Response) => {
   try {
     const { data, error } = await supabase

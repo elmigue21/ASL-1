@@ -79,7 +79,7 @@ const fetchSubscriptions = async ({ pageParam = 1 }) => {
   const pageSize = 10; // Fixed page size
 
 
-    const { data: sessionData, error } = await supabase.auth.getSession();
+    const { data: sessionData } = await supabase.auth.getSession();
     const token = sessionData.session?.access_token;
 
 if(!token){
@@ -348,9 +348,9 @@ return result.data;
     },
   });
 
-  const getAllSelectedRows = () => {
+/*   const getAllSelectedRows = () => {
     return table.getSelectedRowModel().rows.map((row) => row.original);
-  };
+  }; */
 
   const setAllSelectedSubscriptionIds = (checkboxValue: boolean) => {
     const allRows = table.getRowModel().rows;
@@ -478,7 +478,7 @@ return result.data;
                   </TableRow>
 
                   {row.getIsExpanded() &&
-                    row.original.emails.map((email: Email, index: number) => {
+                    row.original.emails.map((email: Email/* , index: number */) => {
                       const isChecked = selectedEmails.includes(email);
                       return (
                         <TableRow key={email.id}>

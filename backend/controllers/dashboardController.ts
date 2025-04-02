@@ -1,7 +1,5 @@
 
 import { Request, Response, RequestHandler } from "express";
-import { supabase } from "../../lib/supabase"; // ✅ Ensure correct path
-import { createClient } from "@supabase/supabase-js";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 
 interface AuthenticatedRequest extends Request {
@@ -18,7 +16,7 @@ export const getActiveSubsCount = async (req: Request, res: Response) => {
         }
     const { data,count, error } = await supabaseUser
       .from("subscribers")
-      .select(undefined, { count: "exact" }) // Get only the count
+      .select(undefined, { count: "exact" }) 
       .eq("active_status", true);
 
     if (error) {
@@ -28,9 +26,9 @@ export const getActiveSubsCount = async (req: Request, res: Response) => {
       return;
     }
 
-    console.log('ACTIVE SUBS count:', data);
 
-    res.status(200).json({ count }); // Return count in an object
+    res.status(200).json({ count }); 
+    return
   } catch (e) {
     res
       .status(500)
@@ -59,6 +57,7 @@ export const getInactiveSubsCount = async (req: Request, res: Response) => {
     }
 
     res.status(200).json(count);
+    return
   } catch (e) {
     res
       .status(500)
@@ -87,6 +86,7 @@ export const getSubCount: RequestHandler = async (req, res) => {
     }
 
     res.status(200).json(count);
+    return
   } catch (e) {
     res
       .status(500)
@@ -109,6 +109,7 @@ if(!supabaseUser){
 
 
       res.status(200).json(data);
+      return
   } catch (e) {
     console.error(e);
       res
@@ -127,11 +128,9 @@ export const getNewSubscribers: RequestHandler = async (req, res) => {
     }
 
     const { data, count, error } = await supabaseUser.rpc('get_new_subs_week');
-    console.log('data', data);
-    console.log('count', count);
-    console.log('error', error);
 
     res.status(200).json(data);
+    return
   } catch (e) {
     console.error(e);
     res.status(500).json({message:"error getting new subscribers",details:e});

@@ -1,8 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Subscription } from "../../types/subscription"; // Ensure correct import path
 import { Email } from "@/types/email";
 
-// Define initial state correctly
 interface SubscriptionState {
   subscriptionIds: number[];
   selectedEmails: Email[];
@@ -21,7 +19,6 @@ const subscriptionSlice = createSlice({
       state.subscriptionIds = action.payload;
     },
     addSelectedEmails(state, action: PayloadAction<Email>) {
-      // Prevent duplicates
       const exists = state.selectedEmails.some(
         (subId) => subId === action.payload
       );
@@ -37,12 +34,10 @@ const subscriptionSlice = createSlice({
   },
 });
 
-// Export actions
 export const {
   setSubscriptions,
   addSelectedEmails,
   removeSelectedEmails,
 } = subscriptionSlice.actions;
 
-// Export reducer
 export default subscriptionSlice.reducer;

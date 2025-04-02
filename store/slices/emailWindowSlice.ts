@@ -1,8 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Subscription } from "../../types/subscription"; // Ensure correct import path
-import { Email } from "@/types/email";
-
-// Define initial state correctly
 interface EmailWindowState {
   isOpen: boolean
 }
@@ -22,10 +18,8 @@ const emailWindowSlice = createSlice({
   },
 });
 
-// Export actions
 export const {
   setOpenState
 } = emailWindowSlice.actions;
 
-// Export reducer
 export default emailWindowSlice.reducer;

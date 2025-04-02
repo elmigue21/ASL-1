@@ -36,7 +36,7 @@ const Dashboard = () => {
     const data = await response.json();
     setCountryCount(data.length);
     setCountryData(data);
-    console.log("Countries:", data);
+    // console.log("Countries:", data);
   };
 
   const fetchTotalSubs = async () => {
@@ -50,7 +50,7 @@ const Dashboard = () => {
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ Attach token in request
+          Authorization: `Bearer ${token}`, 
           "Content-Type": "application/json",
         },
       }
@@ -58,7 +58,6 @@ const Dashboard = () => {
 
     const data = await response.json();
     setTotalSub(data);
-    console.log("total:", data);
   };
 
   const fetchInactiveSubs = async () => {
@@ -80,7 +79,7 @@ const Dashboard = () => {
 
     const data = await response.json();
     setInactiveSub(data);
-    console.log("inactive:", data);
+    // console.log("inactive:", data);
   };
 
   const fetchActiveSubs = async () => {
@@ -104,7 +103,7 @@ const Dashboard = () => {
 
     const data = await response.json();
     setActiveSub(data.count);
-    console.log("active:", data);
+    // console.log("active:", data);
   };
 
   const fetchNewSubs = async () => {
@@ -127,7 +126,7 @@ const Dashboard = () => {
     );
 
     const data = await response.json();
-    console.log("NEW SUBS:", data);
+    // console.log("NEW SUBS:", data);
     setNewSubs(data);
   };
 

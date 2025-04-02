@@ -21,7 +21,7 @@ app.use(
   cors({
     origin:
       process.env.NODE_ENV?.trim() === "production" ? "https://asl-topaz.vercel.app"
-        : "*", // ✅ Change this to your frontend URL
+        : "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type, Authorization"],
     credentials:true
@@ -40,7 +40,7 @@ app.get("/postman", async (req, res) => {
       email: "user@example.com",
       password: "12345",
     });
-    if (error) throw error; // Handle authentication error
+    if (error) throw error;
 
     res.redirect("/api/subscriptions/delete");
   } catch (error: unknown) {
@@ -81,10 +81,8 @@ apiRouter.use('/backups',authenticateUser,backupRoutes);
 
 app.use("/api", apiRouter);
 
-// ✅ Start the server in development mode only
 
 console.log(process.env.NODE_ENV);
-// console.log(process.env.NEXT_PUBLIC_SUPABASE_URL);
 
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 5000;
