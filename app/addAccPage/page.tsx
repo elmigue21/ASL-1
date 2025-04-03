@@ -53,6 +53,19 @@ function AddAccPage(){
       const addEmail = (val:string) => {
         setEmails([...emails, val]); // Add an empty string for a new phone number
       };
+
+      
+        const removePhoneNumber = (indexToRemove: number) => {
+          setPhoneNumbers((prevPhones) =>
+            prevPhones.filter((_, index) => index !== indexToRemove)
+          );
+        };
+
+        const removeEmail = (indexToRemove:number) => {
+          setEmails((prevEmails) =>
+            prevEmails.filter((_, index) => index !== indexToRemove)
+          );
+        };
     
     //   const handlePhoneChange = (index: number, value: string) => {
     //     const updatedPhones = [...phoneNumbers];
@@ -185,7 +198,7 @@ return (
                     <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
                       {phone}
                     </div>
-                    <p className="hover:cursor-pointer">X</p>
+                    <p className="hover:cursor-pointer" onClick={()=>{removePhoneNumber(index)}}>X</p>
                   </div>
                 ))}
               </div>
@@ -217,14 +230,14 @@ return (
                      setEmailInput("");}}}>Add Email</Button>
               </div>
               <ScrollArea className="h-10 w-48 rounded-md border">
-                <h4>NUMBERS</h4>
+                <h4>EMAILS</h4>
                 <div>
                   {emails.map((email, index) => (
                     <div className="flex justify-between mx-5" key={index}>
                       <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
                         {email}
                       </div>
-                      <p className="hover:cursor-pointer">X</p>
+                      <p className="hover:cursor-pointer" onClick={()=>{removeEmail(index)}}>X</p>
                     </div>
                   ))}
                 </div>
