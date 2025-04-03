@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { backupData, getBackup } from "../controllers/backupController";
+import { backupBucket, backupData, getBackup, grabBucket } from "../controllers/backupController";
 const router = Router();
 
 router.get("/backupData", backupData);
-router.get("/getBackups",getBackup)
+router.get("/getBackups",getBackup);
+router.get("/backupBucket", backupBucket);
+router.get("/grabBucket",grabBucket);
 
 
 
