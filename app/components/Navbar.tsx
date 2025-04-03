@@ -1,14 +1,10 @@
 // import { Subscript } from 'lucide-react'
-'use client'
-import React from 'react'
-import Dropdown_Profie from './dropdown_profile'
-import Link from 'next/link'
-import { useDispatch } from 'react-redux'
-import { setOpenState } from '@/store/slices/emailWindowSlice'
-
-
-
-
+"use client";
+import React from "react";
+import Dropdown_Profie from "./dropdown_profile";
+import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { setOpenState } from "@/store/slices/emailWindowSlice";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -42,7 +38,7 @@ const Navbar = () => {
       </div>
       <div
         style={{ fontFamily: "Inter, sans-serif" }}
-        className="absolute left-0 top-[11vh] h-full w-[8.35vw] bg-[#1e2e80] text-white flex flex-col py-[5vh]  z-40 text-[0.87vw] gap-y-[5.65vh] font-bold"
+        className="relative left-0 top-[11vh] h-full w-[8.35vw] bg-[#1e2e80] text-white flex flex-col py-[5vh]  z-40 text-[0.87vw] gap-y-[5.65vh] font-bold"
       >
         <Link href="/dashboardPage">
           <div className="flex flex-row justify-center gap-x-[0.5vw]">
@@ -103,7 +99,7 @@ const Navbar = () => {
           <h2 className="items-center mt-[0.50vh]">Account</h2>
         </div>
         <div
-          className="flex flex-row justify-center gap-x-[0.6vw] text-[1.09vw] me-[0.50vw]"
+          className="flex flex-row justify-center gap-x-[0.6vw] text-[1.09vw] me-[0.50vw] cursor-pointer"
           onClick={() => {
             openClicked();
           }}
@@ -126,6 +122,6 @@ const Navbar = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Navbar
+export default Navbar;
