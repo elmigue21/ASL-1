@@ -37,7 +37,7 @@ export const createSubscription: RequestHandler = async (req, res) => {
       state: state,
       city: city,
       company_linkedin: companyLinkedIn,
-      company_website: companyWebsite, // ✅ Fixed typo
+      company_website: companyWebsite, 
     });
     if (error) {
       res
@@ -86,7 +86,7 @@ export const editSubscription: RequestHandler = async (req, res) => {
       state: state,
       city: city,
       company_linkedin: companyLinkedIn,
-      company_website: companyWebsite, // ✅ Fixed typo
+      company_website: companyWebsite, 
     });
     if (error) {
       res.status(500).json({
@@ -113,13 +113,9 @@ export const deleteSubscription: RequestHandler = async (req, res) => {
       return;
     }
     const {subscriptionId} = req.body
-    console.log('reached delete');
-    console.log(subscriptionId);
     const { data, error } = await supabaseUser.rpc("delete_subscription", {
       sub_id:subscriptionId,
     });
-    console.log("Data:", data);
-    console.log("Error:", error);
 
     if (error) {
       res.status(500).json({

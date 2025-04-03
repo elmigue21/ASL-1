@@ -2,9 +2,9 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "../../lib/supabase";
-import { getBackup } from "@/backend/controllers/backupController";
+// import { getBackup } from "@/backend/controllers/backupController";
 import Navbar from "../components/Navbar";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 
 function backupPage() {
 
@@ -30,7 +30,11 @@ function backupPage() {
     );
     const data = await response.json();
     console.log(data);
+         alert("BACKUPS GOT");
   };
+
+
+
    const getBackups = async () => {
      const { data: sessionData } = await supabase.auth.getSession();
      const token = sessionData.session?.access_token;

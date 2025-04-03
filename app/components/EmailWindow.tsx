@@ -8,10 +8,10 @@ import { RootState
  import { useSelector } from 'react-redux';
  import { useDispatch } from 'react-redux';
 import { setOpenState } from '@/store/slices/emailWindowSlice';
-import { sendEmails } from './../../backend/controllers/emailController';
+// import { sendEmails } from './../../backend/controllers/emailController';
 import { supabase } from '@/lib/supabase';
 import {
-  addSelectedEmails,
+  // addSelectedEmails,
   removeSelectedEmails,
 } from "@/store/slices/subscriptionSlice";
 import { Email } from '@/types/email';
@@ -43,18 +43,14 @@ const emailIds = Array.isArray(selectedEmails)
   ? selectedEmails.map((email) => email?.id).filter(Boolean) 
   : [];
 
-
-
- console.log('email ids',emailIds)
     try{
 
-          const { data: sessionData, error } = await supabase.auth.getSession();
+          const { data: sessionData, /* error */ } = await supabase.auth.getSession();
             const token = sessionData.session?.access_token;
             if (!token) {
               return;
             }
       
-          console.log("submittt");
           const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/email/sendEmails`,
             {
@@ -65,9 +61,9 @@ const emailIds = Array.isArray(selectedEmails)
               },
               body: JSON.stringify({
                 emailIds,
-                emailSubject: "Test Email",
-                emailText: "Test text",
-                emailHtml: "<a href=`https://www.youtube.com/watch?v=xvFZjo5PgG0`>test link</a>",
+                emailSubject: message,
+                emailText: subject,
+                // emailHtml: "<a href=`https://www.youtube.com/watch?v=xvFZjo5PgG0`>test link</a>",
                 fromName: "fname lname",
                 // fromEmail: "",
               }),
@@ -79,7 +75,7 @@ const emailIds = Array.isArray(selectedEmails)
 
 
     }catch(e){
-
+      console.error(e)
     }
   } 
 

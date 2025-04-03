@@ -1,30 +1,45 @@
 import { NextResponse,NextRequest } from "next/server";
-import { supabase } from "./lib/supabase";
+// import { jwtVerify } from "jose";
 
 export const config = {
   matcher: ["/dashboardPage","/regisPage"]
-//   runtime:'nodejs'
 };
 
+
+const JWT_SECRET = process.env.SUPABASE_JWT_SECRET;
+
 export async function middleware(request: NextRequest) {
-  // Corrected async function declaration
-console.log("middleware!");
-  // const { data: sessionData } = await supabase.auth.getSession();
-  // const token = sessionData.session?.access_token;
- const token = request.cookies.get("token"); // Get token from cookie
-console.log('log token middleware', token)
- if (!token) {
-   return NextResponse.redirect(new URL("/loginPage", request.url)); // Redirect if no token
- }
+const { jwtVerify } = await import("jose");
+  if (!JWT_SECRET) {
+    console.error("JWT_SECRET is not defined!");
+    return NextResponse.redirect(new URL("/loginPage", request.url));
+  }
 
-  // const { data: sessionData } = await supabase.auth.getSession();
-  // const token = sessionData.session?.access_token;
+  const token = request.cookies.get("token")?.value || "";
+  try {
+    const secret = new TextEncoder().encode(JWT_SECRET);
+    const { payload } = await jwtVerify(token, secret);
 
-  // if (!token) {
-  //   // return NextResponse.redirect(new URL("/loginPage", request.url)); // Redirect to login if no token
-  // }
+    if (payload.exp) {
+      const expirationDate = new Date(payload.exp * 1000); 
 
+      if (Date.now() >= payload.exp * 1000) {
+        const response = NextResponse.redirect(
+          new URL("/loginPage", request.url)
+        );
+          response.cookies.set("token", "", {
+            maxAge: -1, 
+            path: "/", 
+          });
+        return response;
+      }
+    } else {
+      return NextResponse.redirect(new URL("/loginPage", request.url));
+    }
 
-  console.log("middleware!");
+  } catch (error) {
+    return NextResponse.redirect(new URL("/loginPage", request.url));
+  }
+
   return NextResponse.next();
 }

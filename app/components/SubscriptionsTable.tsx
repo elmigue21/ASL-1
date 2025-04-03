@@ -49,6 +49,7 @@ import {  useInfiniteQuery } from '@tanstack/react-query';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import {Email} from "@/types/email"
+import { useCallback } from "react";
 
 export function SubscriptionsTable() {
 
@@ -79,7 +80,7 @@ const fetchSubscriptions = async ({ pageParam = 1 }) => {
   const pageSize = 10; // Fixed page size
 
 
-    const { data: sessionData, error } = await supabase.auth.getSession();
+    const { data: sessionData } = await supabase.auth.getSession();
     const token = sessionData.session?.access_token;
 
 if(!token){
@@ -119,20 +120,24 @@ return result.data;
       refetchOnWindowFocus: false,
     });
 
-  const handleNextPage = async() =>{
+  const handleNextPage = useCallback(async () => {
     const result = await fetchNextPage();
     console.log(result.data?.pages);
-    setPagination({pageIndex: pagination.pageIndex + 1,
-        pageSize: pagination.pageSize})
+    setPagination({
+      pageIndex: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
+    });
     table.nextPage();
-  }
+  }, [pagination.pageIndex, pagination.pageSize]);
 
-  const handlePreviousPage = async() =>{
+  const handlePreviousPage = useCallback(async () => {
     await fetchPreviousPage();
-    setPagination({pageIndex:pagination.pageIndex - 1, pageSize: pagination.pageSize});
+    setPagination({
+      pageIndex: pagination.pageIndex - 1,
+      pageSize: pagination.pageSize,
+    });
     table.previousPage();
-
-  }
+  }, [pagination.pageIndex, pagination.pageSize]);
 
 
 
@@ -348,9 +353,9 @@ return result.data;
     },
   });
 
-  const getAllSelectedRows = () => {
+/*   const getAllSelectedRows = () => {
     return table.getSelectedRowModel().rows.map((row) => row.original);
-  };
+  }; */
 
   const setAllSelectedSubscriptionIds = (checkboxValue: boolean) => {
     const allRows = table.getRowModel().rows;
@@ -362,7 +367,7 @@ return result.data;
   };
   
   
-  const setSelectedEmails = (
+  const setSelectedEmails = React.useCallback((
     checkboxValue: boolean,
     emailObj: {email:string, id:number}
   ) => {
@@ -371,7 +376,7 @@ return result.data;
     } else {
       dispatch(removeSelectedEmails(emailObj));
     }
-  };
+  },[dispatch]);
 
 
   const searchButtonClicked = async () =>{
@@ -478,7 +483,7 @@ return result.data;
                   </TableRow>
 
                   {row.getIsExpanded() &&
-                    row.original.emails.map((email: Email, index: number) => {
+                    row.original.emails.map((email: Email/* , index: number */) => {
                       const isChecked = selectedEmails.includes(email);
                       return (
                         <TableRow key={email.id}>
