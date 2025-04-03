@@ -17,6 +17,7 @@ export const getAllSubscriptions : RequestHandler = async (req, res) => {
 
     
 const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+console.log("palatandaan", supabaseUser);
 if (!supabaseUser) {
   res.status(401).json({ error: "Unauthorized" });
   return;

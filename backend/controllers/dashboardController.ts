@@ -1,4 +1,3 @@
-
 import { Request, Response, RequestHandler } from "express";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 
@@ -27,7 +26,9 @@ export const getActiveSubsCount = async (req: Request, res: Response) => {
     }
 
 
+
     res.status(200).json({ count }); 
+
     return
   } catch (e) {
     res
@@ -137,6 +138,3 @@ export const getNewSubscribers: RequestHandler = async (req, res) => {
     return;
   }
 };
-
-
-
