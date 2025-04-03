@@ -144,7 +144,7 @@ return (
       <div className="font-bold text-[#1E2E80] text-[1.60vw]">
         Create Subscription Account
       </div>
-      <div className="w-auto h-[77vh] rounded-[0.60vw] shadow-2xl py-[6vh] px-[2.5vw]">
+      <div className="w-auto h-[90vh] rounded-[0.60vw] shadow-2xl py-[6vh] px-[2.5vw] mb-[20vh]">
         <div className="text-[#2F80ED] text-[1vw]">Personal Information</div>
         <div className="flex flex-row gap-x-[10vw]">
           <div className="flex-col">
@@ -192,7 +192,7 @@ return (
 
             <ScrollArea className="h-10 w-48 rounded-md border">
               <h4>NUMBERS</h4>
-              <div>
+              <div >
                 {phoneNumbers.map((phone, index) => (
                   <div className="flex justify-between mx-5" key={index}>
                     <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
@@ -400,7 +400,7 @@ return (
           </div>
         </div>
 
-        <Button className="bg-[#3AC31833] text-[1.2vw] h-[5vh] w-[7vw] rounded-[1.5vw] flex justify-center items-center absolute right-[11vw] mt-[4vh]"
+        <Button className="bg-[#3AC31833] text-[1.2vw] h-[5vh] w-[7vw] rounded-[1.5vw] flex justify-center items-center absolute right-[11vw] mt-[3vh]"
         onClick={()=>{handleSubmit()}}
         >
           Done

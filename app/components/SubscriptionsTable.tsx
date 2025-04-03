@@ -312,7 +312,9 @@ return result.data;
                     View
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>Edit Details</DropdownMenuItem>
+                <Link href="/editPage">
+                  <DropdownMenuItem>Edit Details</DropdownMenuItem>
+                </Link>
                 <DropdownMenuItem>Delete</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -42,7 +42,7 @@ const Navbar = () => {
       </div>
       <div
         style={{ fontFamily: "Inter, sans-serif" }}
-        className="fixed left-0 top-[11vh] h-full w-[8.35vw] bg-[#1e2e80] text-white flex flex-col py-[5vh]  z-40 text-[0.87vw] gap-y-[5.65vh] font-bold"
+        className="absolute left-0 top-[11vh] h-full w-[8.35vw] bg-[#1e2e80] text-white flex flex-col py-[5vh]  z-40 text-[0.87vw] gap-y-[5.65vh] font-bold"
       >
         <Link href="/dashboardPage">
           <div className="flex flex-row justify-center gap-x-[0.5vw]">

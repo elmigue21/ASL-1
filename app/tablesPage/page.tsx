@@ -46,17 +46,15 @@ function TablesPage() {
   };
   return (
     <div>
-      <Navbar />      
-      <div className="z-45 fixed top-25 left-40 p-5">
-        <Button onClick={()=>{openClicked()}}>OPEN WINDOW</Button>
+      <Navbar />
+      <div className="z-45 absolute top-[11vh] left-[8.35vw] p-5">
+        {/* <Button onClick={()=>{openClicked()}}>OPEN WINDOW</Button> */}
         <Suspense fallback={<div>LOADING</div>}>
-        <SubscriptionsTable />
+          <SubscriptionsTable />
         </Suspense>
         {/* <Button onClick={()=>{fetchEmail()}}>qweqwe</Button> */}
-
-
       </div>
-  {/* <EmailWindow /> */}
+      {/* <EmailWindow /> */}
     </div>
   );
 }
