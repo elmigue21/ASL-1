@@ -84,7 +84,7 @@ const emailIds = Array.isArray(selectedEmails)
     };
 
   return openState && (
-    <div className="fixed bottom-0 w-1/2 h-1/2 left-197 z-50 flex flex-col bg-slate-200 border-black border-2 rounded-t-2xl">
+    <div className="fixed bottom-0 w-1/2 h-1/2 right-0 z-50 flex flex-col bg-slate-200 border-black border-2 rounded-t-2xl">
       <div className="justify-between w-full flex p-5 bg-sky-500 rounded-t-2xl">
         <h2>EMAIL WINDOW</h2>
         <h2 onClick={()=>{closeClicked()}}>X</h2>

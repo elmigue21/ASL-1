@@ -144,7 +144,7 @@ return (
       <div className="font-bold text-[#1E2E80] text-[1.60vw]">
         Create Subscription Account
       </div>
-      <div className="w-auto h-[90vh] rounded-[0.60vw] shadow-2xl py-[6vh] px-[2.5vw] mb-[20vh]">
+      <div className="w-auto h-[90vh] rounded-[0.60vw] shadow-2xl py-[6vh] px-[2.5vw] mb-[20vh] z-45">
         <div className="text-[#2F80ED] text-[1vw]">Personal Information</div>
         <div className="flex flex-row gap-x-[10vw]">
           <div className="flex-col">
@@ -234,7 +234,7 @@ return (
                 <div>
                   {emails.map((email, index) => (
                     <div className="flex justify-between mx-5" key={index}>
-                      <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
+                      <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px] z-50">
                         {email}
                       </div>
                       <p className="hover:cursor-pointer" onClick={()=>{removeEmail(index)}}>X</p>
