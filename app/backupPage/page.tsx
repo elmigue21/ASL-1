@@ -5,7 +5,7 @@ import { supabase } from "../../lib/supabase";
 // import { getBackup } from "@/backend/controllers/backupController";
 import Navbar from "../components/Navbar";
 // import { toast } from "sonner";
-import { backupBucket } from './../../backend/controllers/backupController';
+// import { backupBucket } from './../../backend/controllers/backupController';
 
 interface BackupData{
   fileName:string,

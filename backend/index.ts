@@ -13,6 +13,7 @@ import { authenticateUser } from "./middlewares/authenticateUser";
 import tableRoutes from "./routes/tableRoutes";
 import emailRoutes from "./routes/emailRoutes";
 import backupRoutes from './routes/backupRoutes'
+import uploadRoutes from './routes/uploadRoutes'
 
 dotenv.config();
 const app = express();
@@ -75,8 +76,9 @@ apiRouter.use("/profiles", profileRoutes);
 apiRouter.use("/subscriptions",authenticateUser, subscriptionRoutes);
 apiRouter.use("/dashboard",authenticateUser, dashboardRoutes)
 apiRouter.use("/table", authenticateUser,tableRoutes);
-apiRouter.use("/email",authenticateUser,emailRoutes);
+apiRouter.use("/email"/* ,authenticateUser */,emailRoutes);
 apiRouter.use('/backups',authenticateUser,backupRoutes);
+apiRouter.use('/upload',authenticateUser,uploadRoutes);
 
 
 app.use("/api", apiRouter);

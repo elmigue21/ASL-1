@@ -109,6 +109,8 @@ return result.data;
 
 };
 
+// const [maxPages, setMaxPages] = useState<number | null>(null);
+
   const { data, fetchNextPage, fetchPreviousPage, isLoading } =
     useInfiniteQuery({
       queryKey: ["subscriptions"],
@@ -143,6 +145,7 @@ return result.data;
 
 
   const [tableCount, setTableCount] = useState<number | null>(null);
+  const [pageCount,setPageCount] = useState<number | null>(null);
 
   useEffect(() => {
     const getTableCount = async () => {
@@ -157,9 +160,34 @@ return result.data;
 
       console.log("Total count:", count);
       setTableCount(count);
+      setPageCount(count && Math.ceil(count/pagination.pageSize));
     };
     getTableCount();
   }, []);
+  useEffect(()=>{
+    console.log("pagecoutn", pageCount);
+  },[pageCount])
+
+
+  const visiblePages = () => {
+    const pages = [];
+    const total = pageCount? pageCount : 0;
+
+      const currentPage = pagination.pageIndex + 1; // adjust because pageIndex is 0-based
+
+
+    let start = Math.max(currentPage - 2, 1);
+    let end = Math.min(start + 4, total);
+
+    if (end - start < 4) {
+      start = Math.max(end - 4, 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
+  };
   
 
 
@@ -553,6 +581,17 @@ return result.data;
           >
             Next
           </Button>
+          <div className="flex items-center space-x-2">
+  {visiblePages().map((page) => (
+    <button
+      key={page}
+      // onClick={() => handlePageClick(page)}
+      className={`px-3 py-1 border rounded ${page - 1 === pagination.pageIndex? 'bg-blue-500 text-white' : ''}`}
+    >
+      {page}
+    </button>
+  ))}
+</div>
         </div>
       </div>
     </div>

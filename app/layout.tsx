@@ -6,6 +6,9 @@ import { Provider } from "react-redux";
 import {store} from "@/store/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import EmailWindow from "./components/EmailWindow";
+import { useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { useSessionRefresher } from "@/lib/hooks/useSessionRefresher";
 
 // Create a QueryClient instance
 const queryClient = new QueryClient();
@@ -30,7 +33,82 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useSessionRefresher();
+  // useEffect(() => {
+  //   let sessionExpiryTime: number | null = null;
+
+  //   const loadSession = async () => {
+  //     const {
+  //       data: { session },
+  //     } = await supabase.auth.getSession();
+  //     if (session) {
+  //       sessionExpiryTime = session.expires_at
+  //         ? session.expires_at * 1000
+  //         : null;
+  //     }
+  //   };
+
+  //   const extendSessionOnActivity = async () => {
+  //     if (!sessionExpiryTime) return;
+
+  //     const now = Date.now();
+
+  //     if (now < sessionExpiryTime) {
+  //       console.log("User interacted, refreshing session...");
+  //       console.log("SESSION EXPIRY TIME", sessionExpiryTime);
+  //       const { data, error } = await supabase.auth.refreshSession();
+  //       if (data.session) {
+  //         sessionExpiryTime = data.session.expires_at
+  //           ? data.session.expires_at * 1000
+  //           : null;
+  //         console.log("Session extended!");
+  //         const newSession = await supabase.auth.getSession();
+  //         console.log(
+  //           "New session expiry time:",
+  //           newSession.data.session?.expires_at
+  //         );
+  //       } else if (error) {
+  //         console.error("Failed to refresh session:", error.message);
+  //       }
+  //     } else {
+  //       console.log("Session expired, cannot refresh.");
+  //     }
+  //   };
+
+  //   // Attach event listeners
+  //   ["click", "mousemove", "keydown"].forEach((eventName) => {
+  //     window.addEventListener(eventName, extendSessionOnActivity);
+  //   });
+
+  //   // Handle auth state change (refresh sessionExpiryTime)
+  //   const { data: authListener } = supabase.auth.onAuthStateChange(
+  //     (event, session) => {
+  //       if (session) {
+  //         sessionExpiryTime = session.expires_at
+  //           ? session.expires_at * 1000
+  //           : null;
+  //       } else {
+  //         sessionExpiryTime = null;
+  //       }
+  //     }
+  //   );
+
+  //   // Load session initially
+  //   loadSession();
+
+  //   // Cleanup listeners when layout unmounts (very important)
+  //   return () => {
+  //     ["click", "mousemove", "keydown"].forEach((eventName) => {
+  //       window.removeEventListener(eventName, extendSessionOnActivity);
+  //     });
+  //     authListener.subscription.unsubscribe();
+  //   };
+  // }, []);
+
+
   return (
+
+    
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
     <html lang="en">
