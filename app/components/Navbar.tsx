@@ -13,7 +13,7 @@ const Navbar = () => {
   };
   return (
     <div className="z-50">
-      <div className="absolute left-0 top-0 h-[11vh] w-full bg-white text-black shadow-[0px_2px_10px_-3px_#000000] z-50 flex items-center px-4">
+      <div className="absolute left-0 top-0 h-[11vh] w-full bg-white text-black shadow-[0px_2px_10px_-3px_#000000] z-50 flex items-center px-4 overflow-hidden">
         <div className="absolute left-0 top-0 h-[11vh] w-[8.35vw] bg-[#1e2e80] z-50 flex justify-center items-center">
           <ul>
             <img
@@ -38,7 +38,7 @@ const Navbar = () => {
       </div>
       <div
         style={{ fontFamily: "Inter, sans-serif" }}
-        className="relative left-0 top-[11vh] h-full w-[8.35vw] bg-[#1e2e80] text-white flex flex-col py-[5vh]  z-40 text-[0.87vw] gap-y-[5.65vh] font-bold"
+        className="fixed left-0 top-[11vh] h-full w-[8.35vw] bg-[#1e2e80] text-white flex flex-col py-[5vh]  z-40 text-[0.87vw] gap-y-[5.65vh] font-bold"
       >
         <Link href="/dashboardPage">
           <div className="flex flex-row justify-center gap-x-[0.5vw]">

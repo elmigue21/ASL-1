@@ -143,7 +143,7 @@ function AddAccPage() {
   return (
     <>
       <Navbar />
-      <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[88vh] px-[3vw] py-[2vh]"style={{overflow:"hidden"}}>
+      <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[88vh] px-[3vw] py-[2vh] overflow-hidden">
         <div className="font-bold text-[#1E2E80] text-[1.60vw]">
           Create Subscription Account
         </div>
