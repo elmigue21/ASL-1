@@ -33,7 +33,11 @@ const Dashboard = () => {
       }
     );
 
-    const data = await response.json();
+    let data = await response.json();
+      data = data.map((item: any) => ({
+        ...item,
+        country: item.country?.trim() ? item.country : "No country",
+      }));
     setCountryCount(data.length);
     setCountryData(data);
     // console.log("Countries:", data);
@@ -181,9 +185,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="flex justify-evenly h-[50vh] max-h[50vh]">
+        <div className="flex justify-evenly h-[40vh] max-h[40vh]">
           <div className="w-[50vw]">
-            <DonutChart chartData={countryData} chartHeightVH={50} innerRadiusVW={40} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/>
+            <DonutChart chartData={countryData} chartHeightVH={30} innerRadiusVW={20} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/>
           </div>
           <div className="w-full">
             <SubsAreaChart chartData={newSubs}  />
