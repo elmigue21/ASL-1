@@ -629,11 +629,13 @@ const prevPage = () => {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
+
+        
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of {tableCount}{" "}
           row(s) selected.
         </div>
-        <div className="space-x-2">
+        <div className="flex flex-row space-x-2">
           <Button
             variant="outline"
             size="sm"
@@ -645,16 +647,7 @@ const prevPage = () => {
           >
             Previous
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              // handleNextPage();
-              nextPage();
-            }}
-          >
-            Next
-          </Button>
+
           <div className="flex items-center space-x-2">
   {visiblePages().map((page) => (
     <button
@@ -666,6 +659,19 @@ const prevPage = () => {
     </button>
   ))}
 </div>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              // handleNextPage();
+              nextPage();
+            }}
+            className="text-2xl"
+          >
+            ►
+          </Button>
+
         </div>
       </div>
     </div>
