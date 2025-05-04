@@ -13,7 +13,7 @@ const Navbar = () => {
   };
   return (
     <div className="z-50">
-      <div className="absolute left-0 top-0 h-[11vh] w-full bg-white text-black shadow-[0px_2px_10px_-3px_#000000] z-50 flex items-center px-4 overflow-hidden">
+      <div className="fixed left-0 top-0 h-[11vh] w-full bg-white text-black shadow-[0px_2px_10px_-3px_#000000] z-50 flex items-center px-4 overflow-hidden">
         <div className="absolute left-0 top-0 h-[11vh] w-[8.35vw] bg-[#1e2e80] z-50 flex justify-center items-center">
           <ul>
             <img
