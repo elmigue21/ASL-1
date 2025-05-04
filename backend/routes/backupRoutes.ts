@@ -1,11 +1,12 @@
 import { Router } from "express";
-import { /* backupBucket, */ backupData, getBackup, grabBucket } from "../controllers/backupController";
+import { backupBucket, /* backupData, */ getBackups, getReportsAndExcel, grabBucket } from "../controllers/backupController";
 const router = Router();
 
-router.get("/backupData", backupData);
-router.get("/getBackups",getBackup);
-// router.get("/backupBucket", backupBucket);
+// route r.get("/backupData", backupData);
+router.get("/getBackups",getBackups);
+router.get("/backupBucket", backupBucket);
 router.get("/grabBucket",grabBucket);
+router.get("/getReportsAndExcel",getReportsAndExcel);
 
 
 
