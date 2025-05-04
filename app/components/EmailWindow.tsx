@@ -96,14 +96,14 @@ const emailIds = Array.isArray(selectedEmails)
           <img src="rectangle-xmark-red.png" alt="" className="scale-50 hidden group-hover:block"/>
         </button>
       </div>
-      <div className="overflow-x-auto overflow-y-clip whitespace-nowrap gap-2 h-15 touch-auto flex border-y-2">
+      <div className="overflow-x-auto overflow-y-clip whitespace-nowrap gap-2 h-15 touch-auto flex border-y-2 ">
         {selectedEmails.map((email, index) => {
           return (
             <div
               key={index}
-              className="bg-green-200 rounded-3xl m-2 p-2 flex items-center justify-center w-fit"
+              className="bg-green-200 rounded-3xl m-2 p-2 flex items-center justify-center w-fit max-w-xs"
             >
-              {email.email}
+             <span className='truncate'>{email.email}</span> 
               
               <button className="group relative flex items-center justify-center cursor-pointer " onClick={()=>{removeClicked(email)}}>
                 <img src="circle-xmark.png" alt="" className="scale-50 block group-hover:hidden"/>
