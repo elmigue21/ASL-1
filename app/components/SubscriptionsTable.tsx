@@ -114,6 +114,7 @@ const fetchSubscriptions = async ({
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // const [maxPages, setMaxPages] = useState<number | null>(null);
 
   const { data, fetchNextPage, fetchPreviousPage, isLoading } =
@@ -127,6 +128,8 @@ const fetchSubscriptions = async ({
       refetchOnWindowFocus: false,
     });
 =======
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 const useSubscriptions = () => {
   useQuery({
     queryKey: [
@@ -137,6 +140,9 @@ const useSubscriptions = () => {
     placeholderData: true,
   });
 }
+<<<<<<< HEAD
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+=======
 >>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 
 // const [maxPages, setMaxPages] = useState<number | null>(null);
@@ -256,7 +262,11 @@ const prevPage = () => {
     const total = pageCount? pageCount : 0;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       const currentPage = pagination.pageIndex + 1; // adjust because pageIndex is 0-based
+=======
+      const currentPage = pagination.pageIndex; // adjust because pageIndex is 0-based
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 =======
       const currentPage = pagination.pageIndex; // adjust because pageIndex is 0-based
 >>>>>>> b39cb58eb801c187a46235366604c56e5104695a
@@ -679,7 +689,11 @@ const prevPage = () => {
     <button
       key={page}
 <<<<<<< HEAD
+<<<<<<< HEAD
       // onClick={() => handlePageClick(page)}
+=======
+      onClick={() => goToPage(page)}
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 =======
       onClick={() => goToPage(page)}
 >>>>>>> b39cb58eb801c187a46235366604c56e5104695a

@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
 =======
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 import { Separator } from "@/components/ui/separator";
 
 import UploadTab from "./UploadTab";
@@ -16,6 +19,9 @@ import BackupsTab from "./BackupsTab";
 
 function UploadPage() {
 /*   const [file, setFile] = useState<File | null>(null);
+<<<<<<< HEAD
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+=======
 >>>>>>> b39cb58eb801c187a46235366604c56e5104695a
   const [isUploading, setIsUploading] = useState(false);
 
@@ -66,6 +72,7 @@ function UploadPage() {
       setIsUploading(false);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
   };
 
   return (
@@ -80,6 +87,8 @@ function UploadPage() {
         {isUploading ? "Uploading..." : "Upload Excel"}
       </Button>
 =======
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
   }; */
 
   const navItems = [
@@ -135,6 +144,9 @@ const [selectedNav, setSelectedNav] = useState("");
         {selectedNav === "Data Upload" && <UploadTab />}
         {/* {selectedNav === "Reports" && <ReportsTab />} */}
       </div>
+<<<<<<< HEAD
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+=======
 >>>>>>> b39cb58eb801c187a46235366604c56e5104695a
     </div>
   );

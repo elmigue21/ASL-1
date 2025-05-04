@@ -44,6 +44,7 @@ function AddAccPage() {
   const [city, setCity] = useState("Manila");
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         const removeEmail = (indexToRemove:number) => {
           setEmails((prevEmails) =>
             prevEmails.filter((_, index) => index !== indexToRemove)
@@ -173,11 +174,16 @@ return (
                 setPhoneInput("");}}}>Add phone</Button>
             </div>
 =======
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
   const [occupation, setOccupation] = useState("Developer");
   const [industry, setIndustry] = useState("TECH");
   const [company, setCompany] = useState("Google");
   const [companyLinkedIn, setCompanyLinkedIn] = useState("linkedin.com");
   const [companyWebsite, setCompanyWebsite] = useState("facebook.com");
+<<<<<<< HEAD
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+=======
 >>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 
   const [phoneInput, setPhoneInput] = useState("123124");
@@ -376,6 +382,7 @@ return (
           </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         <div className="flex flex-row gap-x-[10vw]">
           <div className="flex-col">
             <div className="text-[0.85vw]">Email</div>
@@ -400,6 +407,8 @@ return (
                       <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px] z-50">
                         {email}
 =======
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
           <div className="flex flex-row gap-x-[10vw]">
             <div className="flex-col">
               <div className="text-[0.85vw]">Email</div>
@@ -419,6 +428,9 @@ return (
                         <div className="absolute top-1/2 right-2 -translate-y-1/2 text-black cursor-pointer">
                           ▼
                         </div>
+<<<<<<< HEAD
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+=======
 >>>>>>> b39cb58eb801c187a46235366604c56e5104695a
                       </div>
                     </PopoverTrigger>
