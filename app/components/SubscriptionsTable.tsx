@@ -50,6 +50,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import {Email} from "@/types/email"
 import { useCallback } from "react";
+import { useQuery,keepPreviousData } from "@tanstack/react-query";
+import { Pagination } from "@/components/ui/pagination";
 
 export function SubscriptionsTable() {
 
@@ -76,20 +78,23 @@ export function SubscriptionsTable() {
   const [searchBarValue, setSearchBarValue] = useState<string>("");
   const [appliedSearchBarValue, setAppliedSearchBarValue] = useState<string>("");
 const queryClient = useQueryClient();
-const fetchSubscriptions = async ({ pageParam = 1 }) => {
-  const pageSize = 10; // Fixed page size
+const fetchSubscriptions = async ({
+  queryKey,
+}: {
+  queryKey: [string, {pageIndex:number, pageSize:number}];
+}) => {
+  // const pageSize = 10; // Fixed page size
+    const [,paginationVal] = queryKey;
 
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData.session?.access_token;
 
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
-
-if(!token){
-  return;
-}
-
+  if (!token) {
+    return;
+  }
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/table?page=${pageParam}&pageSize=${pageSize}&search=${appliedSearchBarValue}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/table?page=${paginationVal.pageIndex + 1}&pageSize=${paginationVal.pageSize}&search=${appliedSearchBarValue}`,
     {
       method: "GET",
       headers: {
@@ -104,11 +109,11 @@ if(!token){
   }
 
   const result = await response.json();
-  console.log('table data:',result.data)
-return result.data;
-
+  console.log("table data:", result.data);
+  return result.data;
 };
 
+<<<<<<< HEAD
 // const [maxPages, setMaxPages] = useState<number | null>(null);
 
   const { data, fetchNextPage, fetchPreviousPage, isLoading } =
@@ -121,27 +126,104 @@ return result.data;
       },
       refetchOnWindowFocus: false,
     });
+=======
+const useSubscriptions = () => {
+  useQuery({
+    queryKey: [
+      'subscriptions',
+      pagination,
+    ],
+    queryFn: fetchSubscriptions,
+    placeholderData: true,
+  });
+}
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 
-  const handleNextPage = useCallback(async () => {
-    const result = await fetchNextPage();
-    console.log(result.data?.pages);
-    setPagination({
-      pageIndex: pagination.pageIndex + 1,
-      pageSize: pagination.pageSize,
-    });
-    table.nextPage();
-  }, [pagination.pageIndex, pagination.pageSize]);
+// const [maxPages, setMaxPages] = useState<number | null>(null);
+// const [page, setPage] = useState(1);
+  // const { data, fetchNextPage, fetchPreviousPage, isLoading } =
+  //   useInfiniteQuery({
+  //     queryKey: ["subscriptions", pagination.pageIndex],
+  //     queryFn: fetchSubscriptions,
+  //     initialPageParam: 1,
+  //     getNextPageParam: (lastPage, allPages, lastPageParam) => {
+  //       return lastPage?.length === 10 ? lastPageParam + 1 : undefined;
+  //     },
+  //     refetchOnWindowFocus: false,
+  //   });
 
-  const handlePreviousPage = useCallback(async () => {
-    await fetchPreviousPage();
-    setPagination({
-      pageIndex: pagination.pageIndex - 1,
-      pageSize: pagination.pageSize,
-    });
-    table.previousPage();
-  }, [pagination.pageIndex, pagination.pageSize]);
+//   const handleNextPage = useCallback(async () => {
+//     const result = await fetchNextPage();
+//     console.log(result.data?.pages);
+//     setPagination({
+//       pageIndex: pagination.pageIndex + 1,
+//       pageSize: pagination.pageSize,
+//     });
+//     table.nextPage();
+//   }, [pagination.pageIndex, pagination.pageSize]);
+
+//   const handlePreviousPage = useCallback(async () => {
+//     await fetchPreviousPage();
+//     setPagination({
+//       pageIndex: pagination.pageIndex - 1,
+//       pageSize: pagination.pageSize,
+//     });
+//     table.previousPage();
+//   }, [pagination.pageIndex, pagination.pageSize]);
+
+// const jumpPage = async (page: number) => {
+//   // Refetch the page using the query's `fetchQuery` method
+//   await queryClient.fetchQuery({
+//     queryKey: ["subscriptions", page], // Ensure the query key has the correct page parameter
+//     queryFn: () => fetchSubscriptions({ pageParam: page }), // Manually fetch data for this page
+//   });
+
+//   // Update the pagination state
+//   setPagination({ ...pagination, pageIndex: page });
+// };
+
+//  const [page,setPage] = useState<number>(1);
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: [
+      "subscriptions",
+      // page,
+      // pagination.pageIndex,
+      // pagination.pageSize,
+      pagination
+    ],
+    queryFn: fetchSubscriptions,
+    placeholderData:true,
+  });
+   const subscriptions = data || [];
+
+  // const {data,isLoading,isError} = useQuery({["subscriptions"]})
 
 
+  const goToPage = (pageNum : number) => {
+    if (pageNum >= 1) {
+      console.log('PAGE NUMBER', pageNum)
+      // setPage(pageNum);
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: pageNum - 1,
+      }));
+    }
+  };
+
+const nextPage = () => {
+  setPagination((prev) => ({
+    ...prev,
+    pageIndex: prev.pageIndex + 1,
+  }));
+};
+
+const prevPage = () => {
+  setPagination(prev => ({
+    ...prev,
+    pageIndex: prev.pageIndex - 1,
+  }));
+};
 
 
   const [tableCount, setTableCount] = useState<number | null>(null);
@@ -173,7 +255,11 @@ return result.data;
     const pages = [];
     const total = pageCount? pageCount : 0;
 
+<<<<<<< HEAD
       const currentPage = pagination.pageIndex + 1; // adjust because pageIndex is 0-based
+=======
+      const currentPage = pagination.pageIndex; // adjust because pageIndex is 0-based
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 
 
     let start = Math.max(currentPage - 2, 1);
@@ -354,10 +440,12 @@ return result.data;
   );
 
 
-  const subscriptions = React.useMemo(
-    () => data?.pages?.flatMap((page) => page) ?? [],
-    [data]
-  );
+  // const subscriptions = React.useMemo(
+  //   () => data?.pages?.flatMap((page) => page) ?? [],
+  //   [data]
+  // );
+
+
 
 
   const table = useReactTable({
@@ -374,6 +462,8 @@ return result.data;
     getExpandedRowModel: getExpandedRowModel(), // ✅ Enable expanded row model
     getRowCanExpand: () => true,
     enableRowSelection: true,
+    manualPagination:true,
+    // pageCount:pageCount,
     state: {
       sorting,
       columnFilters,
@@ -411,7 +501,7 @@ return result.data;
 
   const searchButtonClicked = async () =>{
           await queryClient.removeQueries({ queryKey: ["subscriptions"] });
-          setPagination({ pageIndex: 0, pageSize: 10 });
+          setPagination({ pageIndex: 1, pageSize: 10 });
   }
   
 
@@ -424,6 +514,7 @@ return result.data;
           onChange={(event) => setSearchBarValue(event.target.value)}
           className="max-w-sm"
         />
+        <Button onClick={()=>{ goToPage(3)/* console.log(subscriptions)} */}}>JUMP</Button>
         <Button
           onClick={() => {
             setAppliedSearchBarValue(searchBarValue);
@@ -566,7 +657,8 @@ return result.data;
             variant="outline"
             size="sm"
             onClick={() => {
-              handlePreviousPage();
+              // handlePreviousPage();
+              prevPage();
             }}
             disabled={!table.getCanPreviousPage()}
           >
@@ -576,7 +668,8 @@ return result.data;
             variant="outline"
             size="sm"
             onClick={() => {
-              handleNextPage();
+              // handleNextPage();
+              nextPage();
             }}
           >
             Next
@@ -585,7 +678,11 @@ return result.data;
   {visiblePages().map((page) => (
     <button
       key={page}
+<<<<<<< HEAD
       // onClick={() => handlePageClick(page)}
+=======
+      onClick={() => goToPage(page)}
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
       className={`px-3 py-1 border rounded ${page - 1 === pagination.pageIndex? 'bg-blue-500 text-white' : ''}`}
     >
       {page}

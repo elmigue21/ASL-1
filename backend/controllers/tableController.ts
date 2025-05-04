@@ -8,16 +8,12 @@ interface AuthenticatedRequest extends Request {
   user?: User | null;
 }
 
-
-
-// Get All Subscriptions
 export const getAllSubscriptions : RequestHandler = async (req, res) => {
 
   try {
 
     
 const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
-console.log("palatandaan", supabaseUser);
 if (!supabaseUser) {
   res.status(401).json({ error: "Unauthorized" });
   return;
@@ -25,8 +21,13 @@ if (!supabaseUser) {
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;
 
+      // const page = parseInt(req.query.page) || 1; // Default to page 1
+      // const limit = parseInt(req.query.limit) || 10;
+
     const start = (page - 1) * pageSize;
     const end = start + pageSize - 1;
+
+    console.log('PAGEE!!', page)
 
 let query = supabaseUser
   .from("subscribers")
@@ -47,7 +48,6 @@ let query = supabaseUser
       query = query.or(
         `first_name.ilike.%${req.query.search}%,last_name.ilike.%${req.query.search}%`
       );
-        // .or(`last_name.ilike.%${req.query.search}%`);
     }
 
     const { data, error } = await query;
@@ -58,8 +58,8 @@ let query = supabaseUser
     }
 
     res.json({
-      data: data || [], // ✅ This is an array
-      nextCursor: data && data.length === pageSize ? page + 1 : null, // ✅ Corrected check
+      data: data || [],
+      nextCursor: data && data.length === pageSize ? page + 1 : null, 
     });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
