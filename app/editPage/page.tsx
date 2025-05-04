@@ -7,16 +7,19 @@ return (
     <Navbar />
     <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh] px-[3vw] py-[2vh]">
         <div className="font-bold text-[#1E2E80] text-[1.60vw]">Edit Subscriber Account</div>
-        <div className="w-auto h-[77vh] rounded-[0.60vw] shadow-2xl py-[6vh] px-[2.5vw]">
+        <div className="w-auto h-[77vh] rounded-[0.60vw] shadow-lg py-[6vh] px-[2.5vw]">
             <div className="text-[#2F80ED] text-[1vw]">Personal Information</div>
             <div className="flex flex-row gap-x-[10vw]">
                 <div className="flex-col">
                     <div className="text-[0.85vw]">First Name <span className="text-red-600">*</span></div>
-                    <div className="text-[0.85vw]"> <input type="text" className="border border-[rgba(0,0,0,0.4)] p-[1vw] h-[4vh] w-[18vw] text-[#121212] rounded-[0.40vw]" required/></div>
+                    <div className="text-[0.85vw]"> 
+                        <input type="text" className="border border-[rgba(0,0,0,0.4)] p-[1vw] h-[4vh] w-[18vw] text-[#121212] rounded-[0.40vw]" placeholder="Subscriber First Name" disabled/>
+                        </div>
                 </div>
                 <div className="flex-col">
                     <div className="text-[0.85vw]">Last Name</div>
-                    <div className="text-[0.85vw]"> <input type="text" className="border border-[rgba(0,0,0,0.4)] p-[1vw] h-[4vh] w-[18vw] text-[#121212] rounded-[0.40vw]" required/></div>
+                    
+                    <div className="text-[0.85vw]"> <input type="text" className="border border-[rgba(0,0,0,0.4)] p-[1vw] h-[4vh] w-[18vw] text-[#121212] rounded-[0.40vw]" placeholder="Subscriber Surname" disabled/></div>
                 </div>
                 <div className="flex-col">
                     <div className="text-[0.85vw]">Phone Number</div>
