@@ -2,6 +2,7 @@
 import React, { Suspense } from 'react'
 import { SubscriptionsTable } from '../components/SubscriptionsTable'
 import Navbar from '../components/Navbar'
+import ViewSubscriber from '../components/ViewSubscriber'
 import { Button } from '@/components/ui/button';
 // import { supabase } from '@/lib/supabase';
 // import EmailWindow from '../components/EmailWindow';
@@ -46,6 +47,9 @@ function TablesPage() {
   };
   return (
     <div>
+      
+      <ViewSubscriber/> 
+      
       <Navbar />
       <div className="z-45 absolute top-[11vh] left-[8.35vw] p-5">
         {/* <Button onClick={()=>{openClicked()}}>OPEN WINDOW</Button> */}

@@ -15,7 +15,7 @@ import {
   removeSelectedEmails,
 } from "@/store/slices/subscriptionSlice";
 import { Email } from '@/types/email';
-
+import CloseButton from './CloseButton';
 
 
 
@@ -90,11 +90,9 @@ const emailIds = Array.isArray(selectedEmails)
           <img className="scale-50" src="envelope-plus.png" alt="email icon"/>
           <h1 className="text-lg font-medium">Send Email</h1>
         </div>
-         
-        <button className="group relative flex items-center justify-center cursor-pointer w-fit h-fit" onClick={()=>{closeClicked()}}>
-          <img src="rectangle-xmark.png" alt="" className="scale-50 block group-hover:hidden"/>
-          <img src="rectangle-xmark-red.png" alt="" className="scale-50 hidden group-hover:block"/>
-        </button>
+        
+        <CloseButton onClick={()=>{closeClicked()}}/>
+
       </div>
       <div className="overflow-x-auto overflow-y-clip whitespace-nowrap gap-2 h-15 touch-auto flex border-y-2 ">
         {selectedEmails.map((email, index) => {
