@@ -7,8 +7,13 @@ import { SubsAreaChart } from "../components/SubsAreaChart";
 import Navbar from "../components/Navbar";
 import DateDisplay from "../components/DateDisplay";
 import { useState, useEffect } from "react";
+import { CountryBarChart } from "../components/CountryBarChart";
 
 import { supabase } from "../../lib/supabase";
+import BarChartPopup from "./BarChartPopup";
+import { createContext } from "react";
+import { PopupProvider } from "../context/PopupContext";
+import { usePopupContext } from "../context/PopupContext";
 
 const Dashboard = () => {
   const [countryCount, setCountryCount] = useState(0);
@@ -34,12 +39,12 @@ const Dashboard = () => {
     );
 
     let data = await response.json();
-      data = data.map((item: any) => ({
-        ...item,
-        country: item.country?.trim() ? item.country : "No country",
-      }));
+      // data = data.map((item: any) => ({
+      //   ...item,
+      //   country: item.country?.trim() ? item.country : "No country",
+      // }));
     setCountryCount(data.length);
-    setCountryData(data);
+    // setCountryData(data);
     // console.log("Countries:", data);
   };
 
@@ -134,6 +139,8 @@ const Dashboard = () => {
     setNewSubs(data);
   };
 
+// const { isOpen } = usePopupContext();
+
   useEffect(() => {
     fetchCountryCount();
     fetchActiveSubs();
@@ -142,58 +149,68 @@ const Dashboard = () => {
     fetchNewSubs();
   }, []);
 
+  // const [popupOpen,setPopupOpen] = useState(false);
+  // const handlePopupOpen = () => {
+  //   setPopupOpen(!popupOpen);
+  // }
+
+
+
   return (
     <>
-      <Navbar />
+      <PopupProvider>
 
-      <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh]">
-        <div
-          className="m-[5vh]"
-          style={{ fontFamily: "'Nunito Sans', sans-serif" }}
-        >
-          <div className="flex justify-evenly gap-[1vh] h-[19vh]">
-            <Card className="flex-1 p-[0.70vw] gap-[4vh] rounded-[1vh]">
-              <div className="flex text-[1vw] justify-center">
-                <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
-                  Total Subscribers
-                </CardHeader>
-                <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
-                  Active Subscribers
-                </CardHeader>
-                <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
-                  Inactive Subscribers
-                </CardHeader>
-                <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
-                  Countries
-                </CardHeader>
-              </div>
-              <div className="flex text-[2vw] text-center font-bold text-blue-900 -mt-[1.8vh] height[1vh]">
-                <CardContent className="flex-1">{totalSub}</CardContent>
-                <CardContent className="flex-1">{activeSub}
-                </CardContent>
-                <CardContent className="flex-1">
-                  {inactiveSub}
-                </CardContent>
-                <CardContent className="flex-1">
-                  {countryCount}
-                </CardContent>
-              </div>
-            <div className="-my-[3vh]">
-            <DateDisplay />
+        <Navbar />
+
+        <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh]">
+          <div
+            className="m-[5vh]"
+            style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+          >
+            <div className="flex justify-evenly gap-[1vh] h-[19vh]">
+              <Card className="flex-1 p-[0.70vw] gap-[4vh] rounded-[1vh]">
+                <div className="flex text-[1vw] justify-center">
+                  <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
+                    Total Subscribers
+                  </CardHeader>
+                  <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
+                    Active Subscribers
+                  </CardHeader>
+                  <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
+                    Inactive Subscribers
+                  </CardHeader>
+                  <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
+                    Countries
+                  </CardHeader>
+                </div>
+                <div className="flex text-[2vw] text-center font-bold text-blue-900 -mt-[1.8vh] height[1vh]">
+                  <CardContent className="flex-1">{totalSub}</CardContent>
+                  <CardContent className="flex-1">{activeSub}</CardContent>
+                  <CardContent className="flex-1">{inactiveSub}</CardContent>
+                  <CardContent className="flex-1">{countryCount}</CardContent>
+                </div>
+                <div className="-my-[3vh]">
+                  <DateDisplay />
+                </div>
+              </Card>
             </div>
-            </Card>
+          </div>
+
+          <div className="flex justify-evenly h-[40vh] max-h[40vh]">
+            <div className="w-[50vw]">
+              <CountryBarChart />
+              {/* <DonutChart chartData={countryData} chartHeightVH={30} innerRadiusVW={20} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/> */}
+            </div>
+            <div className="w-full">
+              <SubsAreaChart chartData={newSubs} />
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-evenly h-[40vh] max-h[40vh]">
-          <div className="w-[50vw]">
-            <DonutChart chartData={countryData} chartHeightVH={30} innerRadiusVW={20} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/>
-          </div>
-          <div className="w-full">
-            <SubsAreaChart chartData={newSubs}  />
-          </div>
-        </div>
-      </div>
+        {/* <div className="fixed z-50 w-full h-full flex items-center justify-center bottom-20"> */}
+          <BarChartPopup />
+        {/* </div> */}
+      </PopupProvider>
     </>
   );
 };

@@ -14,6 +14,7 @@ import tableRoutes from "./routes/tableRoutes";
 import emailRoutes from "./routes/emailRoutes";
 import backupRoutes from './routes/backupRoutes'
 import uploadRoutes from './routes/uploadRoutes'
+import downloadRoutes from './routes/downloadRoutes';
 
 dotenv.config();
 const app = express();
@@ -24,7 +25,7 @@ app.use(
       process.env.NODE_ENV?.trim() === "production" ? "https://asl-topaz.vercel.app"
         : "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type, Authorization"],
+    allowedHeaders: ["Content-Type, Authorization, Content-Disposition"],
     credentials:true
   })
 );
@@ -79,6 +80,7 @@ apiRouter.use("/table", authenticateUser,tableRoutes);
 apiRouter.use("/email"/* ,authenticateUser */,emailRoutes);
 apiRouter.use('/backups',authenticateUser,backupRoutes);
 apiRouter.use('/upload',authenticateUser,uploadRoutes);
+apiRouter.use('/download',authenticateUser,downloadRoutes);
 
 
 app.use("/api", apiRouter);

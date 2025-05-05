@@ -13,6 +13,7 @@ function UploadPage() {
 =======
 >>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 import { Separator } from "@/components/ui/separator";
+import ReportsTab from "./ReportsTab";
 
 import UploadTab from "./UploadTab";
 import BackupsTab from "./BackupsTab";
@@ -94,10 +95,10 @@ function UploadPage() {
   const navItems = [
     {label:"Backups",color:"bg-red-500",},
     {label:"Data Upload",color:"bg-orange-500",},
-    {label:"Reports",color:"bg-green-500",},
+    {label:"Reports",color:"bg-blue-500",},
 ];
 
-const [selectedNav, setSelectedNav] = useState("");
+const [selectedNav, setSelectedNav] = useState("Backups");
 
   return (
     <div className="flex border border-slate-400 box-border h-[100vh]">
@@ -140,8 +141,21 @@ const [selectedNav, setSelectedNav] = useState("");
       </div> */}
       </div>
       <div className="flex-1 p-5">
-        {selectedNav === "Backups" && <BackupsTab />}
-        {selectedNav === "Data Upload" && <UploadTab />}
+        {/* {selectedNav === "Backups" && <BackupsTab />}
+        {selectedNav === "Data Upload" && <UploadTab />} */}
+        <div style={{ display: selectedNav === "Backups" ? "block" : "none" }}>
+          <BackupsTab />
+        </div>
+        <div
+          style={{ display: selectedNav === "Data Upload" ? "block" : "none" }}
+        >
+          <UploadTab />
+        </div>
+        <div
+          style={{ display: selectedNav === "Reports" ? "block" : "none" }}
+        >
+          <ReportsTab />
+        </div>
         {/* {selectedNav === "Reports" && <ReportsTab />} */}
       </div>
 <<<<<<< HEAD
