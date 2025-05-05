@@ -4,14 +4,26 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+function UploadPage() {
+  const [file, setFile] = useState<File | null>(null);
+=======
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 import { Separator } from "@/components/ui/separator";
 import ReportsTab from "./ReportsTab";
-
+import Navbar from "../components/Navbar";
 import UploadTab from "./UploadTab";
 import BackupsTab from "./BackupsTab";
 
 function UploadPage() {
 /*   const [file, setFile] = useState<File | null>(null);
+<<<<<<< HEAD
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
   const [isUploading, setIsUploading] = useState(false);
 
   const handleUpload = async () => {
@@ -60,6 +72,24 @@ function UploadPage() {
     } finally {
       setIsUploading(false);
     }
+<<<<<<< HEAD
+<<<<<<< HEAD
+  };
+
+  return (
+    <div className="space-y-4">
+      <Input
+        type="file"
+        accept=".xlsx,.xls,.csv"
+        onChange={(e) => setFile(e.target.files?.[0] || null)}
+        className="border border-black shadow-xl bg-orange-100 hover:bg-orange-200 w-[500px] h-[200px]"
+      />
+      <Button onClick={handleUpload} disabled={isUploading}>
+        {isUploading ? "Uploading..." : "Upload Excel"}
+      </Button>
+=======
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
   }; */
 
   const navItems = [
@@ -71,7 +101,9 @@ function UploadPage() {
 const [selectedNav, setSelectedNav] = useState("Backups");
 
   return (
-    <div className="flex border border-slate-400 box-border h-[100vh]">
+    <>
+    <Navbar />
+    <div className="flex border border-slate-400 box-border z-45 absolute top-[11vh] left-[8.35vw] w-[91.6vw] h-[89vh]">
       <div className="box-border border-3 border-slate-900 rounded p-2">
         <h1 className="p-5">Backup & Retrieval Console</h1>
         <Separator />
@@ -128,7 +160,12 @@ const [selectedNav, setSelectedNav] = useState("Backups");
         </div>
         {/* {selectedNav === "Reports" && <ReportsTab />} */}
       </div>
+<<<<<<< HEAD
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
     </div>
+    </>
   );
 }
 

@@ -21,7 +21,7 @@ const Dashboard = () => {
   const [activeSub, setActiveSub] = useState(0);
   const [inactiveSub, setInactiveSub] = useState(0);
   const [countryData, setCountryData] = useState([]);
-  const [newSubs, setNewSubs] = useState<{ day: Date; count: number }[]>([]);
+  const [newSubs, setNewSubs] = useState<{ date: Date; subscriber_count: number }[]>([]);
 
   const fetchCountryCount = async () => {
     const { data: sessionData } = await supabase.auth.getSession();
@@ -202,7 +202,7 @@ const Dashboard = () => {
               {/* <DonutChart chartData={countryData} chartHeightVH={30} innerRadiusVW={20} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/> */}
             </div>
             <div className="w-full">
-              <SubsAreaChart chartData={newSubs} />
+              <SubsAreaChart /* chartData={newSubs} */ />
             </div>
           </div>
         </div>

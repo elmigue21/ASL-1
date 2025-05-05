@@ -6,10 +6,10 @@ interface AuthenticatedRequest extends Request {
   user?: User | null;
 }
 
-export const getActiveSubsCount = async (req: Request, res: Response) => {
+export const getActiveSubsCount : RequestHandler = async (req, res) => {
   try {
 
-        const supabaseUser = req.supabaseUser;
+        const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
         if (!supabaseUser) {
           return;
         }
@@ -37,10 +37,10 @@ export const getActiveSubsCount = async (req: Request, res: Response) => {
     return;
   }
 };
-export const getInactiveSubsCount = async (req: Request, res: Response) => {
+export const getInactiveSubsCount : RequestHandler = async (req, res) => {
   try {
 
-        const supabaseUser = req.supabaseUser;
+        const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
         if (!supabaseUser) {
           return;
         }
@@ -70,7 +70,7 @@ export const getInactiveSubsCount = async (req: Request, res: Response) => {
 export const getSubCount: RequestHandler = async (req, res) => {
   try {
 
-    const supabaseUser = req.supabaseUser;
+    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
     if(!supabaseUser){
       return;
     }
@@ -99,7 +99,7 @@ export const getSubCount: RequestHandler = async (req, res) => {
 export const getCountryCount :RequestHandler = async (req, res) => {
   try {
 
-const supabaseUser = req.supabaseUser;
+const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
 
 if(!supabaseUser){
   return;
@@ -122,19 +122,69 @@ if(!supabaseUser){
 
 export const getNewSubscribers: RequestHandler = async (req, res) => {
   try {
-    const supabaseUser = req.supabaseUser;
+    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+    const range = (req.query.range as "7d" | "1m" | "6m" | "1y") || "7d";
 
     if (!supabaseUser) {
+      res.status(401).json({ message: "User not authenticated" });
       return;
     }
 
-    const { data, count, error } = await supabaseUser.rpc('get_new_subs_week');
+    const now = new Date();
+    const from = getFromDate(range);
+    const groupBy = range === "6m" || range === "1y" ? "month" : "day";
+    const formatStr = groupBy === "day" ? "YYYY-MM-DD" : "YYYY-MM";
+
+    console.log("from", from);
+
+    // Refactored Query with Group By
+    // const { data, error } = await supabaseUser
+    //   .from("subscribers")
+    //   .select(`count(*), to_char(created_on, '${formatStr}') as date`)
+    //   .gte("created_on", from.toISOString())
+    //   .lte("created_on", now.toISOString())
+    //   .group("date") // Group by the formatted date
+    //   .order("date");
+    const { data, error } = await supabaseUser.rpc("get_new_subscribers_by_range", {
+      range: "invalid_range", // This will fall back to 7 days as default
+    });
+
+
+    console.log("new subs data", data);
+    console.log("error", error);
+
+    if (error) {
+      res.status(500).json({ message: "Error fetching new subscribers", details: error });
+      return;
+    }
 
     res.status(200).json(data);
-    return
+    return;
   } catch (e) {
     console.error(e);
-    res.status(500).json({message:"error getting new subscribers",details:e});
+    res.status(500).json({ message: "Error getting new subscribers", details: e });
     return;
   }
 };
+
+function getFromDate(range: "7d" | "1m" | "6m" | "1y"): Date {
+  const now = new Date();
+  const from = new Date(now);
+
+  switch (range) {
+    case "7d":
+      from.setDate(now.getDate() - 6);
+      break;
+    case "1m":
+      from.setMonth(now.getMonth() - 1);
+      break;
+    case "6m":
+      from.setMonth(now.getMonth() - 6);
+      break;
+    case "1y":
+      from.setFullYear(now.getFullYear() - 1);
+      break;
+  }
+
+  return from;
+}
