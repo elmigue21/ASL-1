@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { uploadFile } from "../controllers/uploadController";
+import { exportToExcel, uploadFile } from "../controllers/uploadController";
 
 
 import multer from "multer";
@@ -29,6 +29,7 @@ const upload = multer({ storage });
 
 
 router.post("/uploadFile",upload.single('file'), uploadFile);
+router.get("/exportExcel",exportToExcel);
 
 
 

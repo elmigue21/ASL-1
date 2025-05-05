@@ -48,7 +48,7 @@ function TablesPage() {
   return (
     <div>
       
-      <ViewSubscriber/> 
+      
       
       <Navbar />
       <div className="z-45 absolute top-[11vh] left-[8.35vw] p-5">

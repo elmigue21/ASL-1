@@ -10,31 +10,31 @@ interface AuthenticatedRequest extends Request {
 }
 
 // Get All Subscriptions
-export const backupData: RequestHandler = async (req, res) => {
-  try {
-    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
-    if (!supabaseUser) {
-      res.status(401).json({ error: "Unauthorized" });
-      return;
-    }
+// export const backupData: RequestHandler = async (req, res) => {
+//   try {
+//     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+//     if (!supabaseUser) {
+//       res.status(401).json({ error: "Unauthorized" });
+//       return;
+//     }
 
-    const { data, error } = await supabaseUser.rpc("backup_data");
+//     const { data, error } = await supabaseUser.rpc("backup_data");
 
-    if (error) {
-      console.log("error", error);
-      res.status(500).json({ error: error });
-      return;
-    }
+//     if (error) {
+//       console.log("error", error);
+//       res.status(500).json({ error: error });
+//       return;
+//     }
 
-    res.json(data);
-    return;
-  } catch (err) {
-    res.status(500).json({ error: (err as Error).message });
-    return;
-  }
-};
+//     res.json(data);
+//     return;
+//   } catch (err) {
+//     res.status(500).json({ error: (err as Error).message });
+//     return;
+//   }
+// };
 
-export const getBackup: RequestHandler = async (req, res) => {
+export const getBackups: RequestHandler = async (req, res) => {
   try {
     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
     if (!supabaseUser) {
@@ -82,66 +82,73 @@ async function fetchAllRows(tableName: string, supabaseUser: SupabaseClient) {
   return allData;
 }
 
-// export const backupBucket: RequestHandler = async (req, res) => {
-//   try {
-//     const tables = ["subscribers","emails","addresses","companies","phone_numbers","industries","occupations"]; // Modify as needed
-//     let backupData: Record<string, Record<string, any>[]> = {};
+export const backupBucket: RequestHandler = async (req, res) => {
+  try {
+    const tables = [
+      "subscribers",
+      "emails",
+      "addresses",
+      "companies",
+      "phone_numbers",
+      "industries",
+      "occupations",
+    ]; // Modify as needed
+    let backupData: Record<string, Record<string, any>[]> = {};
 
-//     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
-//     if (!supabaseUser) {
-//       return;
-//     }
-//     // console.log('supabase user',supabaseUser)
+    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+    if (!supabaseUser) {
+      return;
+    }
+    // console.log('supabase user',supabaseUser)
 
-//     for (const table of tables) {
-//       backupData[table] = await fetchAllRows(table, supabaseUser);
-//     }
-//     // console.log('backup data',backupData);
+    for (const table of tables) {
+      backupData[table] = await fetchAllRows(table, supabaseUser);
+    }
+    // console.log('backup data',backupData);
 
-//     const backupJSON = JSON.stringify(backupData, null, 2);
-//     const fileName = `backup_${new Date()
-//       .toISOString()
-//       .replace(/[:.]/g, "-")}.json`;
+    const backupJSON = JSON.stringify(backupData, null, 2);
+    const fileSizeBytes = Buffer.byteLength(backupJSON, "utf8");
+   const fileName = `excel-export_${new Date()
+     .toISOString()
+     .replace(/[:.]/g, "-")}.xlsx`;
 
-//     console.log(" backup jsoned");
+    console.log(" backup jsoned");
 
-//     const { data: fileData, error: uploadError } = await supabaseUser.storage
-//       .from("backups")
-//       .upload(fileName, backupJSON, {
-//         cacheControl: "3600",
-//         upsert: true,
-//         contentType: "application/json",
-//       });
+    const { data: fileData, error: uploadError } = await supabaseUser.storage
+      .from("backups")
+      .upload(fileName, backupJSON, {
+        cacheControl: "3600",
+        upsert: true,
+        contentType: "application/json",
+      });
 
-//     console.log(" backup storage");
-//     console.log("UPLOAD ERROR?", uploadError);
-//     if (uploadError) throw uploadError;
+    if (uploadError) throw uploadError;
 
-//     const { data: publicData } = supabaseUser.storage
-//       .from("backups")
-//       .getPublicUrl(fileName);
+    const { data: publicData } = supabaseUser.storage
+      .from("backups")
+      .getPublicUrl(fileName);
 
-//     if (!publicData) {
-//       console.log(" NO FILE FOUND");
-//     }
+    if (!publicData) {
+      console.log(" NO FILE FOUND");
+    }
 
-//     const publicURL = publicData.publicUrl;
+    const publicURL = publicData.publicUrl;
 
-//     const { data: backupTableData, error: backupTableError } =
-//       await supabaseUser.from("backups_data").insert([{ url: publicURL,fileName:fileName }]);
-//     console.log("backupTableData", backupTableData);
-//     console.log("backupTableError", backupTableError);
+    const { data: backupTableData, error: backupTableError } =
+      await supabaseUser
+        .from("backups_data")
+        .insert([
+          { url: publicURL, fileName: fileName, fileSize: fileSizeBytes },
+        ]);
 
-//     res.json({ message: "Backup successful", fileUrl: fileData.path });
-//     return;
-//   } catch (error) {
-//     const err = error as Error;
-//     res.status(500).json({ error: "Backup failed", details: err.message });
-//     return;
-//   }
-// };
-
-
+    res.json({ message: "Backup successful", fileUrl: fileData.path });
+    return;
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).json({ error: "Backup failed", details: err.message });
+    return;
+  }
+};
 
 export const grabBucket: RequestHandler = async (req, res) => {
   try {
@@ -151,36 +158,34 @@ export const grabBucket: RequestHandler = async (req, res) => {
       return;
     }
 
-    console.log('grab bucket backend')
+    console.log("grab bucket backend");
 
     const { data: fileData, error: downloadError } = await supabaseUser.storage
       .from("backups") // Your storage bucket
       .download("backup_2025-04-12T10-15-11-517Z.json"); // Path to the file
 
-      console.log('filedata,',fileData)
+    console.log("filedata,", fileData);
     if (fileData) {
-      console.log('file data', fileData)
+      console.log("file data", fileData);
       const text = await fileData.text(); // Read it as text
       const backupData = JSON.parse(text);
 
       console.log("Parsed backup data:", backupData);
 
-
       const groupedEmails = groupBySubscriberId(backupData.emails, "email");
-      const groupedAddresses = groupBySubscriberId(backupData.addresses, "address");
+      const groupedAddresses = groupBySubscriberId(
+        backupData.addresses,
+        "address"
+      );
 
-
-      const merged = backupData.subscribers.map((sub : any) => ({
+      const merged = backupData.subscribers.map((sub: any) => ({
         ...sub,
         emails: groupedEmails[sub.subscriber_id] || [],
         addresses: groupedAddresses[sub.subscriber_id] || [],
         // Add others here in same way
       }));
 
-
       // console.log(groupedEmails);
-
-
 
       // const { data: insertData, error: insertError } = await supabaseUser
       //   .from("subscribers_duplicate") // Your table name
@@ -192,7 +197,6 @@ export const grabBucket: RequestHandler = async (req, res) => {
       //   console.log("Data inserted successfully:", insertData);
       // }
       res.json({ data: backupData, merged });
-
     }
   } catch (error) {
     const err = error as Error;
@@ -201,11 +205,53 @@ export const grabBucket: RequestHandler = async (req, res) => {
   }
 };
 
-function groupBySubscriberId(data : any , key : any) {
-  return data.reduce((acc : any, item : any) => {
+function groupBySubscriberId(data: any, key: any) {
+  return data.reduce((acc: any, item: any) => {
     const id = item.subscriber_id;
     if (!acc[id]) acc[id] = [];
     acc[id].push(item[key]);
     return acc;
   }, {});
 }
+
+export const getReportsAndExcel: RequestHandler = async (req, res) => {
+  try {
+    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+    if (!supabaseUser) {
+      res.status(403).json({ error: "unauthorized" });
+      return;
+    }
+     const { data: excelData, error: excelError } = await supabaseUser
+       .from("excels_data")
+       .select("*");
+
+     if (excelError) throw excelError;
+
+     // Fetch reports_data
+     const { data: reportsData, error: reportsError } = await supabaseUser
+       .from("reports_data")
+       .select("*");
+
+     if (reportsError) throw reportsError;
+
+     // Merge both arrays
+     const merged = [...excelData, ...reportsData];
+
+    merged.sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime();
+      const dateB = new Date(b.created_at).getTime();
+      return dateB - dateA; // descending
+    });
+
+
+
+
+      res.json({ merged});
+    } catch (error) {
+    const err = error as Error;
+    res.status(500).json({ error: "Grab backup failed", details: err.message });
+    return;
+  }
+};
+
+
