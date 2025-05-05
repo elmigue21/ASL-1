@@ -43,11 +43,148 @@ function AddAccPage() {
   const [state, setState] = useState("NCR");
   const [city, setCity] = useState("Manila");
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+        const removeEmail = (indexToRemove:number) => {
+          setEmails((prevEmails) =>
+            prevEmails.filter((_, index) => index !== indexToRemove)
+          );
+        };
+    
+    //   const handlePhoneChange = (index: number, value: string) => {
+    //     const updatedPhones = [...phoneNumbers];
+    //     updatedPhones[index] = value; // Update the specific phone number
+    //     setPhoneNumbers(updatedPhones);
+    //   };
+    
+    //   const handleEmailChange = (index: number, value: string) => {
+    //     const updatedEmails = [...emails];
+    //     updatedEmails[index] = value; // Update the specific phone number
+    //     setEmails(updatedEmails);
+    //   };
+    
+      const handleSubmit = async () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email validation regex
+    
+        if (phoneNumbers.some((phone) => phone.trim() === "")) {
+          alert("Please fill all phone number fields.");
+          return;
+        }
+    
+        if (
+          emails.some((email) => email.trim() === "" || !emailRegex.test(email))
+        ) {
+          alert("Please enter valid email addresses.");
+          return;
+        }
+    
+        
+          const { data: sessionData, /* error */ } = await supabase.auth.getSession();
+          const token = sessionData.session?.access_token;
+          if (!token) {
+            return;
+          }
+    
+        console.log("submittt");
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/subscriptions/create`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`, // ✅ Attach token in request
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              // Your JSON payload goes here
+              firstName: firstName,
+              lastName: lastName,
+              personLinkedIn:personLinkedIn,
+              personFacebook: personFacebook,
+    
+              phoneNumbers:phoneNumbers,
+              emails:emails,
+    
+              country:country,
+              state:state,
+              city:city,
+              
+              occupation:occupation,
+              industry:industry,
+              company:company,
+              companyLinkedIn:companyLinkedIn,
+              companyWebsite:companyWebsite,
+            }),
+          }
+        );
+    
+        const data = await response.json();
+        return data;
+      };
+    
+return (
+  <>
+    <Navbar />
+    <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh] px-[3vw] py-[2vh]">
+      <div className="font-bold text-[#1E2E80] text-[1.60vw]">
+        Create Subscription Account
+      </div>
+      <div className="w-auto h-[90vh] rounded-[0.60vw] shadow-2xl py-[6vh] px-[2.5vw] mb-[20vh] z-45">
+        <div className="text-[#2F80ED] text-[1vw]">Personal Information</div>
+        <div className="flex flex-row gap-x-[10vw]">
+          <div className="flex-col">
+            <div className="text-[0.85vw]">
+              First Name <span className="text-red-600">*</span>
+            </div>
+            <div className="text-[0.85vw]">
+              {" "}
+              <input
+                type="text"
+                className="border border-[rgba(0,0,0,0.4)] p-[1vw] h-[4vh] w-[18vw] text-[#121212] rounded-[0.40vw]"
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex-col">
+            <div className="text-[0.85vw]">Last Name</div>
+            <div className="text-[0.85vw]">
+              {" "}
+              <input
+                type="text"
+                className="border border-[rgba(0,0,0,0.4)] p-[1vw] h-[4vh] w-[18vw] text-[#121212] rounded-[0.40vw]"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex-col">
+            <div className="text-[0.85vw]">Phone Number</div>
+            <div className="flex">
+              <Input
+                value={phoneInput}
+                onChange={(e) => {
+                  setPhoneInput(e.target.value);
+                }}
+              />
+              <Button onClick={()=>{
+                if(phoneInput){
+                addPhoneNumber(phoneInput);
+                setPhoneInput("");}}}>Add phone</Button>
+            </div>
+=======
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
   const [occupation, setOccupation] = useState("Developer");
   const [industry, setIndustry] = useState("TECH");
   const [company, setCompany] = useState("Google");
   const [companyLinkedIn, setCompanyLinkedIn] = useState("linkedin.com");
   const [companyWebsite, setCompanyWebsite] = useState("facebook.com");
+<<<<<<< HEAD
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 
   const [phoneInput, setPhoneInput] = useState("123124");
   const [emailInput, setEmailInput] = useState("email@123.com");
@@ -244,6 +381,34 @@ function AddAccPage() {
             <hr className="border-t-[0.3vh] border-black my-[1.50vh] w-[70vw] mx-auto opacity-20" />
           </div>
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+        <div className="flex flex-row gap-x-[10vw]">
+          <div className="flex-col">
+            <div className="text-[0.85vw]">Email</div>
+            <div className="text-[0.85vw]">
+              <div className="flex">
+                <Input
+                  value={emailInput}
+                  onChange={(e) => {
+                    setEmailInput(e.target.value);
+                  }}
+                />
+                <Button onClick={()=>{
+                    if(emailInput){
+                    addEmail(emailInput);
+                     setEmailInput("");}}}>Add Email</Button>
+              </div>
+              <ScrollArea className="h-10 w-48 rounded-md border">
+                <h4>EMAILS</h4>
+                <div>
+                  {emails.map((email, index) => (
+                    <div className="flex justify-between mx-5" key={index}>
+                      <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px] z-50">
+                        {email}
+=======
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
           <div className="flex flex-row gap-x-[10vw]">
             <div className="flex-col">
               <div className="text-[0.85vw]">Email</div>
@@ -263,6 +428,10 @@ function AddAccPage() {
                         <div className="absolute top-1/2 right-2 -translate-y-1/2 text-black cursor-pointer">
                           ▼
                         </div>
+<<<<<<< HEAD
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+=======
+>>>>>>> b39cb58eb801c187a46235366604c56e5104695a
                       </div>
                     </PopoverTrigger>
                     <PopoverContent className="w-[15vw] p-0">
