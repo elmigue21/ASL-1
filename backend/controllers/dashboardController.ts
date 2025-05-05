@@ -127,7 +127,7 @@ export const getNewSubscribers: RequestHandler = async (req, res) => {
 
     if (!supabaseUser) {
       res.status(401).json({ message: "User not authenticated" });
-      return;
+      return;8
     }
 
     const now = new Date();

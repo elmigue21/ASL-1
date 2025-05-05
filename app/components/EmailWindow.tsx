@@ -84,52 +84,36 @@ const emailIds = Array.isArray(selectedEmails)
     };
 
   return openState && (
-<<<<<<< HEAD
-    <div className="fixed bottom-0 w-1/2 h-1/2 right-0 z-50 flex flex-col bg-slate-200 border-black border-2 rounded-t-2xl">
-      <div className="justify-between w-full flex p-5 bg-sky-500 rounded-t-2xl">
-        <h2>EMAIL WINDOW</h2>
-        <h2 onClick={()=>{closeClicked()}}>X</h2>
-=======
     <div className="fixed bottom-0 w-[45vw] top-[11vh] right-0 z-50 flex flex-col bg-white shadow-md shadow-gray-700/80">
       <div className="justify-between w-full flex p-[2vh] items-center">
         <div className='flex items-center'>
           <img className="scale-50" src="envelope-plus.png" alt="email icon"/>
           <h1 className="text-lg font-medium">Send Email</h1>
         </div>
-<<<<<<< HEAD
-        
-        <CloseButton onClick={()=>{closeClicked()}}/>
-
-=======
          
         <button className="group relative flex items-center justify-center cursor-pointer w-fit h-fit" onClick={()=>{closeClicked()}}>
           <img src="rectangle-xmark.png" alt="" className="scale-50 block group-hover:hidden"/>
           <img src="rectangle-xmark-red.png" alt="" className="scale-50 hidden group-hover:block"/>
         </button>
->>>>>>> 0d048fcf5e23aa424d3c5d9426b04d7eff366b67
->>>>>>> origin/develop
       </div>
-      <div className="overflow-x-auto overflow-y-clip whitespace-nowrap gap-2 h-15 touch-auto flex border-y-2 ">
+      <div className="overflow-x-auto overflow-y-clip whitespace-nowrap gap-2 h-15 touch-auto flex">
         {selectedEmails.map((email, index) => {
           return (
             <div
               key={index}
-              className="bg-green-200 rounded-3xl m-2 p-2 flex items-center justify-center w-fit max-w-xs"
+              className="bg-slate-500 rounded-3xl m-1 p-2 flex items-center justify-center"
             >
-             <span className='truncate'>{email.email}</span> 
-              
-              <button className="group relative flex items-center justify-center cursor-pointer " onClick={()=>{removeClicked(email)}}>
-                <img src="circle-xmark.png" alt="" className="scale-50 block group-hover:hidden"/>
-                <img src="circle-xmark-fill-red.png" alt="" className="scale-50 hidden group-hover:block"/>
-              </button>
-              
+              {email.email}
+              <p className="mx-2 hover:cursor-pointer hover:bg-white rounded-full" onClick={()=>{removeClicked(email)}}>
+                X
+              </p>
             </div>
           );
         })}
       </div>
       <Input
         placeholder="Subject..."
-        className="border-0 rounded-none"
+        className="border-1 border-black rounded-none"
         value={subject}
         onChange={(e) => {
           setSubject(e.target.value);
@@ -137,13 +121,13 @@ const emailIds = Array.isArray(selectedEmails)
       />
       <Textarea
         placeholder="Message..."
-        className="border-1 border-y-2 flex-1 rounded-none"
+        className="border-1 border-black flex-1 rounded-none"
         value={message}
         onChange={(e) => {
           setMessage(e.target.value);
         }}
       />
-      <div className="absolute bottom-5 right-5 bg-[color:#1E2E80] text-white rounded-full py-2 px-4 font-medium" onClick={()=>{sendEmailsClicked()}}>
+      <div className="absolute bottom-5 right-5 bg-blue-500 rounded-full p-2" onClick={()=>{sendEmailsClicked()}}>
         SEND
       </div>
     </div>
