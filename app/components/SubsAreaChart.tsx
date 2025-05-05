@@ -14,6 +14,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useState,useEffect } from "react"
 
 const chartConfig = {
   count: {
@@ -21,14 +22,47 @@ const chartConfig = {
     color: "#1A2B88",
   },
 } satisfies ChartConfig
+import { supabase } from "@/lib/supabase"
 
 interface ChartDataProps {
   day: Date,
   count:number,
 }
 
-export function SubsAreaChart({chartData} : {chartData:ChartDataProps[]}) {
-  console.log('CHART DATAAAAAA', chartData)
+
+export function SubsAreaChart(/* {chartData} : {chartData:ChartDataProps[]} */) {
+  // console.log('CHART DATAAAAAA', chartData)
+
+  const [newSubs, setNewSubs] = useState<{ date: Date; subscriber_count: number }[]>([]);
+
+  const fetchNewSubs = async () => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+
+    if (!token) {
+      return;
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/dashboard/newSubs`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ Attach token in request
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = await response.json();
+    // console.log("NEW SUBS:", data);
+    console.log("datga",data)
+    setNewSubs(data);
+  };
+
+useEffect(()=>{
+  fetchNewSubs()
+},[])
   return (
     <Card className="shadow-none border-0">
       <CardHeader>
@@ -41,7 +75,7 @@ export function SubsAreaChart({chartData} : {chartData:ChartDataProps[]}) {
         >
           <AreaChart
             accessibilityLayer
-            data={chartData}
+            data={newSubs}
             margin={{
               left: 12,
               right: 12,
@@ -49,7 +83,7 @@ export function SubsAreaChart({chartData} : {chartData:ChartDataProps[]}) {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="day"
+              dataKey="date"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -67,7 +101,7 @@ export function SubsAreaChart({chartData} : {chartData:ChartDataProps[]}) {
               content={<ChartTooltipContent indicator="dot" hideLabel />}
             />
             <Area
-              dataKey="total_subscribers"
+              dataKey="subscriber_count"
               type="linear"
               fill="blue"
               fillOpacity={0.1}
