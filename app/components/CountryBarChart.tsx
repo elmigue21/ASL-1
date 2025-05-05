@@ -94,8 +94,8 @@ const { togglePopup } = usePopupContext();
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="relative">Bar Chart - Custom Label
-      <button onClick={()=>{console.log('qweqwe')}}>q</button>
+        <CardTitle className="relative">Subscribers by Country
+      {/* <button onClick={()=>{console.log('qweqwe')}}>q</button> */}
           <Image
           src="/expand-arrows-alt.png"
           alt="Expand"
@@ -106,7 +106,7 @@ const { togglePopup } = usePopupContext();
           
           />
         </CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription>Top Subscriber Countries</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
