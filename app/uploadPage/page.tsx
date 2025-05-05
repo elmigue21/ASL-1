@@ -14,7 +14,7 @@ function UploadPage() {
 >>>>>>> b39cb58eb801c187a46235366604c56e5104695a
 import { Separator } from "@/components/ui/separator";
 import ReportsTab from "./ReportsTab";
-
+import Navbar from "../components/Navbar";
 import UploadTab from "./UploadTab";
 import BackupsTab from "./BackupsTab";
 
@@ -101,7 +101,9 @@ function UploadPage() {
 const [selectedNav, setSelectedNav] = useState("Backups");
 
   return (
-    <div className="flex border border-slate-400 box-border h-[100vh]">
+    <>
+    <Navbar />
+    <div className="flex border border-slate-400 box-border z-45 absolute top-[11vh] left-[8.35vw] w-[91.6vw] h-[89vh]">
       <div className="box-border border-3 border-slate-900 rounded p-2">
         <h1 className="p-5">Backup & Retrieval Console</h1>
         <Separator />
@@ -163,6 +165,7 @@ const [selectedNav, setSelectedNav] = useState("Backups");
 =======
 >>>>>>> b39cb58eb801c187a46235366604c56e5104695a
     </div>
+    </>
   );
 }
 

@@ -82,7 +82,7 @@ const Navbar = () => {
             <h2 className="items-center mt-[0.50vh]">Subscription Stats</h2>
           </div>
         </Link>
-        <Link href="/backupPage">
+        <Link href="/uploadPage">
           {" "}
           <div className="flex flex-row justify-center gap-x-[0.5vw]">
             {" "}
