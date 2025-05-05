@@ -30,13 +30,15 @@ const ReportsTab = () => {
         }
       );
 
+            if (!response.ok) {
+              const errorText = await response.text(); // handle error response as text
+              throw new Error(errorText || "Export excel failed");
+            }
+
       console.log("blob");
       const blob = await response.blob();
 
-      if (!response.ok) {
-        const errorText = await response.text(); // handle error response as text
-        throw new Error(errorText || "Export excel failed");
-      }
+
       console.log(blob);
 
       const date = new Date().toLocaleDateString("en-CA");

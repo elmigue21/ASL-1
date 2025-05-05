@@ -113,23 +113,20 @@ const fetchSubscriptions = async ({
   return result.data;
 };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 // const [maxPages, setMaxPages] = useState<number | null>(null);
 
-  const { data, fetchNextPage, fetchPreviousPage, isLoading } =
-    useInfiniteQuery({
-      queryKey: ["subscriptions"],
-      queryFn: fetchSubscriptions,
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, allPages, lastPageParam) => {
-        return lastPage?.length === 10 ? lastPageParam + 1 : undefined;
-      },
-      refetchOnWindowFocus: false,
-    });
-=======
-=======
->>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+  // const { data, fetchNextPage, fetchPreviousPage, isLoading } =
+  //   useInfiniteQuery({
+  //     queryKey: ["subscriptions"],
+  //     queryFn: fetchSubscriptions,
+  //     initialPageParam: 1,
+  //     getNextPageParam: (lastPage, allPages, lastPageParam) => {
+  //       return lastPage?.length === 10 ? lastPageParam + 1 : undefined;
+  //     },
+  //     refetchOnWindowFocus: false,
+  //   });
+
 const useSubscriptions = () => {
   useQuery({
     queryKey: [
@@ -140,10 +137,7 @@ const useSubscriptions = () => {
     placeholderData: true,
   });
 }
-<<<<<<< HEAD
->>>>>>> b39cb58eb801c187a46235366604c56e5104695a
-=======
->>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+
 
 // const [maxPages, setMaxPages] = useState<number | null>(null);
 // const [page, setPage] = useState(1);
@@ -261,15 +255,9 @@ const prevPage = () => {
     const pages = [];
     const total = pageCount? pageCount : 0;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
       const currentPage = pagination.pageIndex + 1; // adjust because pageIndex is 0-based
-=======
-      const currentPage = pagination.pageIndex; // adjust because pageIndex is 0-based
->>>>>>> b39cb58eb801c187a46235366604c56e5104695a
-=======
-      const currentPage = pagination.pageIndex; // adjust because pageIndex is 0-based
->>>>>>> b39cb58eb801c187a46235366604c56e5104695a
+
 
 
     let start = Math.max(currentPage - 2, 1);
@@ -678,18 +666,10 @@ const prevPage = () => {
           </Button>
 
           <div className="flex items-center space-x-2">
-  {visiblePages().map((page) => (
+  {visiblePages().map((page,index) => (
     <button
-      key={page}
-<<<<<<< HEAD
-<<<<<<< HEAD
-      // onClick={() => handlePageClick(page)}
-=======
+      key={index}
       onClick={() => goToPage(page)}
->>>>>>> b39cb58eb801c187a46235366604c56e5104695a
-=======
-      onClick={() => goToPage(page)}
->>>>>>> b39cb58eb801c187a46235366604c56e5104695a
       className={`px-3 py-1 border rounded ${page - 1 === pagination.pageIndex? 'bg-blue-500 text-white' : ''}`}
     >
       {page}
