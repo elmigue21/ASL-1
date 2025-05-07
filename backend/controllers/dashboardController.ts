@@ -123,7 +123,8 @@ if(!supabaseUser){
 export const getNewSubscribers: RequestHandler = async (req, res) => {
   try {
     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
-    const range = (req.query.range as "7d" | "1m" | "6m" | "1y") || "7d";
+    const range = (req.query.dateRange as "7d" | "1m" | "6m" | "1y") || "7d";
+    console.log(range);
 
     if (!supabaseUser) {
       res.status(401).json({ message: "User not authenticated" });

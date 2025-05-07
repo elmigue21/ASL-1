@@ -14,6 +14,8 @@ import BarChartPopup from "./BarChartPopup";
 import { createContext } from "react";
 import { PopupProvider } from "../context/PopupContext";
 import { usePopupContext } from "../context/PopupContext";
+import { NewSubDateRangeProvider } from "../context/NewSubDateRangeContext"; // Adjust the path if needed
+
 
 const Dashboard = () => {
   const [countryCount, setCountryCount] = useState(0);
@@ -154,12 +156,11 @@ const Dashboard = () => {
   //   setPopupOpen(!popupOpen);
   // }
 
-
+const [dateRange, setDateRange] = useState<"7d" | "1m" | "6m" | "1y">("7d");
 
   return (
     <>
       <PopupProvider>
-
         <Navbar />
 
         <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh]">
@@ -201,14 +202,16 @@ const Dashboard = () => {
               <CountryBarChart />
               {/* <DonutChart chartData={countryData} chartHeightVH={30} innerRadiusVW={20} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/> */}
             </div>
-            <div className="w-full">
-              <SubsAreaChart /* chartData={newSubs} */ />
-            </div>
+            <NewSubDateRangeProvider>
+              <div className="w-full">
+                <SubsAreaChart />
+              </div>
+            </NewSubDateRangeProvider>
           </div>
         </div>
 
         {/* <div className="fixed z-50 w-full h-full flex items-center justify-center bottom-20"> */}
-          <BarChartPopup />
+        <BarChartPopup />
         {/* </div> */}
       </PopupProvider>
     </>

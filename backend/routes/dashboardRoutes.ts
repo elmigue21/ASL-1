@@ -9,7 +9,7 @@ router.get("/subCount",getSubCount);
 router.get("/activeCount", getActiveSubsCount);
 router.get("/inactiveCount",getInactiveSubsCount);
 router.get("/countryCount", getCountryCount);
-router.get("/newSubs", getNewSubscribers);
+router.get("/newSubs/dateRange", getNewSubscribers);
 
 
 export default router;

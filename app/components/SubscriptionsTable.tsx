@@ -684,9 +684,9 @@ const prevPage = () => {
               // handleNextPage();
               nextPage();
             }}
-            className="text-2xl"
+          
           >
-            ►
+            Next
           </Button>
 
         </div>
