@@ -175,6 +175,7 @@ useEffect(()=>{
               tickLine={false}
               axisLine={false}
               tickMargin={8}
+              interval={0}
               tickFormatter={(value) => {
                 // If the label is in YYYY-MM format, just show the month (and maybe year)
                 if (value.length === 7) {
@@ -194,7 +195,7 @@ useEffect(()=>{
                   month: "short",
                 });
                 const day = date.getDate();
-                return `${month} ${day}`; // e.g., "Mar 31"
+                return `${month}${day} `; // e.g., "Mar 31"
               }}
             />
             <ChartTooltip
