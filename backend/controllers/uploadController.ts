@@ -1,10 +1,14 @@
 import { Request, Response, RequestHandler } from "express";
 
 import { SupabaseClient, User } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "../../lib/supabase";
 import multer from "multer";
 import xlsx from "xlsx";
 import { stat } from "fs";
+import PDFDocument from "pdfkit";
+import { PassThrough } from "stream";
+// import PDFDocument from './../../node_modules/pdfkit/js/pdfkit.esnext';
+// import { downloadFile } from './downloadController';
 
 interface AuthenticatedRequest extends Request {
   supabaseUser?: SupabaseClient;
@@ -141,15 +145,13 @@ export const exportToExcel: RequestHandler = async (req, res) => {
       }
 
     res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="${fileName}"`
-    );
-    res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
+    console.log(fileName)
+res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
 
-    res.send(buffer);
+    res.send(buffer)/* .json({fileName}) */;
     return;
   } catch (e) {
     console.error(e);
@@ -275,5 +277,150 @@ export const uploadFile: RequestHandler = async (req, res) => {
     res.json({ insertData, insertError });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
+  }
+};
+
+
+export const generatePdf: RequestHandler = async (req, res) => {
+  const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+  if (!supabaseUser) {
+    res.status(401).json({ error: "Unauthorized from upload file" });
+    return;
+  }
+
+  try {
+    const doc = new PDFDocument();
+    const bufferChunks: Buffer[] = [];
+
+    const stream = new PassThrough();
+    doc.pipe(stream);
+
+    // Collect PDF data in bufferChunks
+    stream.on("data", (chunk) => {
+      bufferChunks.push(chunk);
+    });
+
+    stream.on("end", async () => {
+      const buffer = Buffer.concat(bufferChunks);
+          const now = new Date();
+          const datePart = now.toISOString().split("T")[0]; // e.g., "2025-05-04"
+          const timePart = now.toTimeString().split(" ")[0].replace(/:/g, "-"); // e.g., "14-30-05"
+          const fileName = `data-report-${datePart}_${timePart}.pdf`;
+      const fileSizeBytes = Buffer.byteLength(buffer, "utf8");
+
+      const { data: fileData, error: uploadError } = await supabaseUser.storage
+        .from("reports")
+        .upload(fileName, buffer, {
+          cacheControl: "3600",
+          upsert: true,
+          contentType: "application/pdf",
+        });
+
+      if (uploadError) {
+        console.error(uploadError);
+        res.status(500).json({ error: "Upload failed" });
+        return;
+      }
+
+    const { data: publicData } = supabaseUser.storage
+      .from("reports")
+      .getPublicUrl(fileName);
+
+    if (!publicData) {
+      console.log(" NO FILE FOUND");
+    }
+
+    const publicURL = publicData.publicUrl;
+
+    const { data: reportsTableData, error: reportsTableError } = await supabaseUser
+      .from("reports_data")
+      .insert([
+        {
+          url: publicURL,
+          fileName: fileName,
+          fileSize: fileSizeBytes,
+        },
+      ]);
+
+      console.log('REPORTS TABLE DATA', reportsTableData)
+
+    if (reportsTableError) {
+      console.error(reportsTableError);
+    }
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${fileName}"`
+      );
+      res.send(buffer);
+    });
+
+    // Write content to the PDF
+    doc.fontSize(20).text(`User`, 100, 100);
+    doc.text("This PDF was generated on the server.");
+    doc.end();
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Failed to generate PDF" });
+  }
+};
+
+export const downloadFile: RequestHandler = async (req, res) => {
+
+    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+    if (!supabaseUser) {
+      res.status(401).json({ error: "Unauthorized from upload file" });
+      return;
+    }
+  const { fileName, fileStorage } = req.query as {
+    fileName: string;
+    fileStorage: string;
+  };
+
+  if (!fileName || !fileStorage) {
+    res.status(400).json({ error: "Missing fileUrl or fileStorage" });
+    return; 
+  }
+
+  console.log('file urll!!', fileName)
+
+  try {
+    const { data, error } = await supabaseUser.storage
+      .from(fileStorage)
+      .download(fileName);
+
+    if (error || !data) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to download file" });
+      return; 
+    }
+    console.log('FILEE GOT', data);
+
+    const fileBuffer = await data.arrayBuffer();
+    const buffer = Buffer.from(fileBuffer);
+
+    // Optionally set headers based on fileType
+    // const fileType = req.query.fileType;
+    // if (fileType === "pdf") {
+    //   res.setHeader("Content-Type", "application/pdf");
+    //   res.setHeader("Content-Disposition", `attachment; filename="report.pdf"`);
+    // } else if (fileType === "excel") {
+    //   res.setHeader(
+    //     "Content-Type",
+    //     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    //   );
+    //   res.setHeader(
+    //     "Content-Disposition",
+    //     `attachment; filename="report.xlsx"`
+    //   );
+    // }
+
+    res.send(buffer);
+    return;
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Unexpected server error" });
+    return;
   }
 };

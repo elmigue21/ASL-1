@@ -235,7 +235,21 @@ export const getReportsAndExcel: RequestHandler = async (req, res) => {
      if (reportsError) throw reportsError;
 
      // Merge both arrays
-     const merged = [...excelData, ...reportsData];
+
+     const excelDataWithType = excelData.map((item) => ({
+       ...item,
+       attachType: "excel",
+     }));
+
+     const reportsDataWithType = reportsData.map((item) => ({
+       ...item,
+       attachType: "report",
+     }));
+
+     const merged = [...excelDataWithType, ...reportsDataWithType];
+
+    //  const merged = [...excelData, ...reportsData];
+     console.log('REPORTS', reportsData);
 
     merged.sort((a, b) => {
       const dateA = new Date(a.created_at).getTime();

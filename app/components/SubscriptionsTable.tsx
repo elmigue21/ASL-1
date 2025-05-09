@@ -61,9 +61,9 @@ export function SubscriptionsTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+  // const [columnVisibility, setColumnVisibility] =
+  //   React.useState<VisibilityState>({});
+  // const [rowSelection, setRowSelection] = React.useState({});
 
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -113,76 +113,6 @@ const fetchSubscriptions = async ({
   return result.data;
 };
 
-
-// const [maxPages, setMaxPages] = useState<number | null>(null);
-
-  // const { data, fetchNextPage, fetchPreviousPage, isLoading } =
-  //   useInfiniteQuery({
-  //     queryKey: ["subscriptions"],
-  //     queryFn: fetchSubscriptions,
-  //     initialPageParam: 1,
-  //     getNextPageParam: (lastPage, allPages, lastPageParam) => {
-  //       return lastPage?.length === 10 ? lastPageParam + 1 : undefined;
-  //     },
-  //     refetchOnWindowFocus: false,
-  //   });
-
-const useSubscriptions = () => {
-  useQuery({
-    queryKey: [
-      'subscriptions',
-      pagination,
-    ],
-    queryFn: fetchSubscriptions,
-    placeholderData: true,
-  });
-}
-
-
-// const [maxPages, setMaxPages] = useState<number | null>(null);
-// const [page, setPage] = useState(1);
-  // const { data, fetchNextPage, fetchPreviousPage, isLoading } =
-  //   useInfiniteQuery({
-  //     queryKey: ["subscriptions", pagination.pageIndex],
-  //     queryFn: fetchSubscriptions,
-  //     initialPageParam: 1,
-  //     getNextPageParam: (lastPage, allPages, lastPageParam) => {
-  //       return lastPage?.length === 10 ? lastPageParam + 1 : undefined;
-  //     },
-  //     refetchOnWindowFocus: false,
-  //   });
-
-//   const handleNextPage = useCallback(async () => {
-//     const result = await fetchNextPage();
-//     console.log(result.data?.pages);
-//     setPagination({
-//       pageIndex: pagination.pageIndex + 1,
-//       pageSize: pagination.pageSize,
-//     });
-//     table.nextPage();
-//   }, [pagination.pageIndex, pagination.pageSize]);
-
-//   const handlePreviousPage = useCallback(async () => {
-//     await fetchPreviousPage();
-//     setPagination({
-//       pageIndex: pagination.pageIndex - 1,
-//       pageSize: pagination.pageSize,
-//     });
-//     table.previousPage();
-//   }, [pagination.pageIndex, pagination.pageSize]);
-
-// const jumpPage = async (page: number) => {
-//   // Refetch the page using the query's `fetchQuery` method
-//   await queryClient.fetchQuery({
-//     queryKey: ["subscriptions", page], // Ensure the query key has the correct page parameter
-//     queryFn: () => fetchSubscriptions({ pageParam: page }), // Manually fetch data for this page
-//   });
-
-//   // Update the pagination state
-//   setPagination({ ...pagination, pageIndex: page });
-// };
-
-//  const [page,setPage] = useState<number>(1);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [
@@ -278,6 +208,22 @@ const prevPage = () => {
   const columns = React.useMemo<ColumnDef<Subscription>[]>(
     () => [
       {
+        header: "#",
+        id: "rowNumber",
+        cell: (info) => {
+          const rowIndex = info.row.index;
+          const computedValue =
+            pagination.pageIndex * pagination.pageSize + rowIndex + 1;
+
+          console.log("Row index:", rowIndex);
+          console.log("Page index:", pagination.pageIndex);
+          console.log("Page size:", pagination.pageSize);
+          console.log("Computed row number:", computedValue);
+
+          return computedValue;
+        },
+      },
+      {
         id: "select",
         header: ({ table }) => {
           return (
@@ -309,10 +255,10 @@ const prevPage = () => {
               checked={isChecked}
               onCheckedChange={(value) => {
                 console.log(row.original.emails);
-              row.original.emails.forEach((email:  Email ) => {
-                console.log(email.email, email.id)
-                setSelectedEmails(!!value, email);
-              });
+                row.original.emails.forEach((email: Email) => {
+                  console.log(email.email, email.id);
+                  setSelectedEmails(!!value, email);
+                });
 
                 // setSelectedSubscriptionIds(!!value, rowId);
                 console.log(rowId);
@@ -392,12 +338,14 @@ const prevPage = () => {
         cell: ({ row }) => (
           <div className="capitalize">
             {row.getValue("active_status") ? (
-              <div className="bg-green-200 text-center rounded-full mx-5">
-                Active
+              <div className="bg-green-200 text-center rounded-full mx-5 flex items-center justify-evenly">
+                <div className="bg-green-900 w-2 h-2 rounded-full"></div>
+                <p>Active</p>
               </div>
             ) : (
-              <div className="bg-slate-200 text-center rounded-full mx-5">
-                Inactive
+              <div className="bg-red-200 text-center rounded-full mx-5 flex items-center justify-evenly">
+                <div className="bg-red-900 w-2 h-2 rounded-full"></div>
+                <p>Inactive</p>
               </div>
             )}
           </div>
@@ -434,7 +382,7 @@ const prevPage = () => {
         },
       },
     ],
-    [selectedEmails]
+    [selectedEmails, pagination.pageIndex]
   );
 
 
@@ -455,8 +403,8 @@ const prevPage = () => {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
+    // onColumnVisibilityChange: setColumnVisibility,
+    // onRowSelectionChange: setRowSelection,
     getExpandedRowModel: getExpandedRowModel(), // ✅ Enable expanded row model
     getRowCanExpand: () => true,
     enableRowSelection: true,
@@ -464,9 +412,9 @@ const prevPage = () => {
     // pageCount:pageCount,
     state: {
       sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
+      // columnFilters,
+      // columnVisibility,
+      // rowSelection,
       pagination,
     },
   });
@@ -512,7 +460,7 @@ const prevPage = () => {
           onChange={(event) => setSearchBarValue(event.target.value)}
           className="max-w-sm"
         />
-        <Button onClick={()=>{ goToPage(3)/* console.log(subscriptions)} */}}>JUMP</Button>
+       {/*  <Button onClick={()=>{ goToPage(3)}}>JUMP</Button> */}
         <Button
           onClick={() => {
             setAppliedSearchBarValue(searchBarValue);
@@ -526,7 +474,7 @@ const prevPage = () => {
             console.log(selectedEmails);
           }}
         ></Button> */}
-        <DropdownMenu>
+ {/*        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
               Columns <ChevronDown />
@@ -551,7 +499,7 @@ const prevPage = () => {
                 );
               })}
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
       <div className="rounded-md border">
         <Table className="table-fixed w-full border-collapse border border-gray-300">

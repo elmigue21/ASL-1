@@ -22,11 +22,13 @@ const app = express();
 app.use(
   cors({
     origin:
-      process.env.NODE_ENV?.trim() === "production" ? "https://asl-topaz.vercel.app"
+      process.env.NODE_ENV?.trim() === "production"
+        ? "https://asl-topaz.vercel.app"
         : "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type, Authorization, Content-Disposition"],
-    credentials:true
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["Content-Disposition"],
+    credentials: true,
   })
 );
 

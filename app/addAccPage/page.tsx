@@ -83,28 +83,34 @@ function AddAccPage() {
   //     setEmails(updatedEmails);
   //   };
 
-  const handleSubmit = async () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email validation regex
+const handleSubmit = async () => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email validation regex
 
-    if (phoneNumbers.some((phone) => phone.trim() === "")) {
-      alert("Please fill all phone number fields.");
+  if (phoneNumbers.some((phone) => phone.trim() === "")) {
+    alert("Please fill all phone number fields.");
+    return;
+  }
+
+  if (emails.some((email) => email.trim() === "" || !emailRegex.test(email))) {
+    alert("Please enter valid email addresses.");
+    return;
+  }
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getSession();
+    if (sessionError) {
+      console.error("Session error:", sessionError);
+      alert("Failed to retrieve session.");
       return;
     }
 
-    if (
-      emails.some((email) => email.trim() === "" || !emailRegex.test(email))
-    ) {
-      alert("Please enter valid email addresses.");
-      return;
-    }
-
-    const { data: sessionData /* error */ } = await supabase.auth.getSession();
     const token = sessionData.session?.access_token;
     if (!token) {
+      alert("User is not authenticated.");
       return;
     }
 
-    console.log("submittt");
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/subscriptions/create`,
       {
@@ -114,31 +120,38 @@ function AddAccPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          // Your JSON payload goes here
-          firstName: firstName,
-          lastName: lastName,
-          personLinkedIn: personLinkedIn,
-          personFacebook: personFacebook,
-
-          phoneNumbers: phoneNumbers,
-          emails: emails,
-
-          country: country,
-          state: state,
-          city: city,
-
-          occupation: occupation,
-          industry: industry,
-          company: company,
-          companyLinkedIn: companyLinkedIn,
-          companyWebsite: companyWebsite,
+          firstName,
+          lastName,
+          personLinkedIn,
+          personFacebook,
+          phoneNumbers,
+          emails,
+          country,
+          state,
+          city,
+          occupation,
+          industry,
+          company,
+          companyLinkedIn,
+          companyWebsite,
         }),
       }
     );
 
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("API Error:", errorText);
+      alert("Failed to submit subscription. Please try again.");
+      return;
+    }
+
     const data = await response.json();
     return data;
-  };
+  } catch (error) {
+    console.error("Submission error:", error);
+    alert("An unexpected error occurred. Please try again later.");
+  }
+};
 
   return (
     <>

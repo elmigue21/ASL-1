@@ -29,49 +29,56 @@ interface ReportsData {
   id: number;
   created_at: Date;
   fileSize: number;
+  attachType:string;
 }
 
 
 
 
-const downloadFile = async (fileUrl: string) => {
-  const { data: sessionData } = await supabase.auth.getSession();
-  const token = sessionData.session?.access_token;
+   const downloadFile = async({fileName,fileStorage}:{fileName:string,fileStorage:string}) =>{
+         const { data: sessionData } = await supabase.auth.getSession();
+         const token = sessionData.session?.access_token;
 
-  if (!token) {
-    return;
-  }
+         if (!token) {
+           alert("You are not authenticated.");
+           return;
+         }
+         console.log("export excel");
+         try {
+           const response = await fetch(
+             `${process.env.NEXT_PUBLIC_API_URL}/upload/downloadFile?fileName=${fileName}&fileStorage=${fileStorage}s`,
+             {
+               method: "GET",
+               headers: {
+                 Authorization: `Bearer ${token}`,
+               },
+             }
+           );
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/download/downloadFile?fileUrl=${fileUrl}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`, // ✅ Attach token in request
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  if (response.ok) {
-    const blob = await response.blob(); // Convert response to a Blob (binary data)
-    const downloadUrl = window.URL.createObjectURL(blob); // Create URL for the Blob
-    const link = document.createElement("a");
-    link.href = downloadUrl;
-    if (typeof fileUrl === "string") {
-      link.download = fileUrl.split("/").pop() || "downloaded_file";
-    } else {
-      console.error("Invalid fileUrl");
-    }
-    //   link.download = fileUrl.split("/").pop(); // Filename for download
-    document.body.appendChild(link); // Append link to the DOM (necessary for Firefox)
-    link.click(); // Trigger the download
-    document.body.removeChild(link); // Clean up
-  } else {
-    console.error("File download failed");
-  }
-  const data = await response.json();
-  console.log(data);
-};
+           if (!response.ok) {
+             const errorText = await response.text(); // handle error response as text
+             console.error(errorText)
+             throw new Error(errorText || "Export excel failed");
+           }
+
+           console.log("blob");
+           const blob = await response.blob();
+
+
+           console.log(blob);
+
+           const date = new Date().toLocaleDateString("en-CA");
+           const url = window.URL.createObjectURL(blob);
+           const link = document.createElement("a");
+           link.href = url;
+           link.download = fileName;
+           document.body.appendChild(link);
+           link.click();
+           link.remove();
+         } catch (error) {
+           console.error("Export error:", error);
+         }
+   }
 
 const ReportsTable = () => {
 
@@ -113,7 +120,10 @@ const ReportsTable = () => {
             width={15}
             height={15}
             onClick={() => {
-              downloadFile(row.original.url);
+              downloadFile({
+                fileName: row.original.fileName,
+                fileStorage: row.original.attachType,
+              });
             }}
           />
         );
@@ -146,7 +156,7 @@ const ReportsTable = () => {
       },
     },
 
-    { accessorKey: "status", header: "Status" },
+    { accessorKey: "attachType", header: "Type" },
   ];
 
   const table = useReactTable({
