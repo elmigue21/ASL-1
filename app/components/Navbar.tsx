@@ -17,7 +17,7 @@ const Navbar = () => {
         <div className="absolute left-0 top-0 h-[11vh] w-[8.35vw] bg-[#1e2e80] z-50 flex justify-center items-center">
           <ul>
             <img
-              src="menu-burger.png"
+              src="/menu-burger.png"
               alt="Hamburger Menu"
               className="w-[2vw] h-[1.7vw]"
             />
@@ -25,9 +25,9 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-x-[0.4vw]  mx-auto absolute left-[10.44vw]">
-          <img src="dempaLogo.png" alt="Logo" className="h-[8.9vh] w-[4.2vw]" />
+          <img src="/dempaLogo.png" alt="Logo" className="h-[8.9vh] w-[4.2vw]" />
           <img
-            src="dempaLogoTxt.png"
+            src="/dempaLogoTxt.png"
             alt="Logo Text"
             className="w-[8.2vw] h-[4.5vh]"
           />
@@ -44,7 +44,7 @@ const Navbar = () => {
           <div className="flex flex-row justify-center gap-x-[0.5vw]">
             {" "}
             <img
-              src="layout-fluid.png"
+              src="/layout-fluid.png"
               alt="Dashboard Icon"
               className="w-[1.69vw] h-[3.73vh]"
             />
@@ -55,7 +55,7 @@ const Navbar = () => {
           <div className="flex flex-row justify-center gap-x-[0.5vw] ms-[0.50vw] -my-[0.5vh]">
             {" "}
             <img
-              src="chart-histogram.png"
+              src="/chart-histogram.png"
               alt="Subscription Stats"
               className="w-[1.69vw] h-[3.73vh] mt-[1.3vh]"
             />
@@ -67,7 +67,7 @@ const Navbar = () => {
           <div className="flex flex-row justify-center gap-x-[0.5vw]">
             {" "}
             <img
-              src="refresh.png"
+              src="/refresh.png"
               alt="User Update"
               className="w-[1.69vw] h-[3.60vh]"
             />
@@ -79,7 +79,7 @@ const Navbar = () => {
           <div className="flex flex-row justify-center gap-x-[0.5vw]">
             {" "}
             <img
-              src="user-add.png"
+              src="/user-add.png"
               alt="Add Account"
               className="w-[1.69vw] h-[3.73vh]"
             />
@@ -92,7 +92,7 @@ const Navbar = () => {
         <div className="flex flex-row justify-center gap-x-[0.6vw] text-[1.09vw]">
           {" "}
           <img
-            src="circle-user.png"
+            src="/circle-user.png"
             alt="Account"
             className="w-[2.08vw] h-[2vw]"
           />
@@ -106,7 +106,7 @@ const Navbar = () => {
         >
           {" "}
           <img
-            src="mail-plus-circle.png"
+            src="/mail-plus-circle.png"
             alt="Inbox"
             className="w-[2.08vw] h-[2.1vw]"
           />
@@ -115,7 +115,7 @@ const Navbar = () => {
         <Link href={"/"}>
           <div className="mt-[9vh] flex flex-row justify-center gap-x-[0.6vw] text-[1.09vw]">
             {" "}
-            <img src="exit.png" alt="Inbox" className="w-[2vw] h-[2vw]" />
+            <img src="/exit.png" alt="Inbox" className="w-[2vw] h-[2vw]" />
             <h2 className="items-center mt-1">Log Out</h2>
           </div>
         </Link>
