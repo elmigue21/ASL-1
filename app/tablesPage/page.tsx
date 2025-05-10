@@ -2,7 +2,6 @@
 import React, { Suspense } from 'react'
 import { SubscriptionsTable } from '../components/SubscriptionsTable'
 import Navbar from '../components/Navbar'
-import ViewSubscriber from '../components/ViewSubscriber'
 import { Button } from '@/components/ui/button';
 // import { supabase } from '@/lib/supabase';
 // import EmailWindow from '../components/EmailWindow';

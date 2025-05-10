@@ -30,7 +30,7 @@ export default function MyDropdown() {
             <h1 className="text-[0.63vw]">Admin</h1>
           </div>
           <img
-            src="down_arrow.png"
+            src="/down_arrow.png"
             alt="Inbox"
             className="w-[2vw] h-[2.4vh] items-center mt-[1.3vh] -ml-[0.32vw]"
           />
