@@ -7,8 +7,11 @@ import xlsx from "xlsx";
 import { stat } from "fs";
 import PDFDocument from "pdfkit";
 import { PassThrough } from "stream";
+import { ChartJSNodeCanvas } from "chartjs-node-canvas";
 // import PDFDocument from './../../node_modules/pdfkit/js/pdfkit.esnext';
 // import { downloadFile } from './downloadController';
+// import { ChartConfiguration, ChartTypeRegistry } from 'chart.js';
+
 
 interface AuthenticatedRequest extends Request {
   supabaseUser?: SupabaseClient;
@@ -281,6 +284,21 @@ export const uploadFile: RequestHandler = async (req, res) => {
 };
 
 
+
+const labels = [
+  "2025-05-01",
+  "2025-05-02",
+  "2025-05-03",
+  "2025-05-04",
+  "2025-05-05",
+  "2025-05-06",
+  "2025-05-07",
+];
+
+const data = [100, 124, 150, 189, 200, 215, 230];
+
+
+
 export const generatePdf: RequestHandler = async (req, res) => {
   const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
   if (!supabaseUser) {
@@ -290,10 +308,58 @@ export const generatePdf: RequestHandler = async (req, res) => {
 
   try {
     const doc = new PDFDocument();
+
+   const chartData = {
+     labels: [
+       "2025-05-01",
+       "2025-05-02",
+       "2025-05-03",
+       "2025-05-04",
+       "2025-05-05",
+       "2025-05-06",
+       "2025-05-07",
+     ],
+     datasets: [
+       {
+         label: "Subscribers",
+         data: [100, 124, 150, 189, 200, 215, 230],
+         fill: true,
+         borderColor: "#1A2B88",
+         backgroundColor: "rgba(26, 43, 136, 0.1)",
+         tension: 0.4,
+       },
+     ],
+   };
+
+const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: 400, height: 400 });
+const imageBuffer = await chartJSNodeCanvas.renderToBuffer({
+  type: "line", // Type of the chart
+  data: chartData, // The data for the chart
+  options: {
+    // Set the background color for the entire canvas
+    plugins: {
+      legend: {
+        position: "top", // Customize the legend if necessary
+      },
+    },
+    // Set the canvas background color
+    backgroundColor: "green", // This sets the background color to green
+  },
+});
+
     const bufferChunks: Buffer[] = [];
+
+
+    
 
     const stream = new PassThrough();
     doc.pipe(stream);
+
+        doc.image(imageBuffer, {
+          fit: [600, 300],
+          align: "center",
+          valign: "center",
+        });
 
     // Collect PDF data in bufferChunks
     stream.on("data", (chunk) => {
@@ -363,6 +429,7 @@ export const generatePdf: RequestHandler = async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "Failed to generate PDF" });
+    return;
   }
 };
 

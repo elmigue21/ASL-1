@@ -1,6 +1,6 @@
 "use client"
 
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import {
   Card,
@@ -170,6 +170,7 @@ useEffect(()=>{
             }}
           >
             <CartesianGrid vertical={false} />
+
             <XAxis
               dataKey="date"
               tickLine={false}
@@ -197,6 +198,13 @@ useEffect(()=>{
                 const day = date.getDate();
                 return `${month}${day} `; // e.g., "Mar 31"
               }}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickCount={5} // This hints the chart to use 5 ticks (adjust as needed)
+              tickFormatter={(value) => `${value}`}
             />
             <ChartTooltip
               cursor={false}

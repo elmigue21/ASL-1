@@ -119,6 +119,7 @@ const ReportsTable = () => {
             alt="Excel"
             width={15}
             height={15}
+            className="hover:cursor-pointer rounded-full hover:bg-slate-200 m-1"
             onClick={() => {
               downloadFile({
                 fileName: row.original.fileName,
