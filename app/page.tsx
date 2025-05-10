@@ -18,20 +18,20 @@ function page() {
           <img
             src="/img/dempaLogo.png"
             alt="Dempa Logo"
-            className="drop-shadow-lg shadow-black/90 h-[60vh] w-auto xsm:h-[212px] xsm:w-[212px] sm:h-[286px] sm:w-[286px] md:h-[516px]md:w-[516px] lg:h-[704px] lg:w-[704px] xl:h-[500px] xl:w-[500px]"
+            className="drop-shadow-lg shadow-black/90 h-[60vh] w-auto xsm:h-[37.32vh] xsm:w-[66.25vw] sm:h-[30.89vh] sm:w-[67.29vw] md:h-[50.47vh] md:w-[67.19vw] lg:h-[51.47vh] lg:w-[68.75vw] xl:h-[60vh] xl:w-auto"
           ></img>
           <img
             src="/img/dempaLogoTxt.png"
             alt="Logo Text"
-            className="h-[11.4vh] drop-shadow-lg shadow-black/90 xsm:h-[76px] xsm:w-[260px] sm:h-[90px] sm:w-[320px] md:h-[100px]md:w-[516px] lg:h-[170px] lg:w-[680px] xl:h-[120px] xl:w-[500px]"
+            className="h-[11.4vh] drop-shadow-lg shadow-black/90 xsm:h-[13.38vh] xsm:w-[66.25vw] sm:h-[9.72vh] sm:w-[75.29vw] md:h-[17.97vh] md:w-[67.19vw] lg:h-[18.36vh] lg:w-[68.56vw] xl:h-[11.4vh] xl:w-auto"
           ></img>
 
-          {/* <div className="sm:bg-red-500 md:bg-blue-500 lg:bg-orange-600 xl:bg-amber-300">asdfasdfasdfsdaf</div> */}
+          <div className="sm:bg-red-500 md:bg-blue-500 lg:bg-orange-600 xl:bg-black">asdfasdfasdfsdaf</div>
           <LandingPagePopup popupOpen={popupOpen} setPopupOpen={setPopupOpen} />
         </div>
 
         <Link href={"/loginPage"}>
-          <Button className="w-[30%] h-[6vh] bg-red-600 rounded-full text-white text-[3vw] cursor-pointer hover:bg-red-700 absolute bottom-[6.5vh] right-[4.2vw] xsm:h-[25px] xsm:w-[79px] xsm:text-[15px] sm:h-[32px] sm:w-[113px] sm:text-[15px] md:h-[53px]md:w-[150px] md:text-[21px] lg:w-[205px] lg:h-[73px] lg:text-[30px] xl:h-[50px] xl:w-[180px] xl:text-[25px]">
+          <Button className="w-[30%] h-[6vh] bg-red-600 rounded-full text-white text-[3vw] cursor-pointer hover:bg-red-700 absolute bottom-[6.5vh] right-[4.2vw] xsm:h-[4.40vh] xsm:w-[24.69vw] xsm:text-[4.69vw] sm:h-[3.46vh] sm:w-[26.59vw] sm:text-[3.53vw] md:h-[5.18vh] md:w-[19.53vw] md:text-[2.73vw] lg:w-[20.05vw] lg:h-[5.34vh] lg:text-[2.64vw] xl:h-[6vh] xl:w-[10vw]  xl:text-[1.50vw]">
             LOGIN
           </Button>
         </Link>
