@@ -2,6 +2,7 @@
 import React from 'react'
 //import { useParams } from "next/navigation";
 import Navbar from '../../components/Navbar'
+import StepperList from '../../components/StepperList'
 
 function ViewPage() {
     
@@ -50,7 +51,16 @@ function ViewPage() {
             <div className="grid grid-cols-2 gap-2 px-4 py-2">              
               <div className="flex-col">
                 <div className="text-[14px] font-medium text-slate-500">Phone Number</div>
-                <div className="text-[14px]">numbers here</div>
+                <div className="overflow-y-auto h-[15vh]">
+                  <StepperList
+                    emails={[
+                      "email one",
+                      "email two",
+                      'email three'
+                    ]}
+                  />
+
+                </div>
               </div>
               <div className="flex-col">
                 <div className="text-[14px] font-medium text-slate-500">Email</div>
