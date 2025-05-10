@@ -110,6 +110,7 @@ const handleSubmit = async () => {
       alert("User is not authenticated.");
       return;
     }
+    
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/subscriptions/create`,
@@ -202,6 +203,8 @@ const handleSubmit = async () => {
                         onChange={(e) => setPhoneInput(e.target.value)}
                         placeholder="Enter phone number"
                         className="pr-6"
+                        type="tel"
+                        maxLength={15}
                       />
                       <div className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 cursor-pointer">
                         ▼
@@ -252,10 +255,6 @@ const handleSubmit = async () => {
                 </Button>
               </div>
             </div>
-            {/* <div className="flex-col">
-                    <div className="text-white">.</div>
-                    <div className="border border-solid border-black h-auto w-auto text-center px-[0.3vw] rounded-[1vw]">+ Add Phone No.</div>
-                </div> */}
           </div>
           <div>
             <hr className="border-t-[0.3vh] border-black my-[1.50vh] w-[70vw] mx-auto opacity-20" />
