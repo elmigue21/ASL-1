@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { logout } from "@/utils/auth";
 
 
-export default function MyDropdown() {
+export default function Dropdown_Profile() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -35,7 +35,7 @@ export default function MyDropdown() {
           />
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="z-60">
         <DropdownMenuItem onClick={() => console.log("Profile Clicked")}>
           Profile
         </DropdownMenuItem>

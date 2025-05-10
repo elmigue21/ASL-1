@@ -1,7 +1,7 @@
 // import { Subscript } from 'lucide-react'
 "use client";
 import React, { useRef, useState, useEffect } from "react";
-import Dropdown_Profie from "./dropdown_profile";
+import Dropdown_Profile from "./dropdown_profile";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { setOpenState } from "@/store/slices/emailWindowSlice";
@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
         
           <div 
           onClick={() => setIsOpen(!isOpen)} 
-          className={`transition-all duration-100 ease-in-out overflow-hidden absolute left-0 top-0 h-[11vh] bg-[#1e2e80] z-60 flex justify-center items-center hover:bg-[#2a58ad] cursor-pointer
+          className={`transition-all duration-100 ease-in-out overflow-hidden absolute left-0 top-0 h-[11vh] bg-[#1e2e80] z-50 flex justify-center items-center hover:bg-[#2a58ad] cursor-pointer
           ${isOpen?"w-[15vw]": "w-[5vw]"}`}>
           
               <img
@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
             </div>
             
             <div className="flex absolute items-center w-auto right-[2vw]">
-                <Dropdown_Profie></Dropdown_Profie>
+                <Dropdown_Profile></Dropdown_Profile>
             </div>
           <div
             style={{ fontFamily: "Inter, sans-serif" }}
@@ -73,7 +73,7 @@ const Navbar: React.FC = () => {
                 <div className={`items-center h-[10vh] w-full hover:bg-[#2a58ad] ${isOpen? "grid grid-cols-2 px-[2vw] ": "flex justify-center"}`}>
                   {" "}
                   <img
-                    src="/chart-histogram.png"
+                    src="/table-layout.png"
                     alt="Subscription Stats"
                     className="h-[3.73vh] mt-[1.3vh]"
                   />
