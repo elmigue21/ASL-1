@@ -28,7 +28,7 @@ function page() {
             className="h-[11.4vh] drop-shadow-lg shadow-black/90 xsm:h-[13.38vh] sm:h-[9.72vh] md:h-[17.97vh] lg:h-[18.36vh] xl:h-[11.4vh]"
           ></img>
 
-          <div className="sm:bg-red-500 md:bg-blue-500 lg:bg-orange-600 xl:bg-black">asdfasdfasdfsdaf</div>
+          <div className=" xsm:bg-green-600 sm:bg-red-500 md:bg-blue-500 lg:bg-orange-600 xl:bg-black">asdfasdfasdfsdaf</div>
           <LandingPagePopup popupOpen={popupOpen} setPopupOpen={setPopupOpen} />
         </div>
 

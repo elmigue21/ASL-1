@@ -32,15 +32,16 @@ function LoginPage() {
     <div className="relative h-screen">
       <div className="bg-[#1A3DB2] h-[4vh] w-full"></div>
       <div className="absolute inset-0 flex items-center justify-center z-50">
-        <div className="bg-[#ECE2E2A3] w-[32vw] h-[75.8vh] flex flex-col items-center justify-start rounded-[0.56vw] p-[5vh] mt-[0.9vh]">
+        <div className="bg-[#ECE2E2A3] flex flex-col items-center justify-start rounded-[0.56vw] p-[5vh] mt-[0.9vh] xsm:h-[60vh] xsm:w-[95.25vw] sm:w-[93.53vw] sm:h-[61.41vh] md:w-[65.73vw] md:h-[59.54vh] lg:mt-[-8vh] lg:w-[80.73vw] lg:h-[69.54vh] xl:w-[32vw] xl:h-[75.8vh] ">
           <div className="flex items-center gap-x-[0.63vw] mt-[0.2vh] me-[2vw]">
-            <img src="dempaLogo.png" alt="Logo" className="h-[10.88vh] w-[5.2vw] " />
-            <img src="dempaLogoTxt.png" alt="Logo Text" className="w-[16.8vw] h-[9vh]" />
+            <img src="dempaLogo.png" alt="Logo" className="w-auto xsm:h-[10.88vh] xsm:ml-[-5vw] sm:h-[10.88vh] sm:ml-[-7vw] lg:h-[15vh] xl:h-[11.88vh] xl:ml-[0vw]" />
+            <img src="dempaLogoTxt.png" alt="Logo Text" className="h-[9vh] xsm:h-[6vh] sm:h-[5.6vh] lg:h-[7vh] xl:h-[7vh]"/>
           </div>
-          <div className="mt-[4vh] text-[1.9vw] font-normal">LOGIN</div>
+          
+          <div className="mt-[0vh] font-normal xsm:text-[5.5vw] sm:text-[6.5vw] md:text-[5vw] xl:text-[1.9vw] xl:mt-[2.6vh] " >LOGIN</div>
           <input
             type="text"
-            className="bg-[#CFCECE] text-black border text-[1.58vw] p-[1vw] rounded-[0.56vw] placeholder-white w-[26vw] h-[9vh] my-[4.5vh] pl-[1.6vw]"
+            className="bg-[#CFCECE] text-black border p-[1vw] rounded-[0.56vw] placeholder-white w-[26vw] h-[9vh] my-[4.5vh] pl-[1.6vw] xsm:w-[65vw] xsm:h-[5.82vh] xsm:text-[4vw] xsm:my-[4vh] sm:w-[75vw] sm:h-[6.82vh] sm:text-[5vw] sm:my-[4vh] md:w-[55vw] md:h-[5.82vh] md:text-[4vw] md:my-[5vh] lg:w-[63vw] lg:h-[8vh] xl:w-[26vw] xl:h-[9vh] xl:text-[1.58vw]"
             placeholder="Username"
             value={username}
             onChange={(e) => {
@@ -49,7 +50,7 @@ function LoginPage() {
           />
           <input
             type="password"
-            className="bg-[#CFCECE] text-black border text-[1.58vw] p-[1vw] rounded-[0.56vw] placeholder-white w-[26vw] h-[9vh] pl-[1.6vw]"
+            className="bg-[#CFCECE] text-black border text-[1.58vw] p-[1vw] rounded-[0.56vw] placeholder-white w-[26vw] h-[9vh] pl-[1.6vw] xsm:w-[65vw] xsm:h-[5.82vh] xsm:text-[4vw] sm:w-[75vw] sm:h-[6.82vh] sm:text-[5vw] md:w-[55vw] md:h-[5.82vh] md:text-[4vw] lg:w-[63vw] lg:h-[8vh] xl:w-[26vw] xl:h-[9vh] xl:text-[1.58vw]"
             placeholder="Password"
             value={password}
             onChange={(e) => {
@@ -75,7 +76,7 @@ function LoginPage() {
 
           <Button
           onClick={()=>{handleSubmit()}}
-            className="bg-[#1A3DB2] w-[10.6vw] h-[5.7vh] rounded-full flex items-center justify-center text-white text-[1.58vw] mt-[9vh] hover:cursor-pointer"
+            className="bg-[#1A3DB2]  rounded-full flex items-center justify-center text-white hover:cursor-pointer xsm:w-[22.81vw] xsm:h-[6vh] xsm:text-[4vw] xsm:mt-[4vh] sm:w-[32.81vw] sm:h-[6vh] sm:text-[5vw] sm:mt-[6vh] md:w-[28.81vw] md:h-[5.5vh] md:text-[4vw] md:mt-[6vh] xl:w-[10.6vw] xl:h-[5.7vh] xl:text-[1.58vw] xl:mt-[9vh]"
           >
             Login
           </Button>
