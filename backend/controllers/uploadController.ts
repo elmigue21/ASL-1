@@ -12,7 +12,6 @@ import { ChartJSNodeCanvas } from "chartjs-node-canvas";
 // import { downloadFile } from './downloadController';
 // import { ChartConfiguration, ChartTypeRegistry } from 'chart.js';
 
-
 interface AuthenticatedRequest extends Request {
   supabaseUser?: SupabaseClient;
   user?: User | null;
@@ -120,7 +119,7 @@ export const exportToExcel: RequestHandler = async (req, res) => {
       });
 
     if (uploadError) {
-      console.log("UPLOAD ERROR")
+      console.log("UPLOAD ERROR");
       console.error(uploadError);
     }
 
@@ -134,8 +133,9 @@ export const exportToExcel: RequestHandler = async (req, res) => {
 
     const publicURL = publicData.publicUrl;
 
-    const { data: excelTableData, error: excelTableError } =
-      await supabaseUser.from("excels_data").insert([
+    const { data: excelTableData, error: excelTableError } = await supabaseUser
+      .from("excels_data")
+      .insert([
         {
           url: publicURL,
           fileName: fileName,
@@ -143,18 +143,18 @@ export const exportToExcel: RequestHandler = async (req, res) => {
         },
       ]);
 
-      if(excelTableError){
-        console.error(excelTableError)
-      }
+    if (excelTableError) {
+      console.error(excelTableError);
+    }
 
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
-    console.log(fileName)
-res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
+    console.log(fileName);
+    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
 
-    res.send(buffer)/* .json({fileName}) */;
+    res.send(buffer) /* .json({fileName}) */;
     return;
   } catch (e) {
     console.error(e);
@@ -283,8 +283,6 @@ export const uploadFile: RequestHandler = async (req, res) => {
   }
 };
 
-
-
 const labels = [
   "2025-05-01",
   "2025-05-02",
@@ -297,8 +295,6 @@ const labels = [
 
 const data = [100, 124, 150, 189, 200, 215, 230];
 
-
-
 export const generatePdf: RequestHandler = async (req, res) => {
   const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
   if (!supabaseUser) {
@@ -309,57 +305,73 @@ export const generatePdf: RequestHandler = async (req, res) => {
   try {
     const doc = new PDFDocument();
 
-   const chartData = {
-     labels: [
-       "2025-05-01",
-       "2025-05-02",
-       "2025-05-03",
-       "2025-05-04",
-       "2025-05-05",
-       "2025-05-06",
-       "2025-05-07",
-     ],
-     datasets: [
-       {
-         label: "Subscribers",
-         data: [100, 124, 150, 189, 200, 215, 230],
-         fill: true,
-         borderColor: "#1A2B88",
-         backgroundColor: "rgba(26, 43, 136, 0.1)",
-         tension: 0.4,
-       },
-     ],
-   };
+    const chartData = {
+      labels: [
+        "2025-05-01",
+        "2025-05-02",
+        "2025-05-03",
+        "2025-05-04",
+        "2025-05-05",
+        "2025-05-06",
+        "2025-05-07",
+      ],
+      datasets: [
+        {
+          label: "Subscribers",
+          data: [100, 124, 150, 189, 200, 215, 230],
+          fill: true,
+          borderColor: "#1A2B88",
+          backgroundColor: "rgba(26, 43, 136, 0.1)",
+          tension: 0.4,
+        },
+      ],
+    };
 
-const chartJSNodeCanvas = new ChartJSNodeCanvas({ width: 400, height: 400 });
-const imageBuffer = await chartJSNodeCanvas.renderToBuffer({
-  type: "line", // Type of the chart
-  data: chartData, // The data for the chart
-  options: {
-    // Set the background color for the entire canvas
-    plugins: {
-      legend: {
-        position: "top", // Customize the legend if necessary
+    const imageWidth = 600; // width used in fit
+    const imageHeight = 300;
+    const pageWidth = doc.page.width;
+
+    const x = pageWidth - imageWidth;
+    const y = doc.y;
+
+    const chartJSNodeCanvas = new ChartJSNodeCanvas({
+      width: 600,
+      height: 400,
+    });
+    const imageBuffer = await chartJSNodeCanvas.renderToBuffer({
+      type: "line", // Type of the chart
+      data: chartData, // The data for the chart
+      options: {
+        // Set the background color for the entire canvas
+        plugins: {
+          legend: {
+            position: "top", // Customize the legend if necessary
+          },
+        },
+        // Set the canvas background color
+        backgroundColor: "green", // This sets the background color to green
       },
-    },
-    // Set the canvas background color
-    backgroundColor: "green", // This sets the background color to green
-  },
-});
+    });
+
+
+        writeText(
+          doc,
+          "Subscriber Growth Report",
+          { align: "center", underline: true },
+          20
+        );
+        writeImage(doc, imageBuffer, 300);
+        writeText(doc, "Generated on: " + new Date().toLocaleString());
 
     const bufferChunks: Buffer[] = [];
 
-
-    
-
     const stream = new PassThrough();
     doc.pipe(stream);
+    console.log("IMAGE BUFFER", pageWidth);
 
-        doc.image(imageBuffer, {
-          fit: [600, 300],
-          align: "center",
-          valign: "center",
-        });
+    // doc.image(imageBuffer, x, doc.y, {
+    //   width: doc.page.width,
+    // });
 
     // Collect PDF data in bufferChunks
     stream.on("data", (chunk) => {
@@ -368,10 +380,10 @@ const imageBuffer = await chartJSNodeCanvas.renderToBuffer({
 
     stream.on("end", async () => {
       const buffer = Buffer.concat(bufferChunks);
-          const now = new Date();
-          const datePart = now.toISOString().split("T")[0]; // e.g., "2025-05-04"
-          const timePart = now.toTimeString().split(" ")[0].replace(/:/g, "-"); // e.g., "14-30-05"
-          const fileName = `data-report-${datePart}_${timePart}.pdf`;
+      const now = new Date();
+      const datePart = now.toISOString().split("T")[0]; // e.g., "2025-05-04"
+      const timePart = now.toTimeString().split(" ")[0].replace(/:/g, "-"); // e.g., "14-30-05"
+      const fileName = `data-report-${datePart}_${timePart}.pdf`;
       const fileSizeBytes = Buffer.byteLength(buffer, "utf8");
 
       const { data: fileData, error: uploadError } = await supabaseUser.storage
@@ -388,31 +400,30 @@ const imageBuffer = await chartJSNodeCanvas.renderToBuffer({
         return;
       }
 
-    const { data: publicData } = supabaseUser.storage
-      .from("reports")
-      .getPublicUrl(fileName);
+      const { data: publicData } = supabaseUser.storage
+        .from("reports")
+        .getPublicUrl(fileName);
 
-    if (!publicData) {
-      console.log(" NO FILE FOUND");
-    }
+      if (!publicData) {
+        console.log(" NO FILE FOUND");
+      }
 
-    const publicURL = publicData.publicUrl;
+      const publicURL = publicData.publicUrl;
 
-    const { data: reportsTableData, error: reportsTableError } = await supabaseUser
-      .from("reports_data")
-      .insert([
-        {
-          url: publicURL,
-          fileName: fileName,
-          fileSize: fileSizeBytes,
-        },
-      ]);
+      const { data: reportsTableData, error: reportsTableError } =
+        await supabaseUser.from("reports_data").insert([
+          {
+            url: publicURL,
+            fileName: fileName,
+            fileSize: fileSizeBytes,
+          },
+        ]);
 
-      console.log('REPORTS TABLE DATA', reportsTableData)
+      console.log("REPORTS TABLE DATA", reportsTableData);
 
-    if (reportsTableError) {
-      console.error(reportsTableError);
-    }
+      if (reportsTableError) {
+        console.error(reportsTableError);
+      }
 
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
@@ -422,9 +433,6 @@ const imageBuffer = await chartJSNodeCanvas.renderToBuffer({
       res.send(buffer);
     });
 
-    // Write content to the PDF
-    doc.fontSize(20).text(`User`, 100, 100);
-    doc.text("This PDF was generated on the server.");
     doc.end();
   } catch (e) {
     console.error(e);
@@ -433,13 +441,35 @@ const imageBuffer = await chartJSNodeCanvas.renderToBuffer({
   }
 };
 
-export const downloadFile: RequestHandler = async (req, res) => {
+const writeText = (
+  doc: PDFKit.PDFDocument,
+  text: string,
+  options: PDFKit.Mixins.TextOptions = {},
+  spacing = 10
+) => {
+  doc.text(text, options);
+  doc.y += spacing; // Add vertical space after text
+};
 
-    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
-    if (!supabaseUser) {
-      res.status(401).json({ error: "Unauthorized from upload file" });
-      return;
-    }
+const writeImage = (
+  doc: PDFKit.PDFDocument,
+  imageBuffer: Buffer,
+  imageHeight: number
+) => {
+  doc.image(imageBuffer, {
+    width: doc.page.width,
+    align: "center",
+  });
+
+  doc.y += imageHeight + 10; // Move cursor down after image
+};
+
+export const downloadFile: RequestHandler = async (req, res) => {
+  const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+  if (!supabaseUser) {
+    res.status(401).json({ error: "Unauthorized from upload file" });
+    return;
+  }
   const { fileName, fileStorage } = req.query as {
     fileName: string;
     fileStorage: string;
@@ -447,10 +477,10 @@ export const downloadFile: RequestHandler = async (req, res) => {
 
   if (!fileName || !fileStorage) {
     res.status(400).json({ error: "Missing fileUrl or fileStorage" });
-    return; 
+    return;
   }
 
-  console.log('file urll!!', fileName)
+  console.log("file urll!!", fileName);
 
   try {
     const { data, error } = await supabaseUser.storage
@@ -460,9 +490,9 @@ export const downloadFile: RequestHandler = async (req, res) => {
     if (error || !data) {
       console.error(error);
       res.status(500).json({ error: "Failed to download file" });
-      return; 
+      return;
     }
-    console.log('FILEE GOT', data);
+    console.log("FILEE GOT", data);
 
     const fileBuffer = await data.arrayBuffer();
     const buffer = Buffer.from(fileBuffer);

@@ -2,7 +2,7 @@
 import React from "react";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { DonutChart } from "../components/DonutChart";
+// import { DonutChart } from "../components/DonutChart";
 import { SubsAreaChart } from "../components/SubsAreaChart";
 import Navbar from "../components/Navbar";
 import DateDisplay from "../components/DateDisplay";
@@ -11,9 +11,9 @@ import { CountryBarChart } from "../components/CountryBarChart";
 
 import { supabase } from "../../lib/supabase";
 import BarChartPopup from "./BarChartPopup";
-import { createContext } from "react";
+// import { createContext } from "react";
 import { PopupProvider } from "../context/PopupContext";
-import { usePopupContext } from "../context/PopupContext";
+// import { usePopupContext } from "../context/PopupContext";
 import { NewSubDateRangeProvider } from "../context/NewSubDateRangeContext"; // Adjust the path if needed
 
 
@@ -22,8 +22,8 @@ const Dashboard = () => {
   const [totalSub, setTotalSub] = useState(0);
   const [activeSub, setActiveSub] = useState(0);
   const [inactiveSub, setInactiveSub] = useState(0);
-  const [countryData, setCountryData] = useState([]);
-  const [newSubs, setNewSubs] = useState<{ date: Date; subscriber_count: number }[]>([]);
+  // const [countryData, setCountryData] = useState([]);
+  // const [newSubs, setNewSubs] = useState<{ date: Date; subscriber_count: number }[]>([]);
 
   const fetchCountryCount = async () => {
     const { data: sessionData } = await supabase.auth.getSession();
@@ -40,7 +40,7 @@ const Dashboard = () => {
       }
     );
 
-    let data = await response.json();
+    const data = await response.json();
       // data = data.map((item: any) => ({
       //   ...item,
       //   country: item.country?.trim() ? item.country : "No country",
@@ -117,29 +117,29 @@ const Dashboard = () => {
     // console.log("active:", data);
   };
 
-  const fetchNewSubs = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
+  // const fetchNewSubs = async () => {
+  //   const { data: sessionData } = await supabase.auth.getSession();
+  //   const token = sessionData.session?.access_token;
 
-    if (!token) {
-      return;
-    }
+  //   if (!token) {
+  //     return;
+  //   }
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/dashboard/newSubs`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`, // ✅ Attach token in request
-          "Content-Type": "application/json",
-        },
-      }
-    );
+  //   const response = await fetch(
+  //     `${process.env.NEXT_PUBLIC_API_URL}/dashboard/newSubs`,
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`, // ✅ Attach token in request
+  //         "Content-Type": "application/json",
+  //       },
+  //     }
+  //   );
 
-    const data = await response.json();
-    // console.log("NEW SUBS:", data);
-    setNewSubs(data);
-  };
+  //   const data = await response.json();
+  //   // console.log("NEW SUBS:", data);
+  //   setNewSubs(data);
+  // };
 
 // const { isOpen } = usePopupContext();
 
@@ -148,7 +148,7 @@ const Dashboard = () => {
     fetchActiveSubs();
     fetchInactiveSubs();
     fetchTotalSubs();
-    fetchNewSubs();
+    // fetchNewSubs();
   }, []);
 
   // const [popupOpen,setPopupOpen] = useState(false);
@@ -156,7 +156,7 @@ const Dashboard = () => {
   //   setPopupOpen(!popupOpen);
   // }
 
-const [dateRange, setDateRange] = useState<"7d" | "1m" | "6m" | "1y">("7d");
+// const [dateRange, setDateRange] = useState<"7d" | "1m" | "6m" | "1y">("7d");
 
   return (
     <>

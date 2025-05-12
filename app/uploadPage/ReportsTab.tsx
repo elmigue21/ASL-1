@@ -51,7 +51,7 @@ const ReportsTab = () => {
       console.log(blob);
       console.log("FILE NAME",fileName)
 
-      const date = new Date().toLocaleDateString("en-CA");
+      // const date = new Date().toLocaleDateString("en-CA");
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -99,34 +99,23 @@ const ReportsTab = () => {
        const blob = await response.blob();
 
 
-          //  const contentDisposition = response.headers.get(
-          //    "Content-Disposition"
-          //  );
-          //  const fileNameMatch = contentDisposition?.match(/filename="(.+)"/);
-          //  const fileName = fileNameMatch
-          //    ? fileNameMatch[1]
-          //    : "default-file.xlsx";
-          const contentDisposition = response.headers.get(
-            "Content-Disposition"
-          );
+    const contentDisposition = response.headers.get("Content-Disposition");
 
-          console.log("CONTENT DISPOSITION", contentDisposition);
+    console.log("CONTENT DISPOSITION", contentDisposition);
 
-          const fileNameMatch = contentDisposition?.match(/filename="([^"]+)"/);
-          const fileName = fileNameMatch
-            ? fileNameMatch[1]
-            : "report-file.xlsx";
+    const fileNameMatch = contentDisposition?.match(/filename="([^"]+)"/);
+    const fileName = fileNameMatch ? fileNameMatch[1] : "default-file.xlsx";
 
 
        console.log(blob);
 
-       const date = new Date().toLocaleDateString("en-CA");
+      //  const date = new Date().toLocaleDateString("en-CA");
        const url = window.URL.createObjectURL(blob);
        const link = document.createElement("a");
        link.href = url;
        link.setAttribute(
          "download",
-         `data-report-${new Date().toISOString()}.pdf`
+         fileName
        ); //or any other extension
        document.body.appendChild(link);
        link.click();
@@ -136,70 +125,70 @@ const ReportsTab = () => {
      }
    };
 
-   const downloadFile = async({fileName,fileStorage}:{fileName:string,fileStorage:string}) =>{
-         const { data: sessionData } = await supabase.auth.getSession();
-         const token = sessionData.session?.access_token;
+  //  const downloadFile = async({fileName,fileStorage}:{fileName:string,fileStorage:string}) =>{
+  //        const { data: sessionData } = await supabase.auth.getSession();
+  //        const token = sessionData.session?.access_token;
 
-         if (!token) {
-           alert("You are not authenticated.");
-           return;
-         }
-         console.log("export excel");
-         try {
-           const response = await fetch(
-             `${process.env.NEXT_PUBLIC_API_URL}/upload/downloadFile?fileName=${fileName}&fileStorage=${fileStorage}`,
-             {
-               method: "GET",
-               headers: {
-                 Authorization: `Bearer ${token}`,
-               },
-             }
-           );
+  //        if (!token) {
+  //          alert("You are not authenticated.");
+  //          return;
+  //        }
+  //        console.log("export excel");
+  //        try {
+  //          const response = await fetch(
+  //            `${process.env.NEXT_PUBLIC_API_URL}/upload/downloadFile?fileName=${fileName}&fileStorage=${fileStorage}`,
+  //            {
+  //              method: "GET",
+  //              headers: {
+  //                Authorization: `Bearer ${token}`,
+  //              },
+  //            }
+  //          );
 
-           if (!response.ok) {
-             const errorText = await response.text(); // handle error response as text
-             throw new Error(errorText || "Export excel failed");
-           }
+  //          if (!response.ok) {
+  //            const errorText = await response.text(); // handle error response as text
+  //            throw new Error(errorText || "Export excel failed");
+  //          }
 
-           console.log("blob");
-           const blob = await response.blob();
+  //          console.log("blob");
+  //          const blob = await response.blob();
 
-           //  const contentDisposition = response.headers.get(
-           //    "Content-Disposition"
-           //  );
-           //  const fileNameMatch = contentDisposition?.match(/filename="(.+)"/);
-           //  const fileName = fileNameMatch
-           //    ? fileNameMatch[1]
-           //    : "default-file.xlsx";
-          //  const contentDisposition = response.headers.get(
-          //    "Content-Disposition"
-          //  );
+  //          //  const contentDisposition = response.headers.get(
+  //          //    "Content-Disposition"
+  //          //  );
+  //          //  const fileNameMatch = contentDisposition?.match(/filename="(.+)"/);
+  //          //  const fileName = fileNameMatch
+  //          //    ? fileNameMatch[1]
+  //          //    : "default-file.xlsx";
+  //         //  const contentDisposition = response.headers.get(
+  //         //    "Content-Disposition"
+  //         //  );
 
-          //  console.log("CONTENT DISPOSITION", contentDisposition);
+  //         //  console.log("CONTENT DISPOSITION", contentDisposition);
 
-          //  const fileNameMatch =
-          //    contentDisposition?.match(/filename="([^"]+)"/);
-          //  const fileName = fileNameMatch
-          //    ? fileNameMatch[1]
-          //    : "report-file.xlsx";
+  //         //  const fileNameMatch =
+  //         //    contentDisposition?.match(/filename="([^"]+)"/);
+  //         //  const fileName = fileNameMatch
+  //         //    ? fileNameMatch[1]
+  //         //    : "report-file.xlsx";
 
-           console.log(blob);
+  //          console.log(blob);
 
-           const date = new Date().toLocaleDateString("en-CA");
-           const url = window.URL.createObjectURL(blob);
-           const link = document.createElement("a");
-           link.href = url;
-          //  link.setAttribute(
-          //    "download",
-          //    `data-report-${new Date().toISOString()}.pdf`
-          //  ); //or any other extension
-           document.body.appendChild(link);
-           link.click();
-           link.remove();
-         } catch (error) {
-           console.error("Export error:", error);
-         }
-   }
+  //          const date = new Date().toLocaleDateString("en-CA");
+  //          const url = window.URL.createObjectURL(blob);
+  //          const link = document.createElement("a");
+  //          link.href = url;
+  //         //  link.setAttribute(
+  //         //    "download",
+  //         //    `data-report-${new Date().toISOString()}.pdf`
+  //         //  ); //or any other extension
+  //          document.body.appendChild(link);
+  //          link.click();
+  //          link.remove();
+  //        } catch (error) {
+  //          console.error("Export error:", error);
+  //        }
+  //  }
 
 
   return (

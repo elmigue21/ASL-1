@@ -30,10 +30,6 @@ const UploadTab = () => {
 
       const formData = new FormData();
       formData.append("file", file);
-      console.log("form dtatas");
-      for (let [key, value] of formData.entries()) {
-        console.log(key, value); // Log each entry
-      }
 
       try {
         const response = await fetch(

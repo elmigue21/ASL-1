@@ -5,10 +5,10 @@ import {
   flexRender,
   ColumnDef,
 } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
-import { getReportsAndExcel } from "@/backend/controllers/backupController";
+// import { getReportsAndExcel } from "@/backend/controllers/backupController";
 
 // type Backup = {
 //   id: string;
@@ -67,7 +67,7 @@ interface ReportsData {
 
            console.log(blob);
 
-           const date = new Date().toLocaleDateString("en-CA");
+          //  const date = new Date().toLocaleDateString("en-CA");
            const url = window.URL.createObjectURL(blob);
            const link = document.createElement("a");
            link.href = url;

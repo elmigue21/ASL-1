@@ -28,14 +28,19 @@ import {
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-const chartData = [
+/* const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },
   { month: "March", desktop: 237, mobile: 120 },
   { month: "April", desktop: 73, mobile: 190 },
   { month: "May", desktop: 209, mobile: 130 },
   { month: "June", desktop: 214, mobile: 140 },
-];
+]; */
+
+interface CountryDataProps{
+  country: string;
+  count: number;
+}
 
 import { usePopupContext } from "../context/PopupContext";
 
@@ -53,7 +58,8 @@ const chartConfig = {
 
 export function CountryBarChart() {
 
-  const [countryData, setCountryData] = useState<any[]>([]);
+  const [countryData, setCountryData] = useState<CountryDataProps[]>([]);
+  console.log("COUNTRY DATA ISSS", countryData)
 
  const fetchCountryCount = async () => {
    const { data: sessionData } = await supabase.auth.getSession();
@@ -72,7 +78,7 @@ export function CountryBarChart() {
 
    let data = await response.json();
    data = data
-     .map((item: any) => ({
+     .map((item: CountryDataProps) => ({
        ...item,
        country: item.country?.trim() ? item.country : "N/A",
      }))

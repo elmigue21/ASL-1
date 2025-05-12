@@ -1,14 +1,14 @@
 'use client'
 import React, { useState } from 'react';
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { ScrollArea } from '@/components/ui/scroll-area';
+// import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+// import { ScrollArea } from '@/components/ui/scroll-area';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import EmailInputPopover from './EmailInputPopover';
+// import EmailInputPopover from './EmailInputPopover';
 import { Separator } from '@/components/ui/separator';
 import CloseButton from './CloseButton';
-import PhoneInputPopover from './PhoneInputPopover';
+// import PhoneInputPopover from './PhoneInputPopover';
 type LandingPagePopupProps = {
   popupOpen: boolean;
   setPopupOpen: (open: boolean) => void;
@@ -57,7 +57,7 @@ const [formData, setFormData] = useState<PersonForm>({
   companyLinkedIn: "",
 });
 
-const handleChange = <K extends keyof PersonForm>(
+/* const handleChange = <K extends keyof PersonForm>(
   key: K,
   value: PersonForm[K]
 ) => {
@@ -128,15 +128,16 @@ const handleSubmit = () => {
     companyWebsite,
     companyLinkedIn,
   });
-};
+}; */
 return (
   <div className="w-3/4 fixed h-3/4 gap-y-4 flex flex-col justify-center bg-white border border-black rounded-2xl z-50 p-5">
-    <div className="flex justify-between items-center">
-      <h1>Subscribe</h1>
+    <div className="">
+      <h1 className="absolute top-5 left-5 font-bold">Subscribe</h1>
       <CloseButton
         onClick={() => {
           setPopupOpen(!popupOpen);
         }}
+        className="bg-red-500"
       />
     </div>
     <div className="flex  justify-evenly gap-x-16 px-16">
@@ -152,25 +153,37 @@ return (
         </Label>
         <Input id="lastname" className="border border-black" />
       </span>
+      <span className="flex-1">
+        <Label htmlFor="phone" className="p-1">
+          Phone Number
+        </Label>
+        <Input id="phone" className="border border-black" />
+      </span>
 
-      <PhoneInputPopover
+      {/* <PhoneInputPopover
         phones={formData.phoneNumbers}
         removePhone={removePhoneNumber}
         // emailInput={formData.emailInput}
         // setEmailInput={formData.emailInput}
         addPhone={addPhoneNumber}
-      />
+      /> */}
     </div>
 
     <Separator className="bg-black" />
     <div className="flex  justify-evenly gap-x-16 px-16">
-      <EmailInputPopover
+      {/* <EmailInputPopover
         emails={formData.emails}
         removeEmail={removeEmail}
         // emailInput={formData.emailInput}
         // setEmailInput={formData.emailInput}
         addEmail={addEmail}
-      />
+      /> */}
+      <span className="flex-1">
+        <Label htmlFor="email" className="p-1">
+          Email
+        </Label>
+        <Input id="email" className="border border-black" />
+      </span>
       <span className="flex-1">
         <Label htmlFor="facebookurl" className="p-1">
           Facebook URL
@@ -241,6 +254,9 @@ return (
         </Label>
         <Input id="companylinkedin" className="border border-black" />
       </div>
+    </div>
+    <div className="flex justify-end">
+      <Button className="hover:cursor-pointer active:bg-slate-500 transition-all duration-300 active:scale-95">Submit</Button>
     </div>
   </div>
 );

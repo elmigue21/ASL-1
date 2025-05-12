@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { supabase } from "@/lib/supabase";
+// import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { supabase } from "@/lib/supabase";
 
 import { Separator } from "@/components/ui/separator";
 import ReportsTab from "./ReportsTab";
@@ -12,52 +12,52 @@ import UploadTab from "./UploadTab";
 import BackupsTab from "./BackupsTab";
 
 function UploadPage() {
-  const [file, setFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  // const [file, setFile] = useState<File | null>(null);
+  // const [isUploading, setIsUploading] = useState(false);
 
-  const handleUpload = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
+  // const handleUpload = async () => {
+  //   const { data: sessionData } = await supabase.auth.getSession();
+  //   const token = sessionData.session?.access_token;
 
-    if (!token) {
-      alert("You are not authenticated.");
-      return;
-    }
+  //   if (!token) {
+  //     alert("You are not authenticated.");
+  //     return;
+  //   }
 
-    if (!file) {
-      alert("No file selected!");
-      return;
-    }
+  //   if (!file) {
+  //     alert("No file selected!");
+  //     return;
+  //   }
 
-    setIsUploading(true);
+  //   setIsUploading(true);
 
-    const formData = new FormData();
-    formData.append("file", file);
+  //   const formData = new FormData();
+  //   formData.append("file", file);
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/upload/uploadFile`,
-        {
-          method: "POST",
-          body: formData,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/upload/uploadFile`,
+  //       {
+  //         method: "POST",
+  //         body: formData,
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      const result = await response.json();
+  //     const result = await response.json();
 
-      if (!response.ok) throw new Error(result.error || "Upload failed");
-      console.log(result);
-      alert("Upload successful: " + result.message);
-    } catch (error) {
-      console.error("Upload error:", error);
-      alert("Upload failed");
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  //     if (!response.ok) throw new Error(result.error || "Upload failed");
+  //     console.log(result);
+  //     alert("Upload successful: " + result.message);
+  //   } catch (error) {
+  //     console.error("Upload error:", error);
+  //     alert("Upload failed");
+  //   } finally {
+  //     setIsUploading(false);
+  //   }
+  // };
 
   const navItems = [
     { label: "Backups", color: "bg-red-500" },
@@ -70,7 +70,7 @@ function UploadPage() {
   return (
     <>
       <Navbar />
-      <div className="flex border border-slate-400 box-border z-45 absolute top-[11vh] left-[8.35vw] w-[91.6vw] h-[89vh]">
+      <div className="flex border border-slate-400 box-border z-45 absolute top-[11vh] left-[8.35vw] w-[91.6vw] h-[89vh] overflow-hidden">
         <div className="box-border border-3 border-slate-900 rounded p-2">
           <h1 className="p-5">Backup & Retrieval Console</h1>
           <Separator />

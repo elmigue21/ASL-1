@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import * as React from "react";
 import {
   ColumnDef,
-  ColumnFiltersState,
+  // ColumnFiltersState,
   SortingState,
-  VisibilityState,
+  // VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -14,13 +14,13 @@ import {
   useReactTable,
   getExpandedRowModel,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown/* , ChevronDown */, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
+  // DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
@@ -45,27 +45,27 @@ import {
   addSelectedEmails,
   removeSelectedEmails,
 } from "@/store/slices/subscriptionSlice";
-import {  useInfiniteQuery } from '@tanstack/react-query';
+// import {  useInfiniteQuery } from '@tanstack/react-query';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import {Email} from "@/types/email"
-import { useCallback } from "react";
-import { useQuery,keepPreviousData } from "@tanstack/react-query";
-import { Pagination } from "@/components/ui/pagination";
+// import { useCallback } from "react";
+import { useQuery/* ,keepPreviousData */ } from "@tanstack/react-query";
+// import { Pagination } from "@/components/ui/pagination";
 
 export function SubscriptionsTable() {
 
 
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+  const [sorting, setSorting] = useState<SortingState>([]);
+ /*  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
-  );
+  ); */
   // const [columnVisibility, setColumnVisibility] =
   //   React.useState<VisibilityState>({});
   // const [rowSelection, setRowSelection] = React.useState({});
 
-  const [pagination, setPagination] = React.useState({
+  const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10, 
   });
@@ -114,7 +114,7 @@ const fetchSubscriptions = async ({
 };
 
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading/* , isError  */} = useQuery({
     queryKey: [
       "subscriptions",
       // page,
@@ -175,7 +175,7 @@ const prevPage = () => {
       setPageCount(count && Math.ceil(count/pagination.pageSize));
     };
     getTableCount();
-  }, []);
+  }, [pagination.pageSize]);
   useEffect(()=>{
     console.log("pagecoutn", pageCount);
   },[pageCount])
@@ -191,7 +191,7 @@ const prevPage = () => {
 
 
     let start = Math.max(currentPage - 2, 1);
-    let end = Math.min(start + 4, total);
+    const end = Math.min(start + 4, total);
 
     if (end - start < 4) {
       start = Math.max(end - 4, 1);
@@ -382,14 +382,9 @@ const prevPage = () => {
         },
       },
     ],
-    [selectedEmails, pagination.pageIndex]
+    [/* selectedEmails, pagination.pageIndex */]
   );
 
-
-  // const subscriptions = React.useMemo(
-  //   () => data?.pages?.flatMap((page) => page) ?? [],
-  //   [data]
-  // );
 
 
 
@@ -398,7 +393,7 @@ const prevPage = () => {
     data: subscriptions,
     columns,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    // onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),

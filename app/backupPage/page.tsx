@@ -14,7 +14,7 @@ interface BackupData{
   created_at:Date,
 }
 
-function backupPage() {
+function BackupPage() {
 
   const [backups,setBackups] = useState<BackupData[]>([]);
   
@@ -204,4 +204,4 @@ console.log('clicked delete;')
   );
 }
 
-export default backupPage;
+export default BackupPage;

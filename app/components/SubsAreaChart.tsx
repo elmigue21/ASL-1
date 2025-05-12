@@ -1,35 +1,30 @@
-"use client"
+"use client";
 
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-import { useState,useEffect } from "react"
+} from "@/components/ui/chart";
+import { useState, useEffect } from "react";
 
 const chartConfig = {
   count: {
     label: "Subscribers",
     color: "#1A2B88",
   },
-} satisfies ChartConfig
-import { supabase } from "@/lib/supabase"
-import { SubsComboBox } from "./SubsComboBox"
-import { useNewSubDateRange } from "../context/NewSubDateRangeContext"
+} satisfies ChartConfig;
+import { supabase } from "@/lib/supabase";
+import { SubsComboBox } from "./SubsComboBox";
+import { useNewSubDateRange } from "../context/NewSubDateRangeContext";
 
-interface ChartDataProps {
-  day: Date,
-  count:number,
-}
+// interface ChartDataProps {
+//   day: Date,
+//   count:number,
+// }
 
 type SubData = {
   date: string; // "2025-05-03" or "2025-05"
@@ -43,7 +38,7 @@ const generateDays = (numDays: number): string[] => {
   for (let i = numDays - 1; i >= 0; i--) {
     const date = new Date(today);
     date.setDate(today.getDate() - i);
-    days.push(date.toISOString().split('T')[0]); // Format to "YYYY-MM-DD"
+    days.push(date.toISOString().split("T")[0]); // Format to "YYYY-MM-DD"
   }
 
   return days;
@@ -63,10 +58,13 @@ const generateMonths = (numMonths: number): string[] => {
   return months;
 };
 
+
 // Normalize the data based on the date range (7d, 1m, 6m, 1y)
-const normalizeData = (rawData: any[], range: "7d" | "1m" | "6m" | "1y") => {
-  const labelFormatter = range === "7d" ? "day" : "month";
-  
+const normalizeData = (rawData: SubData[], range: "7d" | "1m" | "6m" | "1y") => {
+
+  console.log('RAW DATA', rawData);
+  // const labelFormatter = range === "7d" ? "day" : "month";
+
   let labels: string[] = [];
   if (range === "7d") {
     labels = generateDays(7); // 7 days
@@ -86,7 +84,7 @@ const normalizeData = (rawData: any[], range: "7d" | "1m" | "6m" | "1y") => {
       // Ensure that rawData date is in the correct format for matching labels
       if (range === "7d" || range === "1m") {
         formattedDate = d.date.slice(0, 10); // Extract "YYYY-MM-DD"
-      } else if (/* range === "1m" ||  */range === "6m" || range === "1y") {
+      } else if (/* range === "1m" ||  */ range === "6m" || range === "1y") {
         formattedDate = d.date.slice(0, 7); // Extract "YYYY-MM" from "YYYY-MM-DD"
       }
 
@@ -94,22 +92,19 @@ const normalizeData = (rawData: any[], range: "7d" | "1m" | "6m" | "1y") => {
     })
   );
 
-
   return labels.map((label) => ({
     date: label,
     subscriber_count: dataMap.get(label) ?? 0,
   }));
 };
 
-
-
 export function SubsAreaChart(/* {chartData} : {chartData:ChartDataProps[]} */) {
   // console.log('CHART DATAAAAAA', chartData)
 
   const [newSubs, setNewSubs] = useState<SubData[]>([]);
 
-// const [dateRange, setDateRange] = useState<"7d" | "1m" | "6m" | "1y">("7d");
-
+  // const [dateRange, setDateRange] = useState<"7d" | "1m" | "6m" | "1y">("7d");
+  const { dateRange /*  setDateRange */ } = useNewSubDateRange();
 
   const fetchNewSubs = async () => {
     const { data: sessionData } = await supabase.auth.getSession();
@@ -133,20 +128,18 @@ export function SubsAreaChart(/* {chartData} : {chartData:ChartDataProps[]} */) 
     const data = await response.json();
     // console.log("NEW SUBS:", data);
 
+    const filled = normalizeData(data, dateRange);
+    console.log("normalized dataaa", filled);
 
-    const filled = normalizeData(data,dateRange);
-    console.log("normalized dataaa", filled)
-
-    console.log("datga",data)
+    console.log("datga", data);
     setNewSubs(filled);
   };
 
-   const { dateRange, setDateRange } = useNewSubDateRange();
+  //  const { dateRange, setDateRange } = useNewSubDateRange();
 
-
-useEffect(()=>{
-  fetchNewSubs()
-},[dateRange])
+  useEffect(() => {
+    fetchNewSubs();
+  }, [dateRange]);
   return (
     <Card className="shadow-none border-0">
       <CardHeader>

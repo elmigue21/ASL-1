@@ -1,16 +1,16 @@
 import React from 'react'
 import BackupsTable from '../components/BackupsTable';
-import {supabase} from '../../lib/supabase';
-import {useState} from 'react'
+// import {supabase} from '../../lib/supabase';
+// import {useState} from 'react'
 
 
-interface BackupData {
-  fileName: string;
-  fileURL: string;
-  id: number;
-  created_at: Date;
-  fileSize: number;
-}
+// interface BackupData {
+//   fileName: string;
+//   fileURL: string;
+//   id: number;
+//   created_at: Date;
+//   fileSize: number;
+// }
 const BackupsTab = () => {
 
 

@@ -6,8 +6,8 @@ import { Provider } from "react-redux";
 import {store} from "@/store/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import EmailWindow from "./components/EmailWindow";
-import { useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+// import { useEffect } from "react";
+// import { supabase } from "@/lib/supabase";
 import { useSessionRefresher } from "@/lib/hooks/useSessionRefresher";
 
 // Create a QueryClient instance

@@ -2,12 +2,12 @@
 import React, { Suspense } from 'react'
 import { SubscriptionsTable } from '../components/SubscriptionsTable'
 import Navbar from '../components/Navbar'
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
 // import { supabase } from '@/lib/supabase';
 // import EmailWindow from '../components/EmailWindow';
 // import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { setOpenState } from "@/store/slices/emailWindowSlice";
+// import { useDispatch } from 'react-redux';
+// import { setOpenState } from "@/store/slices/emailWindowSlice";
 
 
 // const fetchEmail = async () => {
@@ -40,10 +40,10 @@ import { setOpenState } from "@/store/slices/emailWindowSlice";
 
 function TablesPage() {
 
-  const dispatch = useDispatch();
-  const openClicked = () => {
-    dispatch(setOpenState(true));
-  };
+  // const dispatch = useDispatch();
+  // const openClicked = () => {
+  //   dispatch(setOpenState(true));
+  // };
   return (
     <div>
       

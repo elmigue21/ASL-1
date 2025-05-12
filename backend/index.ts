@@ -15,9 +15,29 @@ import emailRoutes from "./routes/emailRoutes";
 import backupRoutes from './routes/backupRoutes'
 import uploadRoutes from './routes/uploadRoutes'
 import downloadRoutes from './routes/downloadRoutes';
+import landingRoutes from './routes/landingRoutes'
+import path from 'path'
+// const env = process.env.NODE_ENV || "local"; // fallback to local
+// Hardcode the path to the .env.local file
+const envPath = path.resolve(__dirname, '../.env.local');
+console.log('Attempting to load .env from:', envPath);
 
-dotenv.config();
+// Now explicitly call dotenv.config with the path
+const result = dotenv.config({ path: envPath });
+if (result.error) {
+    console.error("Failed to load .env file:", result.error);
+} else {
+    console.log("Environment variables loaded successfully.");
+}
+
+// Log the specific variable you're trying to access
+// console.log("EMAIL_SECRET:", process.env.EMAIL_SECRET);
+
 const app = express();
+// // console.log(process.env)
+// console.log("EMAIL_SECRET", process.env.EMAIL_SECRET);
+// console.log(process.env)
+
 
 app.use(
   cors({
@@ -83,6 +103,7 @@ apiRouter.use("/email"/* ,authenticateUser */,emailRoutes);
 apiRouter.use('/backups',authenticateUser,backupRoutes);
 apiRouter.use('/upload',authenticateUser,uploadRoutes);
 apiRouter.use('/download',authenticateUser,downloadRoutes);
+apiRouter.use('/landing', landingRoutes);
 
 
 app.use("/api", apiRouter);

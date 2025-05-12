@@ -9,7 +9,7 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
+  // CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -41,11 +41,11 @@ const frameworks = [
 export function SubsComboBox() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState<"7d" | "1m" | "6m" | "1y">("7d");
-    const {dateRange,setDateRange} = useNewSubDateRange();
+    const {setDateRange} = useNewSubDateRange();
 
     useEffect(()=>{
         setDateRange(value)
-    },[value])
+    },[value, setDateRange])
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

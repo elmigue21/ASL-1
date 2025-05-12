@@ -37,7 +37,7 @@ const BackupsTable = () => {
     const [backups, setBackups] = useState<BackupData[]>([]);
 
   const [selectedRowId, setSelectedRowId] = useState<string>("");
-
+/* 
          const backupBucket = async () => {
            const { data: sessionData } = await supabase.auth.getSession();
            const token = sessionData.session?.access_token;
@@ -86,7 +86,7 @@ const BackupsTable = () => {
            console.log(data);
            alert("BACKUPS bucket");
          };
-  
+   */
          const getBackups = async () => {
               const { data: sessionData } = await supabase.auth.getSession();
               const token = sessionData.session?.access_token;
