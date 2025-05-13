@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/lib/supabase";
 
 export function useSessionRefresher() {
-  useEffect(() => {
-    let sessionExpiryTime: number | null = null;
+  const sessionExpiryTimeRef = useRef<number | null>(null); // Using useRef to persist sessionExpiryTime
 
+  useEffect(() => {
     // Load session and set expiry time
     const loadSession = async () => {
       try {
@@ -14,10 +14,13 @@ export function useSessionRefresher() {
           data: { session },
         } = await supabase.auth.getSession();
         if (session) {
-          sessionExpiryTime = session.expires_at
+          sessionExpiryTimeRef.current = session.expires_at
             ? session.expires_at * 1000
             : null;
-          console.log("Session loaded. Expiry time:", sessionExpiryTime);
+          console.log(
+            "Session loaded. Expiry time:",
+            sessionExpiryTimeRef.current
+          );
         }
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -30,12 +33,12 @@ export function useSessionRefresher() {
 
     // Refresh session if it's about to expire
     const refreshSessionIfNeeded = useCallback(async () => {
-      if (!sessionExpiryTime) return;
+      if (!sessionExpiryTimeRef.current) return;
 
       const now = Date.now();
       const threshold = 59 * 60 * 1000; // 59 minutes
 
-      const timeLeft = sessionExpiryTime - now;
+      const timeLeft = sessionExpiryTimeRef.current - now;
       console.log(
         `Time left before session expires: ${Math.round(timeLeft / 1000)}s`
       );
@@ -45,12 +48,12 @@ export function useSessionRefresher() {
         try {
           const { data, error } = await supabase.auth.refreshSession();
           if (data?.session) {
-            sessionExpiryTime = data.session.expires_at
+            sessionExpiryTimeRef.current = data.session.expires_at
               ? data.session.expires_at * 1000
               : null;
             console.log(
               "Session extended! New expiry time:",
-              sessionExpiryTime
+              sessionExpiryTimeRef.current
             );
           } else if (error) {
             // Explicitly handle error
@@ -66,7 +69,7 @@ export function useSessionRefresher() {
       } else {
         console.log("Session is still valid, no need to refresh.");
       }
-    }, [sessionExpiryTime]);
+    }, []);
 
     // Click handler
     const handleClick = useCallback(() => {
@@ -81,15 +84,15 @@ export function useSessionRefresher() {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         if (session) {
-          sessionExpiryTime = session.expires_at
+          sessionExpiryTimeRef.current = session.expires_at
             ? session.expires_at * 1000
             : null;
           console.log(
             "Auth state changed. Updated expiry time:",
-            sessionExpiryTime
+            sessionExpiryTimeRef.current
           );
         } else {
-          sessionExpiryTime = null;
+          sessionExpiryTimeRef.current = null;
           console.log("Auth state changed. No active session.");
         }
       }
@@ -103,5 +106,5 @@ export function useSessionRefresher() {
       window.removeEventListener("click", handleClick);
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, []); // Empty dependency array ensures this runs once when the component mounts
 }

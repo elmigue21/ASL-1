@@ -147,7 +147,7 @@ export const getNewSubscribers: RequestHandler = async (req, res) => {
     //   .group("date") // Group by the formatted date
     //   .order("date");
     const { data, error } = await supabaseUser.rpc("get_new_subscribers_by_range", {
-      range: "invalid_range", // This will fall back to 7 days as default
+      range: range, // This will fall back to 7 days as default
     });
 
 

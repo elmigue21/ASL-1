@@ -8,6 +8,58 @@ interface AuthenticatedRequest extends Request {
   user?: User | null;
 }
 
+export const getSubscription: RequestHandler = async (req, res) => {
+  try {
+    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+    if (!supabaseUser) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+    const { id } = req.params;
+    const { data, error } = await supabaseUser
+      .from("subscribers")
+      .select(
+        `
+    *,
+    addresses (city, country, state),
+    emails (email),
+    companies (name, website, linked_in_url),
+    industries (industry),
+    phone_numbers (phone),
+    occupations (occupation)
+  `
+      )
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error) {
+      console.log("error", error);
+      res.status(500).json({ error: error });
+      return;
+    }
+    if (!data) {
+      res.status(204).end(); // or res.send() / res.json() if appropriate
+      return;
+    }
+
+  const result = {
+    ...data,
+    address: data.addresses,
+    company: data.companies,
+    industry: data.industries?.industry,
+    occupation: data.occupations?.occupation,
+    email: data.emails?.[0]?.email,
+  };
+  console.log(result);
+
+
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+    return;
+  }
+};
+
 // Get All Subscriptions
 export const createSubscription: RequestHandler = async (req, res) => {
   try {
@@ -21,7 +73,6 @@ export const createSubscription: RequestHandler = async (req, res) => {
     const { country, state, city } = req.body;
     const { occupation, industry, company, companyLinkedIn, companyWebsite } =
       req.body;
-      
 
     const { data, error } = await supabaseUser.rpc("create_subscription", {
       first_name: firstName,
@@ -37,15 +88,13 @@ export const createSubscription: RequestHandler = async (req, res) => {
       state: state,
       city: city,
       company_linkedin: companyLinkedIn,
-      company_website: companyWebsite, 
+      company_website: companyWebsite,
     });
     if (error) {
-      res
-        .status(500)
-        .json({
-          message: "failed to create subscription",
-          details: error.message,
-        });
+      res.status(500).json({
+        message: "failed to create subscription",
+        details: error.message,
+      });
       console.error(error);
       return;
     }
@@ -64,7 +113,7 @@ export const editSubscription: RequestHandler = async (req, res) => {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
-    const {subscriberId} = req.body;
+    const { subscriberId } = req.body;
     const { firstName, lastName, personLinkedIn, personFacebook } = req.body;
     const { phoneNumbers, emails } = req.body;
     const { country, state, city } = req.body;
@@ -72,7 +121,7 @@ export const editSubscription: RequestHandler = async (req, res) => {
       req.body;
 
     const { data, error } = await supabaseUser.rpc("edit_subscription", {
-      sub_id:subscriberId,
+      sub_id: subscriberId,
       first_name: firstName,
       last_name: lastName,
       person_facebook_url: personFacebook,
@@ -86,7 +135,7 @@ export const editSubscription: RequestHandler = async (req, res) => {
       state: state,
       city: city,
       company_linkedin: companyLinkedIn,
-      company_website: companyWebsite, 
+      company_website: companyWebsite,
     });
     if (error) {
       res.status(500).json({
@@ -104,7 +153,6 @@ export const editSubscription: RequestHandler = async (req, res) => {
   }
 };
 
-
 export const deleteSubscription: RequestHandler = async (req, res) => {
   try {
     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
@@ -112,9 +160,9 @@ export const deleteSubscription: RequestHandler = async (req, res) => {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
-    const {subscriptionId} = req.body
+    const { subscriptionId } = req.body;
     const { data, error } = await supabaseUser.rpc("delete_subscription", {
-      sub_id:subscriptionId,
+      sub_id: subscriptionId,
     });
 
     if (error) {
@@ -132,4 +180,3 @@ export const deleteSubscription: RequestHandler = async (req, res) => {
     return;
   }
 };
-

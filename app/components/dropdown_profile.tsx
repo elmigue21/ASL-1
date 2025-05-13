@@ -5,7 +5,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 // import img from 'next/img'
-import Link from 'next/link'
+// import Link from 'next/link'
 import { logout } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 

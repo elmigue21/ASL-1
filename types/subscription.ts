@@ -5,19 +5,24 @@ export interface Subscription {
     first_name: string;
     last_name: string;
     current_position: string;
-    Field1: string;
+    // Field1: string;
     person_linkedin_url: string;
-    company_name: string;
-    person_city: string;
-    person_state: string;
-    person_country: string;
-    person_industry: string;
+    // company_name: string;
+    // person_city: string;
+    // person_state: string;
+    // person_country: string;
+    // person_industry: string;
     tags: string;
-    company_website: string;
+    // company_website: string;
     emails: {email:string,id:number}[];
-    phones:string[];
+    phone_numbers:{phone:string}[];
     person_facebook_url: string;
     company_linkedin_url: string;
     created_by: string;
     lead_status: string;
+    active_status:boolean;
+    address: {country:string,state:string,city:string};
+    company:{name:string,linked_in_url:string,website:string};
+    occupation:string
+    industry:string
 }

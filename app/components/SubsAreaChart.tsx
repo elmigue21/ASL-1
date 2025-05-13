@@ -77,20 +77,20 @@ const normalizeData = (rawData: SubData[], range: "7d" | "1m" | "6m" | "1y") => 
   }
 
   // Map raw data to a date value (default to 0 if missing)
-  const dataMap = new Map(
-    rawData.map((d: SubData) => {
-      let formattedDate = d.date;
+const dataMap = new Map<string, number>();
 
-      // Ensure that rawData date is in the correct format for matching labels
-      if (range === "7d" || range === "1m") {
-        formattedDate = d.date.slice(0, 10); // Extract "YYYY-MM-DD"
-      } else if (/* range === "1m" ||  */ range === "6m" || range === "1y") {
-        formattedDate = d.date.slice(0, 7); // Extract "YYYY-MM" from "YYYY-MM-DD"
-      }
+rawData.forEach((d: SubData) => {
+  let formattedDate = d.date;
 
-      return [formattedDate, d.subscriber_count ?? 0]; // If value is missing, default to 0
-    })
-  );
+  if (range === "7d" || range === "1m") {
+    formattedDate = d.date.slice(0, 10); // "YYYY-MM-DD"
+  } else if (range === "6m" || range === "1y") {
+    formattedDate = d.date.slice(0, 7); // "YYYY-MM"
+  }
+
+  const prevCount = dataMap.get(formattedDate) || 0;
+  dataMap.set(formattedDate, prevCount + (d.subscriber_count ?? 0));
+});
 
   return labels.map((label) => ({
     date: label,

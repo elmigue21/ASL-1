@@ -14,7 +14,7 @@ import {
   useReactTable,
   getExpandedRowModel,
 } from "@tanstack/react-table";
-import { ArrowUpDown /* , ChevronDown */, MoreHorizontal } from "lucide-react";
+import { /* ArrowUpDown  *//* , ChevronDown *//* , */ MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -270,7 +270,7 @@ export function SubscriptionsTable() {
       {
         accessorFn: (row) => `${row.first_name ?? ""} ${row.last_name ?? ""}`, // ✅ Handles missing names safely
         id: "full_name", // We use `id` instead of `accessorKey` since it's computed
-        header: ({ column }) => (
+        header: ({ /* column */ }) => (
           <Button
             variant="ghost"
             // onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}

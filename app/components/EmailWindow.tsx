@@ -15,7 +15,7 @@ import {
   removeSelectedEmails,
 } from "@/store/slices/subscriptionSlice";
 import { Email } from '@/types/email';
-import CloseButton from './CloseButton';
+// import CloseButton from './CloseButton';
 
 
 
