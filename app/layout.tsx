@@ -8,8 +8,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import EmailWindow from "./components/EmailWindow";
 // import { useEffect } from "react";
 // import { supabase } from "@/lib/supabase";
-import { useSessionRefresher } from "@/lib/hooks/useSessionRefresher";
+// import { useSessionRefresher } from "@/lib/hooks/useSessionRefresher";
 import {SessionRefresher} from "./components/SessionRefresher";
+import { Toaster } from "sonner";
 
 // Create a QueryClient instance
 const queryClient = new QueryClient();
@@ -115,6 +116,7 @@ export default function RootLayout({
             <body
             // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
+              <Toaster richColors position="bottom-center" />
               <EmailWindow />
               {children}
             </body>

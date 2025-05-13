@@ -17,7 +17,7 @@ export default function Dropdown_Profile() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex flex-row justify-center gap-x-[1.1vw] cursor-pointer items-center">
+        <div className="flex flex-row justify-center gap-x-[1.1vw] cursor-pointer items-center border border-slate-200 rounded-xl shadow p-3 hover:bg-slate-200">
           <Avatar className="h-[5.8vh] w-[2.8vw] object-cover">
             <AvatarImage
               src="https://github.com/shadcn.png"
@@ -40,12 +40,12 @@ export default function Dropdown_Profile() {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="z-60">
-        <DropdownMenuItem onClick={() => console.log("Profile Clicked")}>
+        <DropdownMenuItem onClick={() => console.log("Profile Clicked")} className="hover:cursor-pointer">
           Profile
         </DropdownMenuItem>
         {/* <DropdownMenuItem onClick={() => console.log("Settings Clicked")}>Settings</DropdownMenuItem> */}
         <div>
-          <DropdownMenuItem onClick={() => {logout(); router.replace("/")}}>
+          <DropdownMenuItem onClick={() => {logout(); router.replace("/")}} className="hover:cursor-pointer">
             Logout
           </DropdownMenuItem>
         </div>

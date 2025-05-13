@@ -38,7 +38,7 @@ function Page() {
         <Link href={"/loginPage"}>
           <Button
             //className="w-auto h-auto bg-red-600 rounded-full text-white text-[3vw] cursor-pointer hover:bg-red-700 absolute bottom-[6.5vh] right-[4.2vw] xsm:h-[4.40vh] xsm:w-[24.69vw] xsm:text-[4.69vw] sm:h-[3.46vh] sm:w-[26.59vw] sm:text-[3.53vw] md:h-[5.18vh] md:w-[19.53vw] md:text-[2.73vw] lg:w-[20.05vw] lg:h-[5.34vh] lg:text-[2.64vw] xl:h-[6vh] xl:w-[10vw]  xl:text-[1.50vw]"
-            className="w-auto bg-red-600 rounded-full text-white text-[3vw] cursor-pointer hover:bg-red-700 absolute bottom-[6.5vh] right-[4.2vw] xsm:text-[4.69vw] sm:text-[3.53vw] md:text-[2.73vw] lg:text-[2vw] xl:text-[1.50vw]"
+            className="w-auto bg-red-600 rounded-full text-white text-[3vw] cursor-pointer hover:bg-red-700 absolute bottom-[6.5vh] right-[4.2vw] xsm:text-[4.69vw] sm:text-[3.53vw] md:text-[2.73vw] lg:text-[2vw] xl:text-[1.50vw] active:scale-90 transition-all duration-300"
           >
             LOGIN
           </Button>

@@ -7,7 +7,9 @@ import { useDispatch } from "react-redux";
 import { setOpenState } from "@/store/slices/emailWindowSlice";
 import { logout } from "@/utils/auth";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
+import { Toaster } from "sonner";
 
 const Navbar: React.FC = () => {
   const dispatch = useDispatch();

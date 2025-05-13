@@ -23,6 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { toast } from "sonner";
 
 function AddAccPage() {
   const [firstName, setFirstName] = useState("Firsttt");
@@ -200,10 +201,18 @@ const handleSubmit = async () => {
                     <div className="relative w-full">
                       <Input
                         value={phoneInput}
-                        onChange={(e) => setPhoneInput(e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value.length > 15 || !/^\+?\d*$/.test(value)) {
+                            return;
+                          }
+                          setPhoneInput(value);
+                        }}
                         placeholder="Enter phone number"
                         className="pr-6"
                         type="tel"
+                        pattern="[0-9]*"
+                        inputMode="numeric"
                         maxLength={15}
                       />
                       <div className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 cursor-pointer">
@@ -313,9 +322,29 @@ const handleSubmit = async () => {
                   </Popover>
                   <Button
                     onClick={() => {
-                      if (emailInput) {
+                      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                      if (emailInput && emailPattern.test(emailInput)) {
                         addEmail(emailInput);
                         setEmailInput("");
+                        toast("Email Added!",{
+                          description:"qweqweqweqweqw",
+                          style: {
+    border: "1px solid black", // Add border color
+    padding: "1rem", // Padding
+    color: "red", // Text color
+    fontWeight: "bold", // Font weight
+    fontSize: "1rem", // Optional font size
+  }
+                        });
+                      } else {
+ toast.error("Invalid email", {
+  description: "Please enter a valid email like user@example.com",
+  style:{
+    backgroundColor:"red",
+    color:"white"
+  }
+});
                       }
                     }}
                     className="bg-white text-black border-black border-1 rounded-[0.60vw] cursor-pointer hover:bg-white"

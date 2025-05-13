@@ -52,6 +52,7 @@ import { Email } from "@/types/email";
 // import { useCallback } from "react";
 import { useQuery /* ,keepPreviousData */ } from "@tanstack/react-query";
 // import { Pagination } from "@/components/ui/pagination";
+import Image from "next/image";
 
 export function SubscriptionsTable() {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -289,10 +290,10 @@ export function SubscriptionsTable() {
             <div className="">
               {emails.length > 1 && (
                 <button
-                  className="bg-slate-200 p-1 rounded-md border  shadow-lg transition-all active:scale-80 hover:cursor-pointer duration-200 active:bg-white hover:shadow-xl hover:bg-slate-500 h-1/2 w-auto"
+                  className="p-1 rounded-full transition-all active:scale-80 hover:cursor-pointer duration-200 active:bg-white hover:shadow-xl hover:bg-slate-500 h-1/2 w-auto"
                   {...{ onClick: row.getToggleExpandedHandler() }}
                 >
-                  {row.getIsExpanded() ? "🢄" : "🢂"}
+                  {row.getIsExpanded() ? <Image src="/angle-down.png" width={15} height={15} alt="arrowdown"/> : <Image src="/angle-right.png" width={15} height={15} alt="arrowright"/>}
                 </button>
               )}
               {emails.length > 0 ? emails[0].email : "No Email"}
