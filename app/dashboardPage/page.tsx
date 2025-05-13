@@ -15,6 +15,8 @@ import BarChartPopup from "./BarChartPopup";
 import { PopupProvider } from "../context/PopupContext";
 // import { usePopupContext } from "../context/PopupContext";
 import { NewSubDateRangeProvider } from "../context/NewSubDateRangeContext"; // Adjust the path if needed
+import useAuthGuard from "@/lib/hooks/useAuthGuard";
+import { useRouter } from "next/navigation";
 
 
 const Dashboard = () => {
@@ -24,6 +26,7 @@ const Dashboard = () => {
   const [inactiveSub, setInactiveSub] = useState(0);
   // const [countryData, setCountryData] = useState([]);
   // const [newSubs, setNewSubs] = useState<{ date: Date; subscriber_count: number }[]>([]);
+
 
   const fetchCountryCount = async () => {
     const { data: sessionData } = await supabase.auth.getSession();
@@ -149,6 +152,7 @@ const Dashboard = () => {
     fetchInactiveSubs();
     fetchTotalSubs();
     // fetchNewSubs();
+    // useAuthGuard();
   }, []);
 
   // const [popupOpen,setPopupOpen] = useState(false);

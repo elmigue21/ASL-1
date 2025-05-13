@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { ReactNode, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
-export function useSessionRefresher() {
+interface SessionRefresherProps {
+  children?: ReactNode;
+}
+
+export function SessionRefresher({ children }: SessionRefresherProps) {
   useEffect(() => {
     let sessionExpiryTime: number | null = null;
 
-    // Load session and set expiry time
     const loadSession = async () => {
       try {
         const {
@@ -22,18 +25,15 @@ export function useSessionRefresher() {
       } catch (error: unknown) {
         if (error instanceof Error) {
           console.error("Error loading session:", error.message);
-        } else {
-          console.error("Unknown error occurred while loading session");
         }
       }
     };
 
-    // Refresh session if it's about to expire
-    const refreshSessionIfNeeded = useCallback(async () => {
+    const refreshSessionIfNeeded = async () => {
       if (!sessionExpiryTime) return;
 
       const now = Date.now();
-      const threshold = 59 * 60 * 1000; // 59 minutes
+      const threshold = 1 * 60 * 1000;
 
       const timeLeft = sessionExpiryTime - now;
       console.log(
@@ -53,31 +53,27 @@ export function useSessionRefresher() {
               sessionExpiryTime
             );
           } else if (error) {
-            // Explicitly handle error
             console.error("Failed to refresh session:", error.message);
           }
         } catch (error: unknown) {
           if (error instanceof Error) {
             console.error("Error refreshing session:", error.message);
-          } else {
-            console.error("Unknown error occurred while refreshing session");
           }
         }
       } else {
         console.log("Session is still valid, no need to refresh.");
       }
-    }, [sessionExpiryTime]);
+    };
 
-    // Click handler
-    const handleClick = useCallback(() => {
+    const handleClick = () => {
       console.log("User clicked. Checking session...");
       refreshSessionIfNeeded();
-    }, [refreshSessionIfNeeded]);
+    };
 
-    // Listen for clicks
+    // Set up event listener
     window.addEventListener("click", handleClick);
 
-    // Handle auth state changes
+    // Watch auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         if (session) {
@@ -95,13 +91,14 @@ export function useSessionRefresher() {
       }
     );
 
-    // Initial session load
+    // Initial load
     loadSession();
 
-    // Cleanup
     return () => {
       window.removeEventListener("click", handleClick);
       authListener.subscription.unsubscribe();
     };
   }, []);
+
+  return <>{children}</>;
 }

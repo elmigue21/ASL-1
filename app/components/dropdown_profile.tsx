@@ -7,9 +7,13 @@ import {
 // import img from 'next/img'
 import Link from 'next/link'
 import { logout } from "@/utils/auth";
+import { useRouter } from "next/navigation";
 
 
 export default function Dropdown_Profile() {
+
+  const router = useRouter();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,11 +44,11 @@ export default function Dropdown_Profile() {
           Profile
         </DropdownMenuItem>
         {/* <DropdownMenuItem onClick={() => console.log("Settings Clicked")}>Settings</DropdownMenuItem> */}
-        <Link href={"/"}>
-          <DropdownMenuItem onClick={() => logout()}>
+        <div>
+          <DropdownMenuItem onClick={() => {logout(); router.replace("/")}}>
             Logout
           </DropdownMenuItem>
-        </Link>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

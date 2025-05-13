@@ -9,6 +9,7 @@ import EmailWindow from "./components/EmailWindow";
 // import { useEffect } from "react";
 // import { supabase } from "@/lib/supabase";
 import { useSessionRefresher } from "@/lib/hooks/useSessionRefresher";
+import {SessionRefresher} from "./components/SessionRefresher";
 
 // Create a QueryClient instance
 const queryClient = new QueryClient();
@@ -33,7 +34,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  useSessionRefresher();
+  // useSessionRefresher();
   // useEffect(() => {
   //   let sessionExpiryTime: number | null = null;
 
@@ -107,19 +108,19 @@ export default function RootLayout({
 
 
   return (
-
-    
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-    <html lang="en">
-      <body
-        // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <EmailWindow/>
-        {children}
-      </body>
-    </html>
-    </QueryClientProvider>
+        <html lang="en">
+          <SessionRefresher>
+            <body
+            // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            >
+              <EmailWindow />
+              {children}
+            </body>
+          </SessionRefresher>
+        </html>
+      </QueryClientProvider>
     </Provider>
   );
 }

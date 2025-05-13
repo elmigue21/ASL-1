@@ -1,5 +1,9 @@
 // auth.js
 import { supabase } from "@/lib/supabase"; // assuming you have a separate supabaseClient setup
+import { useRouter } from "next/navigation";
+import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+
+
 
 // Sign up user
 export const signUp = async (email : string, password : string) => {
@@ -44,6 +48,28 @@ export const signIn = async (email: string, password: string) => {
 
 
 // Log out user
-export const logout = async () => {
+export const logout = async (/* router : AppRouterInstance */) => {
+  // const router = useRouter();
+
   await supabase.auth.signOut();
+
+  // Clear tokens from cookies
+  document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+  document.cookie =
+    "access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+  document.cookie =
+    "refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+  // Optionally clear tokens from localStorage and sessionStorage
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+
+  sessionStorage.removeItem("access_token");
+  sessionStorage.removeItem("refresh_token");
+
+  console.log(
+    "User signed out and tokens cleared from cookies, localStorage, and sessionStorage."
+  );
+  // router.replace("/login");
+  // window.history.forward();
 };

@@ -14,7 +14,7 @@ import {
   useReactTable,
   getExpandedRowModel,
 } from "@tanstack/react-table";
-import { ArrowUpDown/* , ChevronDown */, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown /* , ChevronDown */, MoreHorizontal } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -48,26 +48,23 @@ import {
 // import {  useInfiniteQuery } from '@tanstack/react-query';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import {Email} from "@/types/email"
+import { Email } from "@/types/email";
 // import { useCallback } from "react";
-import { useQuery/* ,keepPreviousData */ } from "@tanstack/react-query";
+import { useQuery /* ,keepPreviousData */ } from "@tanstack/react-query";
 // import { Pagination } from "@/components/ui/pagination";
 
 export function SubscriptionsTable() {
-
-
-
   const [sorting, setSorting] = useState<SortingState>([]);
- /*  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
+  /*  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   ); */
   // const [columnVisibility, setColumnVisibility] =
   //   React.useState<VisibilityState>({});
-  // const [rowSelection, setRowSelection] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 10, 
+    pageSize: 10,
   });
 
   const dispatch = useDispatch();
@@ -76,63 +73,67 @@ export function SubscriptionsTable() {
   );
 
   const [searchBarValue, setSearchBarValue] = useState<string>("");
-  const [appliedSearchBarValue, setAppliedSearchBarValue] = useState<string>("");
-const queryClient = useQueryClient();
-const fetchSubscriptions = async ({
-  queryKey,
-}: {
-  queryKey: [string, {pageIndex:number, pageSize:number}];
-}) => {
-  // const pageSize = 10; // Fixed page size
-    const [,paginationVal] = queryKey;
+  const [appliedSearchBarValue, setAppliedSearchBarValue] =
+    useState<string>("");
+  const queryClient = useQueryClient();
+  const fetchSubscriptions = async ({
+    queryKey,
+  }: {
+    queryKey: [string, { pageIndex: number; pageSize: number }];
+  }) => {
+    // const pageSize = 10; // Fixed page size
+    const [, paginationVal] = queryKey;
 
-  const { data: sessionData } = await supabase.auth.getSession();
-  const token = sessionData.session?.access_token;
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
 
-  if (!token) {
-    return;
-  }
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/table?page=${paginationVal.pageIndex + 1}&pageSize=${paginationVal.pageSize}&search=${appliedSearchBarValue}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`, // ✅ Attach token in request
-        "Content-Type": "application/json",
-      },
+    if (!token) {
+      return;
     }
-  );
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`);
-  }
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/table?page=${
+        paginationVal.pageIndex + 1
+      }&pageSize=${paginationVal.pageSize}&search=${appliedSearchBarValue}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ Attach token in request
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-  const result = await response.json();
-  console.log("table data:", result.data);
-  return result.data;
-};
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
+    const result = await response.json();
+    console.log("table data:", result.data);
+    return result.data;
+  };
 
-  const { data, isLoading/* , isError  */} = useQuery({
+  const { data, isLoading /* , isError  */ } = useQuery({
     queryKey: [
       "subscriptions",
       // page,
       // pagination.pageIndex,
       // pagination.pageSize,
-      pagination
+      pagination,
     ],
     queryFn: fetchSubscriptions,
-    placeholderData:true,
+    placeholderData: true,
   });
-   const subscriptions = data || [];
+  const subscriptions = data || [];
 
   // const {data,isLoading,isError} = useQuery({["subscriptions"]})
 
+  const [tableCount, setTableCount] = useState<number | null>(null);
+  const [pageCount, setPageCount] = useState<number>(0);
 
-  const goToPage = (pageNum : number) => {
+  const goToPage = (pageNum: number) => {
     if (pageNum >= 1) {
-      console.log('PAGE NUMBER', pageNum)
+      console.log("PAGE NUMBER", pageNum);
       // setPage(pageNum);
       setPagination((prev) => ({
         ...prev,
@@ -141,23 +142,27 @@ const fetchSubscriptions = async ({
     }
   };
 
-const nextPage = () => {
-  setPagination((prev) => ({
-    ...prev,
-    pageIndex: prev.pageIndex + 1,
-  }));
-};
+  const nextPage = () => {
+    if (pagination.pageIndex + 1 > pageCount) {
+      return;
+    }
 
-const prevPage = () => {
-  setPagination(prev => ({
-    ...prev,
-    pageIndex: prev.pageIndex - 1,
-  }));
-};
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: prev.pageIndex + 1,
+    }));
+  };
 
+  const prevPage = () => {
+    if (pagination.pageIndex - 1 > pageCount) {
+      return;
+    }
 
-  const [tableCount, setTableCount] = useState<number | null>(null);
-  const [pageCount,setPageCount] = useState<number | null>(null);
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: prev.pageIndex - 1,
+    }));
+  };
 
   useEffect(() => {
     const getTableCount = async () => {
@@ -170,25 +175,22 @@ const prevPage = () => {
         return null;
       }
 
+      const totalCount = count ?? 0;
       console.log("Total count:", count);
-      setTableCount(count);
-      setPageCount(count && Math.ceil(count/pagination.pageSize));
+      setTableCount(totalCount);
+      setPageCount(Math.ceil(totalCount / pagination.pageSize));
     };
     getTableCount();
   }, [pagination.pageSize]);
-  useEffect(()=>{
+  useEffect(() => {
     console.log("pagecoutn", pageCount);
-  },[pageCount])
-
+  }, [pageCount]);
 
   const visiblePages = () => {
     const pages = [];
-    const total = pageCount? pageCount : 0;
+    const total = pageCount ? pageCount : 0;
 
-
-      const currentPage = pagination.pageIndex + 1; // adjust because pageIndex is 0-based
-
-
+    const currentPage = pagination.pageIndex + 1; // adjust because pageIndex is 0-based
 
     let start = Math.max(currentPage - 2, 1);
     const end = Math.min(start + 4, total);
@@ -202,8 +204,8 @@ const prevPage = () => {
     }
     return pages;
   };
-  
 
+  
 
   const columns = React.useMemo<ColumnDef<Subscription>[]>(
     () => [
@@ -214,11 +216,6 @@ const prevPage = () => {
           const rowIndex = info.row.index;
           const computedValue =
             pagination.pageIndex * pagination.pageSize + rowIndex + 1;
-
-          console.log("Row index:", rowIndex);
-          console.log("Page index:", pagination.pageIndex);
-          console.log("Page size:", pagination.pageSize);
-          console.log("Computed row number:", computedValue);
 
           return computedValue;
         },
@@ -235,7 +232,6 @@ const prevPage = () => {
               onCheckedChange={(value) => {
                 table.toggleAllPageRowsSelected(!!value);
                 setAllSelectedSubscriptionIds(!!value);
-                // console.log(value);
               }}
               aria-label="Select all"
               className="border-black"
@@ -247,8 +243,7 @@ const prevPage = () => {
           const isChecked = row.original.emails.every((email: Email) =>
             selectedEmails.includes(email)
           );
-          // console.log('IS CHECKED?', isChecked)
-          // console.log('CHECKED????' ,row.getIsSelected())
+
 
           return (
             <Checkbox
@@ -264,31 +259,23 @@ const prevPage = () => {
                 console.log(rowId);
               }}
               aria-label="Select row"
-              className="border-black"
+              className="border-black hover:cursor-pointer hover:bg-slate-200 hover:border-slate-500 active:scale-80 transition-transform duration-300"
             />
           );
         },
         enableSorting: false,
         enableHiding: false,
       },
-      // {
-      //   id: "expander",
-      //   header: () => null,
-      //   cell: ({ row }: { row: any }) => (
-      //     <button {...{ onClick: row.getToggleExpandedHandler() }}>
-      //       {row.getIsExpanded() ? "▼" : "▶"}
-      //     </button>
-      //   ),
-      // },
+
       {
         accessorFn: (row) => `${row.first_name ?? ""} ${row.last_name ?? ""}`, // ✅ Handles missing names safely
         id: "full_name", // We use `id` instead of `accessorKey` since it's computed
         header: ({ column }) => (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            // onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Name <ArrowUpDown />
+            Name {/* <ArrowUpDown /> */}
           </Button>
         ),
         cell: ({ row }) => <div>{row.getValue("full_name")}</div>,
@@ -302,7 +289,7 @@ const prevPage = () => {
             <div className="">
               {emails.length > 1 && (
                 <button
-                  className="bg-slate-200 p-1 rounded-md border  shadow-lg transition-transform duration-300 hover:shadow-xl hover:bg-slate-500 h-1/2 w-auto"
+                  className="bg-slate-200 p-1 rounded-md border  shadow-lg transition-all active:scale-80 hover:cursor-pointer duration-200 active:bg-white hover:shadow-xl hover:bg-slate-500 h-1/2 w-auto"
                   {...{ onClick: row.getToggleExpandedHandler() }}
                 >
                   {row.getIsExpanded() ? "🢄" : "🢂"}
@@ -336,12 +323,12 @@ const prevPage = () => {
         accessorKey: "active_status",
         header: "Active",
         cell: ({ row }) => (
-          <div className="capitalize">
+          <div className="capitalize flex items-center justify-center">
             {row.getValue("active_status") ? (
-              <div className="bg-green-200 text-center rounded-full mx-5 flex items-center justify-evenly">
+              <span className="bg-green-200 text-center rounded-full p-1 w-1/2 inline-flex items-center justify-evenly">
                 <div className="bg-green-900 w-2 h-2 rounded-full"></div>
                 <p>Active</p>
-              </div>
+              </span>
             ) : (
               <div className="bg-red-200 text-center rounded-full mx-5 flex items-center justify-evenly">
                 <div className="bg-red-900 w-2 h-2 rounded-full"></div>
@@ -359,7 +346,10 @@ const prevPage = () => {
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
+                <Button
+                  variant="ghost"
+                  className="h-8 w-8 p-0 hover:bg-slate-200 hover:cursor-pointer rounded-full active:bg-slate-800 active:scale-80 transition-all"
+                >
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal />
                 </Button>
@@ -368,26 +358,28 @@ const prevPage = () => {
                 <Link href={`/ViewPage/${subscription.id}`}>
                   <DropdownMenuItem
                     onClick={() => console.log(subscription.id)}
+                    className="hover:cursor-pointer"
                   >
                     View
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/editPage">
-                  <DropdownMenuItem>Edit Details</DropdownMenuItem>
+                  <DropdownMenuItem
+                  className="hover:cursor-pointer">Edit Details</DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem>Delete</DropdownMenuItem>
+                <DropdownMenuItem className="hover:cursor-pointer">
+                  Delete
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           );
         },
       },
     ],
-    [/* selectedEmails, pagination.pageIndex */]
+    [
+      selectedEmails, pagination.pageIndex
+    ]
   );
-
-
-
-
 
   const table = useReactTable({
     data: subscriptions,
@@ -399,52 +391,47 @@ const prevPage = () => {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     // onColumnVisibilityChange: setColumnVisibility,
-    // onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: setRowSelection,
     getExpandedRowModel: getExpandedRowModel(), // ✅ Enable expanded row model
     getRowCanExpand: () => true,
     enableRowSelection: true,
-    manualPagination:true,
+    manualPagination: true,
     // pageCount:pageCount,
     state: {
       sorting,
       // columnFilters,
       // columnVisibility,
-      // rowSelection,
+      rowSelection,
       pagination,
     },
   });
 
-/*   const getAllSelectedRows = () => {
-    return table.getSelectedRowModel().rows.map((row) => row.original);
-  }; */
+
 
   const setAllSelectedSubscriptionIds = (checkboxValue: boolean) => {
     const allRows = table.getRowModel().rows;
-    allRows.map(row =>{
-      row.original.emails.map((email: {email:string,id:number})=>{
+    allRows.map((row) => {
+      row.original.emails.map((email: { email: string; id: number }) => {
         setSelectedEmails(checkboxValue, email);
-      })
-    })
+      });
+    });
   };
-  
-  
-  const setSelectedEmails = React.useCallback((
-    checkboxValue: boolean,
-    emailObj: {email:string, id:number}
-  ) => {
-    if (checkboxValue) {
-      dispatch(addSelectedEmails(emailObj));
-    } else {
-      dispatch(removeSelectedEmails(emailObj));
-    }
-  },[dispatch]);
 
+  const setSelectedEmails = React.useCallback(
+    (checkboxValue: boolean, emailObj: { email: string; id: number }) => {
+      if (checkboxValue) {
+        dispatch(addSelectedEmails(emailObj));
+      } else {
+        dispatch(removeSelectedEmails(emailObj));
+      }
+    },
+    [dispatch]
+  );
 
-  const searchButtonClicked = async () =>{
-          await queryClient.removeQueries({ queryKey: ["subscriptions"] });
-          setPagination({ pageIndex: 1, pageSize: 10 });
-  }
-  
+  const searchButtonClicked = async () => {
+    await queryClient.removeQueries({ queryKey: ["subscriptions"] });
+    setPagination({ pageIndex: 1, pageSize: 10 });
+  };
 
   return (
     <div className="w-full">
@@ -455,7 +442,7 @@ const prevPage = () => {
           onChange={(event) => setSearchBarValue(event.target.value)}
           className="max-w-sm"
         />
-       {/*  <Button onClick={()=>{ goToPage(3)}}>JUMP</Button> */}
+        {/*  <Button onClick={()=>{ goToPage(3)}}>JUMP</Button> */}
         <Button
           onClick={() => {
             setAppliedSearchBarValue(searchBarValue);
@@ -464,37 +451,7 @@ const prevPage = () => {
         >
           Search
         </Button>
-        {/* <Button
-          onClick={() => {
-            console.log(selectedEmails);
-          }}
-        ></Button> */}
- {/*        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu> */}
+
       </div>
       <div className="rounded-md border">
         <Table className="table-fixed w-full border-collapse border border-gray-300">
@@ -508,6 +465,7 @@ const prevPage = () => {
                       className={` 
                         ${
                           index === 0 ||
+                          index === 1 ||
                           index === headerGroup.headers.length - 1
                             ? "w-[50px]"
                             : "flex-grow basis-0 text-bold"
@@ -545,24 +503,26 @@ const prevPage = () => {
                   </TableRow>
 
                   {row.getIsExpanded() &&
-                    row.original.emails.map((email: Email/* , index: number */) => {
-                      const isChecked = selectedEmails.includes(email);
-                      return (
-                        <TableRow key={email.id}>
-                          <TableCell>
-                            <Checkbox
-                              className="border-slate-500"
-                              checked={isChecked}
-                              onCheckedChange={(value) => {
-                                setSelectedEmails(!!value, email);
-                              }}
-                            ></Checkbox>
-                          </TableCell>
-                          <TableCell></TableCell>
-                          <TableCell>{email.email}</TableCell>
-                        </TableRow>
-                      );
-                    })}
+                    row.original.emails.map(
+                      (email: Email /* , index: number */) => {
+                        const isChecked = selectedEmails.includes(email);
+                        return (
+                          <TableRow key={email.id}>
+                            <TableCell>
+                              <Checkbox
+                                className="border-slate-500"
+                                checked={isChecked}
+                                onCheckedChange={(value) => {
+                                  setSelectedEmails(!!value, email);
+                                }}
+                              ></Checkbox>
+                            </TableCell>
+                            <TableCell></TableCell>
+                            <TableCell>{email.email}</TableCell>
+                          </TableRow>
+                        );
+                      }
+                    )}
                 </React.Fragment>
               ))
             ) : isLoading ? (
@@ -589,14 +549,27 @@ const prevPage = () => {
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-
-        
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of {tableCount}{" "}
+          {table.getSelectedRowModel().rows.length} of {tableCount}
           row(s) selected.
         </div>
         <div className="flex flex-row space-x-2">
           <Button
+            className="hover:cursor-pointer hover:bg-slate-200 active:scale-80 transition-transform duration-300"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setPagination((prev) => ({
+                ...prev,
+                pageIndex: 0,
+              }));
+            }}
+            disabled={!table.getCanPreviousPage()}
+          >
+            First
+          </Button>
+          <Button
+            className="hover:cursor-pointer hover:bg-slate-200 active:scale-80 transition-transform duration-300"
             variant="outline"
             size="sm"
             onClick={() => {
@@ -609,29 +582,47 @@ const prevPage = () => {
           </Button>
 
           <div className="flex items-center space-x-2">
-  {visiblePages().map((page,index) => (
-    <button
-      key={index}
-      onClick={() => goToPage(page)}
-      className={`px-3 py-1 border rounded ${page - 1 === pagination.pageIndex? 'bg-blue-500 text-white' : ''}`}
-    >
-      {page}
-    </button>
-  ))}
-</div>
-          
+            {visiblePages().map((page, index) => (
+              <button
+                key={index}
+                onClick={() => goToPage(page)}
+                className={`px-3 py-1 border rounded hover:bg-blue-200 hover:cursor-pointer active:bg-blue-800 active:scale-90 transition-all duration-100  ${
+                  page - 1 === pagination.pageIndex
+                    ? "bg-blue-500 text-white"
+                    : ""
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
           <Button
+            className="hover:cursor-pointer hover:bg-slate-200 active:scale-80 transition-transform duration-300"
             variant="outline"
             size="sm"
             onClick={() => {
               // handleNextPage();
               nextPage();
             }}
-          
+            disabled={pagination.pageIndex + 1 >= pageCount}
           >
             Next
           </Button>
-
+          <Button
+            className="hover:cursor-pointer hover:bg-slate-200 active:scale-80 transition-transform duration-300"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setPagination((prev) => ({
+                ...prev,
+                pageIndex: pageCount - 1,
+              }));
+            }}
+            disabled={pagination.pageIndex + 1 >= pageCount}
+          >
+            Last
+          </Button>
         </div>
       </div>
     </div>

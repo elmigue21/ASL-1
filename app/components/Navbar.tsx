@@ -5,6 +5,8 @@ import Dropdown_Profile from "./dropdown_profile";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { setOpenState } from "@/store/slices/emailWindowSlice";
+import { logout } from "@/utils/auth";
+import { useRouter } from "next/navigation";
 
 
 const Navbar: React.FC = () => {
@@ -16,6 +18,8 @@ const Navbar: React.FC = () => {
     dispatch(setOpenState(true));
   
   };
+
+  const router = useRouter();
 
   return (
     <div className="z-50">
@@ -141,7 +145,7 @@ const Navbar: React.FC = () => {
                   <h2 className="items-center mt-[0.50vh]">Email</h2>
                 </div>
               </div>
-              <Link href={"/"}>
+              <div onClick={() => {logout(); router.replace("/")}}>
                 <div className={`mt-[9vh] items-center h-[10vh] w-full hover:bg-[#2a58ad] ${isOpen? "grid grid-cols-2 px-[2vw] ": "flex justify-center"}`}>
                   {" "}
                   <img src="/exit.png" alt="Inbox" className="h-[3.73vh]" />
@@ -149,7 +153,7 @@ const Navbar: React.FC = () => {
                     <h2 className="items-center mt-1">Log Out</h2>
                   </div>
                 </div>
-              </Link>
+              </div>
           </div>
           
         

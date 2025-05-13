@@ -79,7 +79,7 @@ function UploadPage() {
             {navItems.map((item, index) => (
               <div
                 key={index}
-                className={`flex items-center hover:cursor-pointer p-5 rounded ${
+                className={`flex items-center hover:cursor-pointer p-5 rounded active:scale-90 transition-all active:bg-slate-200 ${
                   selectedNav === item.label
                     ? "bg-slate-700 text-white font-bold"
                     : "bg-slate-200 hover:bg-slate-400"
