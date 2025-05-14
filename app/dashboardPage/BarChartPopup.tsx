@@ -8,7 +8,7 @@ const BarChartPopup = () => {
     <>
 
         <div className={`w-full h-full flex items-center justify-center z-50 fixed ${isOpen ? '' : 'hidden'}`}>
-          <CountryBarChart />
+          {/* <CountryBarChart /> */}
         </div>
 
     </>

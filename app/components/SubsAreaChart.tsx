@@ -143,9 +143,8 @@ export function SubsAreaChart(/* {chartData} : {chartData:ChartDataProps[]} */) 
   return (
     <Card className="shadow-none border-0">
       <CardHeader>
-        <CardTitle className="font-bold">
-          New Subscribers
-          {dateRange}
+        <CardTitle className="font-bold justify-between flex items-center">
+          <h1>New Subscribers</h1>
           <SubsComboBox />
         </CardTitle>
       </CardHeader>

@@ -11,48 +11,58 @@ import { CountryBarChart } from "../components/CountryBarChart";
 
 import { supabase } from "../../lib/supabase";
 import BarChartPopup from "./BarChartPopup";
-// import { createContext } from "react";
-import { PopupProvider } from "../context/PopupContext";
-// import { usePopupContext } from "../context/PopupContext";
-import { NewSubDateRangeProvider } from "../context/NewSubDateRangeContext"; // Adjust the path if needed
-import useAuthGuard from "@/lib/hooks/useAuthGuard";
-import { useRouter } from "next/navigation";
 
+import { PopupProvider } from "../context/PopupContext";
+
+import { NewSubDateRangeProvider } from "../context/NewSubDateRangeContext"; // Adjust the path if needed
+import { motion } from "framer-motion";
+interface CountryDataProps{
+  country: string;
+  count: number;
+}
 
 const Dashboard = () => {
   const [countryCount, setCountryCount] = useState(0);
   const [totalSub, setTotalSub] = useState(0);
   const [activeSub, setActiveSub] = useState(0);
   const [inactiveSub, setInactiveSub] = useState(0);
-  // const [countryData, setCountryData] = useState([]);
-  // const [newSubs, setNewSubs] = useState<{ date: Date; subscriber_count: number }[]>([]);
+  const [countryData, setCountryData] = useState<CountryDataProps[]>([]);
+ const fetchCountryCount = async () => {
+   const { data: sessionData } = await supabase.auth.getSession();
+   const token = sessionData.session?.access_token;
 
+   const response = await fetch(
+     `${process.env.NEXT_PUBLIC_API_URL}/dashboard/countrycount`,
+     {
+       method: "GET",
+       headers: {
+         Authorization: `Bearer ${token}`, // ✅ Attach token in request
+         "Content-Type": "application/json",
+       },
+     }
+   );
 
-  const fetchCountryCount = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
+   let data = await response.json();
+   data = data
+     .map((item: CountryDataProps) => ({
+       ...item,
+       country: item.country?.trim() ? item.country : "N/A",
+     }))
+     .sort(
+       (
+         a: { country: string; count: number },
+         b: { country: string; count: number }
+       ) => b.count - a.count
+     ); // Sort numerically based on count
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/dashboard/countrycount`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`, // ✅ Attach token in request
-          "Content-Type": "application/json",
-        },
-      }
-    );
+   setCountryData(data);
+   setCountryCount(data.length)
+   console.log("Countries:", data);
+ };
 
-    const data = await response.json();
-      // data = data.map((item: any) => ({
-      //   ...item,
-      //   country: item.country?.trim() ? item.country : "No country",
-      // }));
-    setCountryCount(data.length);
-    // setCountryData(data);
-    // console.log("Countries:", data);
-  };
-
+  useEffect(()=>{
+    fetchCountryCount();
+  },[])
   const fetchTotalSubs = async () => {
     const { data: sessionData } = await supabase.auth.getSession();
     const token = sessionData.session?.access_token;
@@ -117,50 +127,21 @@ const Dashboard = () => {
 
     const data = await response.json();
     setActiveSub(data.count);
-    // console.log("active:", data);
   };
-
-  // const fetchNewSubs = async () => {
-  //   const { data: sessionData } = await supabase.auth.getSession();
-  //   const token = sessionData.session?.access_token;
-
-  //   if (!token) {
-  //     return;
-  //   }
-
-  //   const response = await fetch(
-  //     `${process.env.NEXT_PUBLIC_API_URL}/dashboard/newSubs`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         Authorization: `Bearer ${token}`, // ✅ Attach token in request
-  //         "Content-Type": "application/json",
-  //       },
-  //     }
-  //   );
-
-  //   const data = await response.json();
-  //   // console.log("NEW SUBS:", data);
-  //   setNewSubs(data);
-  // };
-
-// const { isOpen } = usePopupContext();
 
   useEffect(() => {
     fetchCountryCount();
     fetchActiveSubs();
     fetchInactiveSubs();
     fetchTotalSubs();
-    // fetchNewSubs();
-    // useAuthGuard();
   }, []);
 
-  // const [popupOpen,setPopupOpen] = useState(false);
-  // const handlePopupOpen = () => {
-  //   setPopupOpen(!popupOpen);
-  // }
+const [isOpen, setIsOpen] = useState(false);
 
-// const [dateRange, setDateRange] = useState<"7d" | "1m" | "6m" | "1y">("7d");
+const expandClicked = ()=>{
+  setIsOpen(!isOpen);
+  console.log('clicked')
+}
 
   return (
     <>
@@ -189,10 +170,71 @@ const Dashboard = () => {
                   </CardHeader>
                 </div>
                 <div className="flex text-[2vw] text-center font-bold text-blue-900 -mt-[1.8vh] height[1vh]">
-                  <CardContent className="flex-1">{totalSub}</CardContent>
-                  <CardContent className="flex-1">{activeSub}</CardContent>
-                  <CardContent className="flex-1">{inactiveSub}</CardContent>
-                  <CardContent className="flex-1">{countryCount}</CardContent>
+                  {[totalSub, activeSub, inactiveSub, countryCount].every(
+                    (val) => {
+                      // Ensure val is not null or undefined and handle string and number separately
+                      return (
+                        val !== null &&
+                        val !== undefined &&
+                        (typeof val === "string" ? val !== "" : true) && // If val is a string, check it's not an empty string
+                        (typeof val === "number" ? val !== 0 : true) // If val is a number, check it's not 0
+                      );
+                    }
+                  ) && (
+                    <>
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className="flex-1"
+                        key={totalSub}
+                      >
+                        <CardContent>{totalSub}</CardContent>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
+                        transition={{
+                          duration: 0.6,
+                          ease: "easeOut",
+                          delay: 0.1,
+                        }}
+                        key={activeSub}
+                        className="flex-1"
+                      >
+                        <CardContent>{activeSub}</CardContent>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
+                        transition={{
+                          duration: 0.6,
+                          ease: "easeOut",
+                          delay: 0.2,
+                        }}
+                        className="flex-1"
+                        key={inactiveSub}
+                      >
+                        <CardContent>{inactiveSub}</CardContent>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
+                        transition={{
+                          duration: 0.6,
+                          ease: "easeOut",
+                          delay: 0.3,
+                        }}
+                        className="flex-1"
+                        key={countryCount}
+                      >
+                        <CardContent>{countryCount}</CardContent>
+                      </motion.div>
+                    </>
+                  )}
                 </div>
                 <div className="-my-[3vh]">
                   <DateDisplay />
@@ -203,7 +245,10 @@ const Dashboard = () => {
 
           <div className="flex justify-evenly h-[40vh] max-h[40vh]">
             <div className="w-[50vw]">
-              <CountryBarChart />
+              <CountryBarChart
+                countryData={countryData.slice(0, 5)}
+                expandClickedAction={() => expandClicked()}
+              />
               {/* <DonutChart chartData={countryData} chartHeightVH={30} innerRadiusVW={20} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/> */}
             </div>
             <NewSubDateRangeProvider>
@@ -215,7 +260,18 @@ const Dashboard = () => {
         </div>
 
         {/* <div className="fixed z-50 w-full h-full flex items-center justify-center bottom-20"> */}
-        <BarChartPopup />
+        {/* <BarChartPopup /> */}
+        <div
+          className={`z-50 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-1/2 w-1/2 bg-blue-500 ${
+            isOpen ? "block" : "hidden"
+          }`}
+          style={{ top: "calc(50% - 60px)" }}
+        >
+          <CountryBarChart
+            countryData={countryData}
+            expandClickedAction={() => expandClicked()}
+          />
+        </div>
         {/* </div> */}
       </PopupProvider>
     </>

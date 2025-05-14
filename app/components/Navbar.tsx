@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
   const router = useRouter();
 
   return (
-    <div className="z-50">
+    <div className="z-50 xsm:hidden md:block">
       <div className="fixed left-0 top-0 h-[11vh] w-full bg-white text-black shadow-[0px_2px_10px_-3px_#000000] z-60 flex items-center px-4 overflow-hidden ">
         <div
           onClick={() => setIsOpen(!isOpen)}

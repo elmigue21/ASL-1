@@ -54,7 +54,8 @@ export function SubsComboBox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[200px] justify-between hover:cursor-pointer"
+          
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.value
@@ -70,6 +71,7 @@ export function SubsComboBox() {
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
+                className="hover:cursor-pointer hover:scale-110 transition-all duration-300"
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {

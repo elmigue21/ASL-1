@@ -331,7 +331,7 @@ export function SubscriptionsTable() {
                 <p>Active</p>
               </span>
             ) : (
-              <div className="bg-red-200 text-center rounded-full mx-5 flex items-center justify-evenly">
+              <div className="bg-red-200 text-center rounded-full mx-5 flex items-center justify-evenly w-1/2 p-1">
                 <div className="bg-red-900 w-2 h-2 rounded-full"></div>
                 <p>Inactive</p>
               </div>

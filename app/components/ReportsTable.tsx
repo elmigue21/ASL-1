@@ -8,6 +8,11 @@ import {
 // import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
+import  TrashIcon from '@/public/trash-xmark.svg';
+import { Trash } from "lucide-react";
+
+
+
 // import { getReportsAndExcel } from "@/backend/controllers/backupController";
 
 // type Backup = {
@@ -110,6 +115,7 @@ const ReportsTable = () => {
 
   const columns: ColumnDef<ReportsData>[] = [
     {
+      id: "download",
       accessorKey: "fileURL",
       header: "",
       cell: ({ row }) => {
@@ -119,7 +125,7 @@ const ReportsTable = () => {
             alt="Excel"
             width={15}
             height={15}
-            className="hover:cursor-pointer rounded-full hover:bg-slate-200 m-1"
+            className="hover:cursor-pointer rounded-full hover:bg-slate-200 m-1 hover:scale-150 transition-all duration-300"
             onClick={() => {
               downloadFile({
                 fileName: row.original.fileName,
@@ -158,6 +164,19 @@ const ReportsTable = () => {
     },
 
     { accessorKey: "attachType", header: "Type" },
+    {
+      id: "delete",
+      accessorKey: "fileURL",
+      header: "",
+      cell: ({ row }) => {
+        return (
+          <Trash
+            className="text-red-500 hover:cursor-pointer hover:bg-slate-200 m-1 rounded-full hover:scale-120 transition-all duration-300 hover:text-red-600"
+            // style={{ fill: "#ef4444" }}
+          />
+        );
+      },
+    },
   ];
 
   const table = useReactTable({

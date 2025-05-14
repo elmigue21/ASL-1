@@ -17,7 +17,7 @@ export default function Dropdown_Profile() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex flex-row justify-center gap-x-[1.1vw] cursor-pointer items-center border border-slate-200 rounded-xl shadow p-3 hover:bg-slate-200">
+        <div className="flex flex-row justify-center gap-x-[1.1vw] cursor-pointer items-center border border-slate-200 rounded-xl shadow p-3 hover:bg-slate-200 px-10">
           <Avatar className="h-[5.8vh] w-[2.8vw] object-cover">
             <AvatarImage
               src="https://github.com/shadcn.png"

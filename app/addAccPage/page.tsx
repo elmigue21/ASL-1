@@ -84,76 +84,77 @@ function AddAccPage() {
   //     setEmails(updatedEmails);
   //   };
 
-const handleSubmit = async () => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email validation regex
+  const handleSubmit = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email validation regex
 
-  if (phoneNumbers.some((phone) => phone.trim() === "")) {
-    alert("Please fill all phone number fields.");
-    return;
-  }
-
-  if (emails.some((email) => email.trim() === "" || !emailRegex.test(email))) {
-    alert("Please enter valid email addresses.");
-    return;
-  }
-
-  try {
-    const { data: sessionData, error: sessionError } =
-      await supabase.auth.getSession();
-    if (sessionError) {
-      console.error("Session error:", sessionError);
-      alert("Failed to retrieve session.");
+    if (phoneNumbers.some((phone) => phone.trim() === "")) {
+      alert("Please fill all phone number fields.");
       return;
     }
 
-    const token = sessionData.session?.access_token;
-    if (!token) {
-      alert("User is not authenticated.");
+    if (
+      emails.some((email) => email.trim() === "" || !emailRegex.test(email))
+    ) {
+      alert("Please enter valid email addresses.");
       return;
     }
-    
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/subscriptions/create`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`, // ✅ Attach token in request
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          personLinkedIn,
-          personFacebook,
-          phoneNumbers,
-          emails,
-          country,
-          state,
-          city,
-          occupation,
-          industry,
-          company,
-          companyLinkedIn,
-          companyWebsite,
-        }),
+    try {
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.getSession();
+      if (sessionError) {
+        console.error("Session error:", sessionError);
+        alert("Failed to retrieve session.");
+        return;
       }
-    );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("API Error:", errorText);
-      alert("Failed to submit subscription. Please try again.");
-      return;
+      const token = sessionData.session?.access_token;
+      if (!token) {
+        alert("User is not authenticated.");
+        return;
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/subscriptions/create`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ Attach token in request
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            personLinkedIn,
+            personFacebook,
+            phoneNumbers,
+            emails,
+            country,
+            state,
+            city,
+            occupation,
+            industry,
+            company,
+            companyLinkedIn,
+            companyWebsite,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("API Error:", errorText);
+        alert("Failed to submit subscription. Please try again.");
+        return;
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("An unexpected error occurred. Please try again later.");
     }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Submission error:", error);
-    alert("An unexpected error occurred. Please try again later.");
-  }
-};
+  };
 
   return (
     <>
@@ -197,7 +198,7 @@ const handleSubmit = async () => {
               <div className="text-[0.85vw]">Phone Number</div>
               <div className="flex">
                 <Popover>
-                  <PopoverTrigger asChild>
+                  
                     <div className="relative w-full">
                       <Input
                         value={phoneInput}
@@ -215,11 +216,13 @@ const handleSubmit = async () => {
                         inputMode="numeric"
                         maxLength={15}
                       />
+                      <PopoverTrigger asChild>
                       <div className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 cursor-pointer">
                         ▼
                       </div>
+                       </PopoverTrigger>
                     </div>
-                  </PopoverTrigger>
+                 
                   <PopoverContent className="w-[12vw] p-0">
                     <ScrollArea className="h-auto w-full rounded-md border p-2">
                       <h4 className="text-sm font-semibold mb-2">NUMBERS</h4>
@@ -275,7 +278,7 @@ const handleSubmit = async () => {
               <div className="text-[0.85vw]">
                 <div className="flex">
                   <Popover>
-                    <PopoverTrigger asChild>
+                    
                       <div className="relative w-full">
                         <Input
                           value={emailInput}
@@ -285,11 +288,13 @@ const handleSubmit = async () => {
                           placeholder="Enter email"
                           className="pr-6 h-[4vh] w-[12vw]"
                         />
+                        <PopoverTrigger asChild>
                         <div className="absolute top-1/2 right-2 -translate-y-1/2 text-black cursor-pointer">
                           ▼
                         </div>
+                        </PopoverTrigger>
                       </div>
-                    </PopoverTrigger>
+                    
                     <PopoverContent className="w-[15vw] p-0">
                       <ScrollArea className="h-[auto] w-full rounded-md border p-2">
                         <h4 className="text-sm font-semibold mb-2">EMAILS</h4>
@@ -327,24 +332,24 @@ const handleSubmit = async () => {
                       if (emailInput && emailPattern.test(emailInput)) {
                         addEmail(emailInput);
                         setEmailInput("");
-                        toast("Email Added!",{
-                          description:"qweqweqweqweqw",
+                        toast("Email Added!", {
+                          description: "qweqweqweqweqw",
                           style: {
-    border: "1px solid black", // Add border color
-    padding: "1rem", // Padding
-    color: "red", // Text color
-    fontWeight: "bold", // Font weight
-    fontSize: "1rem", // Optional font size
-  }
+                            border: "1px solid black", // Add border color
+                            padding: "1rem", // Padding
+                            color: "red", // Text color
+                            fontWeight: "bold", // Font weight
+                            fontSize: "1rem", // Optional font size
+                          },
                         });
                       } else {
- toast.error("Invalid email", {
-  description: "Please enter a valid email like user@example.com",
-  style:{
-    backgroundColor:"red",
-    color:"white"
-  }
-});
+                        toast.error("Invalid email", {
+                          description: "Please enter a valid email address",
+                          style: {
+                            backgroundColor: "red",
+                            color: "white",
+                          },
+                        });
                       }
                     }}
                     className="bg-white text-black border-black border-1 rounded-[0.60vw] cursor-pointer hover:bg-white"

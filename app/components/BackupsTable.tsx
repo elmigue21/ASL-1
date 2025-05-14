@@ -128,6 +128,7 @@ const BackupsTable = () => {
             setSelectedRowId(String(row.original.id));
             console.log(row.original.id);
           }}
+          className="hover:cursor-pointer active:scale-70 transition-all duration-300 "
         />
       ),
     },

@@ -25,7 +25,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
 import Image from "next/image";
 
 /* const chartData = [
@@ -56,9 +56,8 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function CountryBarChart() {
-
-  const [countryData, setCountryData] = useState<CountryDataProps[]>([]);
+export function CountryBarChart({ countryData,expandClickedAction }: { countryData: CountryDataProps[], expandClickedAction: () => void }) {
+  /*   const [countryData, setCountryData] = useState<CountryDataProps[]>([]);
   console.log("COUNTRY DATA ISSS", countryData)
 
  const fetchCountryCount = async () => {
@@ -95,26 +94,32 @@ export function CountryBarChart() {
 
   useEffect(()=>{
     fetchCountryCount();
-  },[])
-const { togglePopup } = usePopupContext();
+  },[]) */
+
+
+  // const { togglePopup } = usePopupContext();
   return (
-    <Card>
+    <Card className="shadow-none border-none">
       <CardHeader>
-        <CardTitle className="relative">Subscribers by Country
-      {/* <button onClick={()=>{console.log('qweqwe')}}>q</button> */}
+        <CardTitle className="relative">
+          Subscribers by Country
+          {/* <button onClick={()=>{console.log('qweqwe')}}>q</button> */}
           <Image
-          src="/expand-arrows-alt.png"
-          alt="Expand"
-          width={15}
-          height={15}
-          className="absolute right-2 top-2 hover:cursor-pointer"
-          onClick={() => {console.log('qweqweqwe');togglePopup()}}
-          
+            src="/expand-arrows-alt.png"
+            alt="Expand"
+            width={15}
+            height={15}
+            className="absolute right-2 top-2 hover:cursor-pointer"
+            onClick={() => {
+              console.log("qweqweqwe");
+              // togglePopup();
+              expandClickedAction();
+            }}
           />
         </CardTitle>
         <CardDescription>Top Subscriber Countries</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="overflow-y-auto max-h-72">
         <ChartContainer config={chartConfig}>
           <BarChart
             accessibilityLayer
@@ -174,12 +179,12 @@ const { togglePopup } = usePopupContext();
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
+        {/* <div className="flex gap-2 font-medium leading-none">
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
           Showing total visitors for the last 6 months
-        </div>
+        </div> */}
       </CardFooter>
     </Card>
   );

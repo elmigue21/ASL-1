@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "utils/faker/seedUsers.js","types.d.ts", "app/components/WorldHeatMap.jsx", "backend/controllers/uploadController.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "utils/faker/seedUsers.js","types.d.ts", "app/components/WorldHeatMap.jsx", "backend/controllers/uploadController.ts","**/*.d.ts"],
   "exclude": ["node_modules"]
 }
