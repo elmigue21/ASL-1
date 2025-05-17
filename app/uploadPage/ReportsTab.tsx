@@ -10,7 +10,7 @@ const ReportsTab = () => {
 
     const [isOpen,setIsOpen] = useState(false);
 
-  const exportExcel = async () => {
+/*   const exportExcel = async () => {
 
     try {
       const response = await fetch(
@@ -108,7 +108,7 @@ const ReportsTab = () => {
      } catch (error) {
        console.error("Export error:", error);
      }
-   };
+   }; */
 
   //  const downloadFile = async({fileName,fileStorage}:{fileName:string,fileStorage:string}) =>{
   //        const { data: sessionData } = await supabase.auth.getSession();
@@ -180,11 +180,11 @@ const ReportsTab = () => {
     <div className="space-y-4 w-full">
       <div className="flex items-center">
         <div className="bg-blue-500 h-2 w-2 mx-2 rounded-full"></div>
-        <h1 className="font-bold">Reports</h1>
+        <h1 className="font-bold text-4xl">Reports</h1>
       </div>
       <div className="bg-blue-500 h-2"></div>
-
-      <div className="flex gap-4 items-center my-5">
+{/* <h1 className="text-4xl font-bold text-blue-900">Reports Log</h1> */}
+      {/* <div className="flex gap-4 items-center my-5">
         <h1 className="font-bold text-3xl">Reports Log</h1>
         <Button
           className="bg-white border-2 border-slate-500 text-black hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer"
@@ -214,7 +214,7 @@ const ReportsTab = () => {
           />
           Generate Report
         </Button>
-      </div>
+      </div> */}
 
       <div>
         <ReportsTable />

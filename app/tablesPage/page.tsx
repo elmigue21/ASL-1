@@ -8,24 +8,16 @@ import SubTable from '../components/SubsTable'
 function TablesPage() {
 
   return (
-    <div>
+    <div className="">
         {/* <Navbar />
         <NavbarMobile/> */}
 
-      <div className="z-45 absolute top-[11vh] left-[8.35vw] p-5">
-        {/* <Button onClick={()=>{openClicked()}}>OPEN WINDOW</Button> */}
-        {/* <Suspense fallback={<div>LOADING</div>}> */}
-          {/* <div className="sm:hidden md:block">
-            <SubscriptionsTable />
-          </div>
-          <div className="xsm:block md:hidden w-[calc(100vw-100px)] h-[calc(100vh-64px)]">
-            <SubscriptionsTableMobile />
-          </div> */}
+      <div className="z-45 absolute top-[11vh] left-[8.35vw] p-5 flex items-center justify-center w-[calc(100%-100px)]">
+
           <SubTable/>
-        {/* </Suspense> */}
-        {/* <Button onClick={()=>{fetchEmail()}}>qweqwe</Button> */}
+
       </div>
-      {/* <EmailWindow /> */}
+
     </div>
   );
 }

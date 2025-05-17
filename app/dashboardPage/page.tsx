@@ -16,6 +16,7 @@ import { PopupProvider } from "../context/PopupContext";
 
 import { NewSubDateRangeProvider } from "../context/NewSubDateRangeContext"; // Adjust the path if needed
 import { motion } from "framer-motion";
+import { Loader } from "lucide-react";
 interface CountryDataProps{
   country: string;
   count: number;
@@ -153,18 +154,8 @@ const expandClicked = ()=>{
                   </CardHeader>
                 </div>
                 <div className="flex text-[2vw] text-center font-bold text-blue-900 -mt-[1.8vh] height[1vh]">
-                  {/* {[totalSub, activeSub, inactiveSub, countryCount].every(
-                    (val) => {
-                      // Ensure val is not null or undefined and handle string and number separately
-                      return (
-                        val !== null &&
-                        val !== undefined &&
-                        (typeof val === "string" ? val !== "" : true) && // If val is a string, check it's not an empty string
-                        (typeof val === "number" ? val !== 0 : true) // If val is a number, check it's not 0
-                      );
-                    }
-                  ) && ( */}
-                    <>
+                  <>
+                    {totalSub !==null ? (
                       <motion.div
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
@@ -174,49 +165,52 @@ const expandClicked = ()=>{
                       >
                         <CardContent>{totalSub}</CardContent>
                       </motion.div>
+                    ) : (
+                      <Loader className="flex-1" />
+                    )}
+        {activeSub ? (
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
+                      transition={{
+                        duration: 0.6,
+                        ease: "easeOut",
+                        delay: 0.1,
+                      }}
+                      key={`active-${activeSub}`}
+                      className="flex-1"
+                    >
+                      <CardContent>{activeSub}</CardContent>
+                    </motion.div>): (<Loader className="flex-1 animate-spin" />)}
+{inactiveSub !==null ? (
+                    <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
+                      transition={{
+                        duration: 0.6,
+                        ease: "easeOut",
+                        delay: 0.2,
+                      }}
+                      className="flex-1"
+                      key={`inactive-${inactiveSub}`}
+                    >
+                      <CardContent>{inactiveSub}</CardContent>
+                    </motion.div>): (<Loader className="flex-1 animate-spin" />)}
 
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
-                        transition={{
-                          duration: 0.6,
-                          ease: "easeOut",
-                          delay: 0.1,
-                        }}
-                        key={`active-${activeSub}`}
-                        className="flex-1"
-                      >
-                        <CardContent>{activeSub}</CardContent>
-                      </motion.div>
-
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
-                        transition={{
-                          duration: 0.6,
-                          ease: "easeOut",
-                          delay: 0.2,
-                        }}
-                        className="flex-1"
-                        key={`inactive-${inactiveSub}`}
-                      >
-                        <CardContent>{inactiveSub}</CardContent>
-                      </motion.div>
-
-                      <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
-                        transition={{
-                          duration: 0.6,
-                          ease: "easeOut",
-                          delay: 0.3,
-                        }}
-                        className="flex-1"
-                        key={`countryCount-${countryCount}`}
-                      >
-                        <CardContent>{countryCount}</CardContent>
-                      </motion.div>
-                    </>
+                   {countryCount !==null?( <motion.div
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
+                      transition={{
+                        duration: 0.6,
+                        ease: "easeOut",
+                        delay: 0.3,
+                      }}
+                      className="flex-1"
+                      key={`countryCount-${countryCount}`}
+                    >
+                      <CardContent>{countryCount}</CardContent>
+                    </motion.div>): (<Loader className="flex-1 animate-spin" />)}
+                  </>
                   {/* )} */}
                 </div>
                 <div className="-my-[3vh]">

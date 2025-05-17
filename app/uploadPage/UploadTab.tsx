@@ -173,7 +173,7 @@ const table = useReactTable({
     <div className="space-y-4 w-full">
       <div className="flex items-center">
         <div className="bg-orange-500 h-2 w-2 mx-2 rounded-full"></div>
-        <h1 className="font-bold">Data Upload</h1>
+        <h1 className="font-bold text-4xl">Data Upload</h1>
       </div>
 
       <div className="bg-orange-500 h-2"></div>
