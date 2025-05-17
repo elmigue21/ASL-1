@@ -2,7 +2,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+// import { supabase } from "@/lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
 import { Subscription } from "@/types/subscription";
 import { Button } from "@/components/ui/button";
@@ -108,24 +108,24 @@ const SubscriptionsTableMobile = () => {
     }));
   };
 
-  useEffect(() => {
-    const getTableCount = async () => {
-      const { count, error } = await supabase
-        .from("subscribers")
-        .select("*", { count: "exact", head: true });
+  // useEffect(() => {
+  //   const getTableCount = async () => {
+  //     const { count, error } = await supabase
+  //       .from("subscribers")
+  //       .select("*", { count: "exact", head: true });
 
-      if (error) {
-        console.error("Error fetching count:", error);
-        return null;
-      }
+  //     if (error) {
+  //       console.error("Error fetching count:", error);
+  //       return null;
+  //     }
 
-      const totalCount = count ?? 0;
-      console.log("Total count:", count);
-      setTableCount(totalCount);
-      setPageCount(Math.ceil(totalCount / pagination.pageSize));
-    };
-    getTableCount();
-  }, [pagination.pageSize]);
+  //     const totalCount = count ?? 0;
+  //     console.log("Total count:", count);
+  //     setTableCount(totalCount);
+  //     setPageCount(Math.ceil(totalCount / pagination.pageSize));
+  //   };
+  //   getTableCount();
+  // }, [pagination.pageSize]);
   //   useEffect(() => {
   //     console.log("pagecoutn", pageCount);
   //   }, [pageCount]);

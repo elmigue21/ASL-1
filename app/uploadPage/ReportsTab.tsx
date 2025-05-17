@@ -1,5 +1,5 @@
 import React from "react";
-import { supabase } from "@/lib/supabase";
+// import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 // import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -11,22 +11,15 @@ const ReportsTab = () => {
     const [isOpen,setIsOpen] = useState(false);
 
   const exportExcel = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
 
-    if (!token) {
-      alert("You are not authenticated.");
-      return;
-    }
-    console.log("export excel");
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/upload/exportExcel`,
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
           },
+          credentials:"include"
         }
       );
 
@@ -71,22 +64,14 @@ const ReportsTab = () => {
 
 
    const generatePdf = async () => {
-     const { data: sessionData } = await supabase.auth.getSession();
-     const token = sessionData.session?.access_token;
-
-     if (!token) {
-       alert("You are not authenticated.");
-       return;
-     }
-     console.log("export excel");
      try {
        const response = await fetch(
          `${process.env.NEXT_PUBLIC_API_URL}/upload/generatePdf`,
          {
            method: "GET",
            headers: {
-             Authorization: `Bearer ${token}`,
            },
+           credentials:"include"
          }
        );
 

@@ -1,9 +1,17 @@
 import { Request, Response, RequestHandler } from "express";
 
-import { SupabaseClient, User } from "@supabase/supabase-js";
-import { supabase } from "../../lib/supabase"; // ✅ Ensure correct path
+import { createClient, SupabaseClient, User } from "@supabase/supabase-js";
+// import { supabase } from "../../lib/supabase"; // ✅ Ensure correct path
 import cookie from "cookie";
 
+const supabaseUrl = process.env.SUPABASE_URL
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY
+
+if(!supabaseUrl || !supabaseAnonKey){
+  throw new Error("environment variables missing")
+}
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {

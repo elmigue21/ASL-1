@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import Navbar from "../components/Navbar";
-import { supabase } from "@/lib/supabase";
+// import Navbar from "../components/Navbar";
+// import { supabase } from "@/lib/supabase";
 import { useState } from "react";
 // import { DropdownMenu,
 //     DropdownMenuTrigger,

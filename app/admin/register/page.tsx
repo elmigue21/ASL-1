@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
-import RoleGuard from "@/app/components/RoleGuard";
+// import { Input } from "@/components/ui/input";
+// import RoleGuard from "@/app/components/RoleGuard";
 
 const RegisterPage = () => {
   const [email, setEmail] = useState("");
@@ -49,7 +49,7 @@ const RegisterPage = () => {
          return;
        }
 
-       const data = await response.json();
+      //  const data = await response.json();
        toast.success("Registration successful!");
 
        // Optionally do something after success, like redirect or clear form

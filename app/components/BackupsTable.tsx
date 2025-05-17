@@ -6,7 +6,7 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/lib/supabase";
+// import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 import { toast } from "sonner";
 
