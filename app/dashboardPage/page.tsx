@@ -55,7 +55,7 @@ const fetchCountryCount = async () => {
 
   setCountryData(data);
   setCountryCount(data.length);
-  console.log("Countries:", data);
+  // console.log("Countries:", data);
 };
 
 
@@ -92,7 +92,7 @@ const fetchCountryCount = async () => {
 
     const data = await response.json();
     setInactiveSub(data);
-    console.log("inactive:", data);
+    // console.log("inactive:", data);
   };
 
   const fetchActiveSubs = async () => {
@@ -109,7 +109,7 @@ const fetchCountryCount = async () => {
 
     const data = await response.json();
     setActiveSub(data.count);
-    console.log("active",data)
+    // console.log("active",data)
   };
 
   useEffect(() => {

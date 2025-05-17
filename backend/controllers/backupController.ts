@@ -9,7 +9,6 @@ interface AuthenticatedRequest extends Request {
   user?: User | null;
 }
 
-
 export const getBackups: RequestHandler = async (req, res) => {
   try {
     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
@@ -18,7 +17,9 @@ export const getBackups: RequestHandler = async (req, res) => {
       return;
     }
 
-    const { data, error } = await supabaseUser.from("backups_data").select("*");
+    const { data: backups, error } = await supabaseUser
+      .from("backups_data")
+      .select("*");
 
     if (error) {
       console.log("error", error);
@@ -26,13 +27,39 @@ export const getBackups: RequestHandler = async (req, res) => {
       return;
     }
 
-    res.json(data);
-    return;
+    // For each backup row, check if file is corrupted
+    const backupsWithStatus = await Promise.all(
+      backups.map(async (backup) => {
+        try {
+          // Attempt to download the backup file by fileName or path stored in backup
+          const { data: fileData, error: downloadError } =
+            await supabaseUser.storage
+              .from("backups")
+              .download(backup.fileName); // Adjust if field name differs
+
+          if (downloadError || !fileData) {
+            // If download fails, mark corrupted
+            return { ...backup, status: "corrupted" };
+          }
+
+          const text = await fileData.text();
+          JSON.parse(text); // Try parsing JSON, throws if corrupted
+
+          // If parse succeeds
+          return { ...backup, status: "OK" };
+        } catch (err) {
+          // JSON parse error or other errors mark corrupted
+          return { ...backup, status: "corrupted" };
+        }
+      })
+    );
+
+    res.json(backupsWithStatus);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
-    return;
   }
 };
+
 
 async function fetchAllRows(tableName: string, supabaseUser: SupabaseClient) {
   let allData: Record<string, any>[] = [];
@@ -84,9 +111,9 @@ export const backupBucket: RequestHandler = async (req, res) => {
 
     const backupJSON = JSON.stringify(backupData, null, 2);
     const fileSizeBytes = Buffer.byteLength(backupJSON, "utf8");
-   const fileName = `backup_${new Date()
-     .toISOString()
-     .replace(/[:.]/g, "-")}.json`;
+    const fileName = `backup_${new Date()
+      .toISOString()
+      .replace(/[:.]/g, "-")}.json`;
 
     console.log(" backup jsoned");
 
@@ -137,11 +164,9 @@ export const grabBucket: RequestHandler = async (req, res) => {
     console.log("grab bucket backend");
     const backupName = req.query.backupName as string;
 
-
     const { data: fileData, error: downloadError } = await supabaseUser.storage
       .from("backups") // Your storage bucket
       .download(backupName); // Path to the file
-
 
     if (fileData) {
       const text = await fileData.text(); // Read it as text
@@ -149,62 +174,61 @@ export const grabBucket: RequestHandler = async (req, res) => {
 
       // console.log("Parsed backup data:", backupData);
 
-const transformSubscriptions = (backupData: any) => {
-  // Group by subscriber_id (foreign key pointing to subscriber.id)
-  const groupedEmails = groupBySubscriberId(backupData.emails);
-  const groupedAddresses = groupBySubscriberId(backupData.addresses);
-  const groupedPhones = groupBySubscriberId(backupData.phone_numbers);
-  const groupedCompanies = groupBySubscriberId(backupData.companies);
-  const groupedOccupations = groupBySubscriberId(backupData.occupations);
-  const groupedIndustries = groupBySubscriberId(backupData.industries);
+      const transformSubscriptions = (backupData: any) => {
+        // Group by subscriber_id (foreign key pointing to subscriber.id)
+        const groupedEmails = groupBySubscriberId(backupData.emails);
+        const groupedAddresses = groupBySubscriberId(backupData.addresses);
+        const groupedPhones = groupBySubscriberId(backupData.phone_numbers);
+        const groupedCompanies = groupBySubscriberId(backupData.companies);
+        const groupedOccupations = groupBySubscriberId(backupData.occupations);
+        const groupedIndustries = groupBySubscriberId(backupData.industries);
 
-  return backupData.subscribers.map((sub: any) => {
-    const sid = sub.id;
+        return backupData.subscribers.map((sub: any) => {
+          const sid = sub.id;
 
-    const addr = groupedAddresses[sid]?.[0] || {};
-    const emails = groupedEmails[sid] || [];
-    const phones = groupedPhones[sid] || [];
-    const company = groupedCompanies[sid]?.[0] || {};
-    const occupation = groupedOccupations[sid]?.[0]?.occupation || null;
-    const industry = groupedIndustries[sid]?.[0]?.industry || null;
+          const addr = groupedAddresses[sid]?.[0] || {};
+          const emails = groupedEmails[sid] || [];
+          const phones = groupedPhones[sid] || [];
+          const company = groupedCompanies[sid]?.[0] || {};
+          const occupation = groupedOccupations[sid]?.[0]?.occupation || null;
+          const industry = groupedIndustries[sid]?.[0]?.industry || null;
 
+          return {
+            first_name: sub.first_name || null,
+            last_name: sub.last_name || null,
+            person_facebook_url: sub.person_facebook_url || null,
+            person_linkedin_url: sub.person_linkedin_url || null,
+            created_on: sub.updated_from_linkedin || sub.created_on || null,
+            phones: phones.map((p: any) => p.phone),
+            emails: emails.map((e: any) => e.email),
+            occupation,
+            industry,
+            company_name: company.name || null,
+            company_website: company.website || null,
+            company_linked_in_url: company.linked_in_url || null,
+            address_country: addr.country || null,
+            address_state: addr.state || null,
+            address_city: addr.city || null,
+          };
+        });
+      };
 
-    return {
-      first_name: sub.first_name || null,
-      last_name: sub.last_name || null,
-      person_facebook_url: sub.person_facebook_url || null,
-      person_linkedin_url: sub.person_linkedin_url || null,
-      created_on: sub.updated_from_linkedin || sub.created_on || null,
-      phones: phones.map((p: any) => p.phone),
-      emails: emails.map((e: any) => e.email),
-      occupation,
-      industry,
-      company_name: company.name || null,
-      company_website: company.website || null,
-      company_linked_in_url: company.linked_in_url || null,
-      address_country: addr.country || null,
-      address_state: addr.state || null,
-      address_city: addr.city || null,
-    };
-  });
-};
+      const transformedSubscriptions = transformSubscriptions(backupData);
+      // console.log(transformedSubscriptions)
+      // return;
 
+      const { data: insertData, error: insertError } = await supabaseUser.rpc(
+        "backup_table",
+        {
+          subscriptions: transformedSubscriptions,
+        }
+      );
 
-
-
-const transformedSubscriptions = transformSubscriptions(backupData);
-// console.log(transformedSubscriptions)
-// return;
-
-      const {data: insertData,error: insertError } = await supabaseUser.rpc("backup_table", {
-        subscriptions: transformedSubscriptions,
-      });
-
-      if(insertError){
-        console.error("error inserting ")
+      if (insertError) {
+        console.error("error inserting ");
       }
 
-      console.log('insert data' , insertData);
+      console.log("insert data", insertData);
 
       res.json({ data: backupData });
     }
@@ -231,35 +255,35 @@ export const getReportsAndExcel: RequestHandler = async (req, res) => {
       res.status(403).json({ error: "unauthorized" });
       return;
     }
-     const { data: excelData, error: excelError } = await supabaseUser
-       .from("excels_data")
-       .select("*");
+    const { data: excelData, error: excelError } = await supabaseUser
+      .from("excels_data")
+      .select("*");
 
-     if (excelError) throw excelError;
+    if (excelError) throw excelError;
 
-     // Fetch reports_data
-     const { data: reportsData, error: reportsError } = await supabaseUser
-       .from("reports_data")
-       .select("*");
+    // Fetch reports_data
+    const { data: reportsData, error: reportsError } = await supabaseUser
+      .from("reports_data")
+      .select("*");
 
-     if (reportsError) throw reportsError;
+    if (reportsError) throw reportsError;
 
-     // Merge both arrays
+    // Merge both arrays
 
-     const excelDataWithType = excelData.map((item) => ({
-       ...item,
-       attachType: "excel",
-     }));
+    const excelDataWithType = excelData.map((item) => ({
+      ...item,
+      attachType: "excel",
+    }));
 
-     const reportsDataWithType = reportsData.map((item) => ({
-       ...item,
-       attachType: "report",
-     }));
+    const reportsDataWithType = reportsData.map((item) => ({
+      ...item,
+      attachType: "report",
+    }));
 
-     const merged = [...excelDataWithType, ...reportsDataWithType];
+    const merged = [...excelDataWithType, ...reportsDataWithType];
 
     //  const merged = [...excelData, ...reportsData];
-     console.log('REPORTS', reportsData);
+    console.log("REPORTS", reportsData);
 
     merged.sort((a, b) => {
       const dateA = new Date(a.created_at).getTime();
@@ -267,15 +291,53 @@ export const getReportsAndExcel: RequestHandler = async (req, res) => {
       return dateB - dateA; // descending
     });
 
-
-
-
-      res.json({ merged});
-    } catch (error) {
+    res.json({ merged });
+  } catch (error) {
     const err = error as Error;
     res.status(500).json({ error: "Grab backup failed", details: err.message });
     return;
   }
 };
 
+export const deleteBackup: RequestHandler = async (req, res): Promise<void> => {
+  try {
+    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+    if (!supabaseUser) {
+      res.status(401).json({ error: "Unauthorized from upload file" });
+      return;
+    }
 
+    const { fileName, recordId } = req.body;
+    console.log("fileNAME", fileName);
+    console.log("id", recordId);
+
+    if (!fileName || !recordId) {
+      res.status(400).json({ error: "Missing required fields." });
+      return;
+    }
+
+    const { error: storageError } = await supabaseUser.storage
+      .from("backups")
+      .remove([fileName]);
+    if (storageError) {
+      console.error("Error deleting file from storage:", storageError);
+      res.status(500).json({ error: "Failed to delete file from storage." });
+      return;
+    }
+
+    const { error: dbError } = await supabaseUser
+      .from("backups_data")
+      .delete()
+      .eq("id", recordId);
+    if (dbError) {
+      console.error("Error deleting record from table:", dbError);
+      res.status(500).json({ error: "Failed to delete record from table." });
+      return;
+    }
+
+    res.json({ message: "File and record deleted successfully." });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error." });
+  }
+};

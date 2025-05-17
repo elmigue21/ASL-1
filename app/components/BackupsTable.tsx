@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 // import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 import { toast } from "sonner";
+import { Loader } from "lucide-react";
 
 // type Backup = {
 //   id: string;
@@ -29,6 +30,7 @@ interface BackupData {
   id: number;
   created_at: Date;
   fileSize: number;
+  status:string;
 }
 
 const BackupsTable = () => {
@@ -36,80 +38,40 @@ const BackupsTable = () => {
 
   const [selectedRowId, setSelectedRowId] = useState<string>("");
 
-  const [backupCreating, setBackupCreating] = useState(false);
-  const [reRender, setReRender] = useState(false);
+  const [isAction, setIsAction] = useState(false);
 
   const backupBucket = async () => {
-    console.log("back up bucket");
-    try {
-      toast.custom(() => (
-        <div className="border border-black bg-slate-100 text-black px-4 py-2 rounded-md shadow">
-          Creating backup of current data...
-        </div>
-      ));
-      setBackupCreating(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/backups/backupBucket`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Server error: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log(data);
-      // toast.success("Backup created successfully!");
-      setReRender(true);
-    } catch (error: any) {
-      console.error("Backup failed:", error);
-      toast.error(`Failed to create backup: ${error.message}`);
-    }
-  };
-
-
-
-  useEffect(() => {
-    // This will run every time backupDone changes
-    if(backupCreating && reRender){
-    toast.success("Backup DONE!")
-    setReRender(false);
-    setBackupCreating(false);
-    getBackups();
-    }
-    // You can fetch new data or do anything here
-  }, [reRender]);
-
-  const grabBucket = async () => {
-
-    const selectedBackup = backups.find(
-  (backup) => String(backup.id) === selectedRowId
-);
-if(!selectedBackup){
-  console.error("no selected backup")
-  return;
-}
-
+         setIsAction(true);
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/backups/grabBucket?backupName=${selectedBackup.fileName}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/backups/backupBucket`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials:"include"
+        credentials: "include",
       }
     );
     const data = await response.json();
     console.log(data);
-    alert("BACKUPS bucket");
+    // alert("BACKUPS bucket");
+         setIsAction(false);
+  };
+
+  const grabBucket = async () => {
+         setIsAction(true);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/backups/grabBucket`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+    const data = await response.json();
+         setIsAction(false);
   };
 
   const getBackups = async () => {
@@ -126,6 +88,52 @@ if(!selectedBackup){
     const data = await response.json();
     console.log(data);
     setBackups(data);
+  };
+
+  const deleteBackup = async () => {
+    setIsAction(true);
+    try {
+      const selectedBackup = backups.find(
+        (backup) => String(backup.id) === selectedRowId
+      );
+
+      if (!selectedBackup) {
+        console.error("no selected backup");
+             setIsAction(false);
+        return;
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/backups/delete`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            fileName: selectedBackup.fileName,
+            recordId: selectedBackup.id,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete file");
+      }
+
+      const data = await response.json();
+      await getBackups();
+      // setIsDeleting(false);
+      toast.success("Sucessfully deleted file!");
+      setIsAction(false);
+      return data;
+    } catch (error: any) {
+      console.error("Error in deleteFile:", error);
+      setIsAction(false);
+      throw error;
+    }
   };
 
   const columns: ColumnDef<BackupData>[] = [
@@ -203,47 +211,60 @@ if(!selectedBackup){
       <h2 className="text-xl font-bold mb-4">Backups</h2>
       <div className="gap-4 flex">
         <Button
+        disabled={isAction}
           onClick={() => {
-            backupBucket();
+            console.log(selectedRowId);
           }}
-          className="bg-white border-2 border-slate-500 my-5 text-black p-5 hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer"
+          className={`bg-white border-2 border-slate-500 my-5
+           text-black p-5 hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer`}
         >
-          <Image
-            src="/secure-backup.png"
-            alt="backup-icon"
-            width={20}
-            height={20}
-          />
+          {isAction ?(
+            <Loader className="animate-spin duration-1000" />
+          ):(
+            <Image
+              src="/secure-backup.png"
+              alt="backup-icon"
+              width={20}
+              height={20}
+            />
+          )}
           Create new Backup
-        </Button>
-        <Button
-          onClick={() => {
-            grabBucket()
-          }}
-          className="bg-white border-2 border-slate-500 my-5 text-black p-5 hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer"
-          disabled={selectedRowId == ""}
-        >
-          <Image
-            src="/folder-download.png"
-            alt="backup-icon"
-            width={20}
-            height={20}
-          />
-          Restore selected Backup
         </Button>
         <Button
           onClick={() => {
             console.log(selectedRowId);
           }}
-          className="bg-white border-2 border-slate-500 my-5 text-black p-5 hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer"
-          disabled={selectedRowId == ""}
+          className={`bg-white border-2 border-slate-500 my-5 text-black 
+          p-5 hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer `}
+          disabled={selectedRowId == "" || isAction}
         >
+          {isAction ?(
+            <Loader className="animate-spin duration-1000" />
+          ):(
+          <Image
+            src="/folder-download.png"
+            alt="backup-icon"
+            width={20}
+            height={20}
+          />)}
+          Restore selected Backup
+        </Button>
+        <Button
+          onClick={() => {
+            deleteBackup();
+          }}
+          className="bg-white border-2 border-slate-500 my-5 text-black p-5 hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer"
+          disabled={selectedRowId == "" || isAction}
+        >
+          {isAction ?(
+            <Loader className="animate-spin duration-1000" />
+          ):(
           <Image
             src="/folder-xmark-circle.png"
             alt="backup-icon"
             width={20}
             height={20}
-          />
+          />)}
           Delete selected Backup
         </Button>
       </div>

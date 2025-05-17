@@ -8,45 +8,66 @@ export default function RoleGuard({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("ASDFASDFASDFSADFASDFASDFADFS")
+    let isMounted = true; // to prevent state updates if unmounted
+
     async function checkRole() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/role`, {
-          method: "GET",
-          credentials: "include", // important to send cookies
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/getRole`,
+          {
+            method: "GET",
+            credentials: "include", // send cookies
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-        
         if (!res.ok) {
-          // Not authenticated or error, redirect to login
-          router.push("/loginPage");
+          console.error(
+            "RoleGuard: getRole fetch failed with status",
+            res.status
+          );
+          if (isMounted) {
+            setLoading(false);
+            router.push("/loginPage");
+          }
           return;
         }
 
         const data = await res.json();
+        console.log("AUTH ROLE Data", data);
 
-        console.log("AUTH ROLE Data" ,data)
         if (!data.role || data.role !== "admin") {
-          router.push("/unauthorized");
+          if (isMounted) {
+            setLoading(false);
+            router.push("/unauthorized");
+          }
           return;
         }
 
         // Role is admin, allow access
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       } catch (error) {
-        // On error, redirect to login
-        router.push("/loginPage");
+        console.error("RoleGuard: error during role check", error);
+        if (isMounted) {
+          setLoading(false);
+          router.push("/loginPage");
+        }
       }
     }
 
     checkRole();
+
+    return () => {
+      isMounted = false;
+    };
   }, [router]);
 
   if (loading) {
-    return <div>Loading...</div>; // Or your spinner
+    return <div>Loading...</div>; // or spinner component
   }
 
   return <>{children}</>;

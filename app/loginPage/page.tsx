@@ -59,7 +59,7 @@ const handleSubmit = async () => {
 
     if (!response.ok) {
       console.error("Login failed:", data.error || "Unknown error");
-      alert(data.error || "Login failed");
+      toast.error(`Login failed: ${data.error}`  || "Unknown error")
       setIsClicked(false);
       return;
     }
@@ -70,7 +70,8 @@ const handleSubmit = async () => {
     toast.success("Login Success!")
   } catch (error) {
     console.error("Network or unexpected error:", error);
-    alert("An unexpected error occurred. Please try again.");
+    // alert("An unexpected error occurred. Please try again.");
+    toast.error(`An error occured. ${error}`)
     setIsClicked(false);
   }
 };

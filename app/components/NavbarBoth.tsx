@@ -11,16 +11,22 @@ import useMediaQuery from "@/lib/hooks/useMediaQuery";
 import Dropdown_Profile from "./dropdown_profile";
 import { logout } from "@/utils/auth";
 import { setOpenState } from "@/store/slices/emailWindowSlice";
+import { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
 
 const NavbarBoth = () => {
   const isMobile = useMediaQuery("(max-width: 767px)");
 
-    const pathname = usePathname();
+  const pathname = usePathname();
 
-    // Return nothing on specific routes
-    if (pathname === "/loginPage" || pathname === "/") {
-      return null;
-    }
+  // Return nothing on specific routes
+  if (
+    pathname === "/loginPage" ||
+    pathname === "/" ||
+    pathname === "/confirm" /* || pathname === "/unauthorized" */
+  ) {
+    return null;
+  }
 
   return isMobile ? <NavbarMobile /> : <NavbarDesktop />;
 };
@@ -159,12 +165,20 @@ const NavbarMobile = () => {
 };
 
 const NavbarDesktop: React.FC = () => {
-  const dispatch = useDispatch();
+  //   const dispatch = useDispatch();
 
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const openState = useSelector(
+    (state: RootState) => state.EmailWindowSlice.isOpen
+  );
+  const mailClicked = () => {
+    dispatch(setOpenState(!openState));
+  };
+  // const dispatch = useDispatch();
 
-  const openClicked = () => {
-    dispatch(setOpenState(true));
+  const closeClicked = () => {
+    dispatch(setOpenState(!openState));
   };
 
   const router = useRouter();
@@ -194,13 +208,13 @@ const NavbarDesktop: React.FC = () => {
             isOpen ? "left-[16vw]" : "left-[6vw]"
           }`}
         >
-          <Image
-            src="/dempaLogo.png"
-            alt="Logo"
-            // className="h-[8.9vh] w-[4.2vw]"
-            height={100}
-            width={100}
-          />
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 0.5 /* , ease: "easeInOut" */ }}
+            style={{ display: "inline-block" }}
+          >
+            <Image src="/dempaLogo.png" alt="Logo" height={100} width={100} />
+          </motion.div>
           <Image
             src="/dempaLogoTxt.png"
             alt="Logo Text"
@@ -366,19 +380,24 @@ const NavbarDesktop: React.FC = () => {
           <div
             className={`items-center h-[10vh] w-full hover:bg-[#2a58ad] hover:scale-120 transition-all duration-300 hover:cursor-pointer ${
               isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
-            }`}
+            } `}
             onClick={() => {
-              openClicked();
+              mailClicked();
             }}
           >
             {" "}
-            <Image
-              src="/mail-plus-circle.png"
-              alt="Inbox"
-              // className="h-[3.73vh]"
-              width={30}
-              height={30}
-            />
+            <div
+              className={`${
+                openState ? "bg-blue-500 rounded-full p-2" : ""
+              } inline-block transition-all duration-300`}
+            >
+              <Image
+                src="/mail-plus-circle.png"
+                alt="Inbox"
+                width={30}
+                height={30}
+              />
+            </div>
             <div
               className={`transition-all duration-100 ease-in-out ${
                 isOpen ? "block" : "hidden"

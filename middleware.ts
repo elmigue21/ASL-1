@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
   console.log(`[Middleware] Incoming request for: ${request.nextUrl.pathname}`);
 
   const token = request.cookies.get("access_token")?.value;
-  console.log("[Middleware] Access token from cookie:", token);
+  // console.log("[Middleware] Access token from cookie:", token);
 
   const url = request.nextUrl.clone();
 
@@ -85,7 +85,7 @@ export async function middleware(request: NextRequest) {
   try {
     const secret = new TextEncoder().encode(JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
-    console.log("[Middleware] Verified token payload:", payload);
+    // console.log("[Middleware] Verified token payload:", payload);
 
     if (payload.exp && Date.now() >= payload.exp * 1000) {
       console.warn(

@@ -19,6 +19,7 @@ import downloadRoutes from './routes/downloadRoutes';
 import landingRoutes from './routes/landingRoutes'
 import authRoutes from './routes/authRoutes'
 import countriesRoutes from './routes/countriesRoutes'
+import adminRoutes from "./routes/adminRoutes";
 import path from 'path'
 // const env = process.env.NODE_ENV || "local"; // fallback to local
 // Hardcode the path to the .env.local file
@@ -113,16 +114,18 @@ app.get("/", (req, res) => {
 
 
 // apiRouter.use("/profiles", profileRoutes);
-apiRouter.use("/countries", countriesRoutes)
-apiRouter.use("/auth", authRoutes);
+
+apiRouter.use("/admin", authenticateUser,adminRoutes);
+apiRouter.use("/countries", countriesRoutes);
 apiRouter.use("/subscriptions",authenticateUser, subscriptionRoutes);
-apiRouter.use("/dashboard",authenticateUser, dashboardRoutes)
+apiRouter.use("/dashboard",authenticateUser, dashboardRoutes);
 apiRouter.use("/table", authenticateUser,tableRoutes);
 // apiRouter.use("/email"/* ,authenticateUser */,emailRoutes);
 apiRouter.use('/backups',authenticateUser,backupRoutes);
 apiRouter.use('/upload',authenticateUser,uploadRoutes);
 apiRouter.use('/download',authenticateUser,downloadRoutes);
 apiRouter.use('/landing', landingRoutes);
+apiRouter.use("/auth", authRoutes);
 
 
 

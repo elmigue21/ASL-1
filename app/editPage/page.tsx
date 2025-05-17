@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 function editPage(){
 return (
 <>
-    <Navbar />
+    {/* <Navbar /> */}
     <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh] px-[3vw] py-[2vh]">
         <div className="font-bold text-[#1E2E80] text-[1.60vw]">Edit Subscriber Account</div>
         <div className="w-auto h-[77vh] rounded-[0.60vw] shadow-lg py-[6vh] px-[2.5vw]">
