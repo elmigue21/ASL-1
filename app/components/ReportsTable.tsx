@@ -14,6 +14,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 
 
@@ -40,7 +41,6 @@ interface ReportsData {
   fileSize: number;
   attachType: "report" | "excel";
 }
-
 
 
 
@@ -90,6 +90,8 @@ const ReportsTable = () => {
   const [excelReportData, setExcelReportData] = useState<ReportsData[]>([]);
   const [isDeleting, setIsDeleting]= useState(false);
 
+  const [isAction,setIsAction] = useState(false);
+
   const getExcelReport = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/backups/getReportsAndExcel`,
@@ -102,7 +104,7 @@ const ReportsTable = () => {
       }
     );
     const data = await response.json();
-    console.log(data.merged);
+    // console.log(data.merged);
     setExcelReportData(data.merged);
   };
 
@@ -133,6 +135,7 @@ const ReportsTable = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
+        toast.error("error deleting file " + errorData)
         throw new Error(errorData.error || "Failed to delete file");
       }
 
@@ -143,7 +146,93 @@ const ReportsTable = () => {
       return data;
     } catch (error: any) {
       console.error("Error in deleteFile:", error);
+      toast.error("error deleting file " + error)
       throw error;
+    }
+  };
+
+  
+  const exportExcel = async () => {
+    setIsAction(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/upload/exportExcel`,
+        {
+          method: "GET",
+          headers: {},
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text(); // handle error response as text
+        setIsAction(false);
+        toast.error("Error exporting excel " + errorText)
+        throw new Error(errorText || "Export excel failed");
+      }
+      const blob = await response.blob();
+      const contentDisposition = response.headers.get("Content-Disposition");
+      const fileNameMatch = contentDisposition?.match(/filename="([^"]+)"/);
+      const fileName = fileNameMatch ? fileNameMatch[1] : "default-file.xlsx";
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        fileName
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      await getExcelReport();
+      setIsAction(false);
+      toast.success("Excel exported!")
+    } catch (error) {
+      console.error("Export error:", error);
+      setIsAction(false);
+      toast.error("Error exporting excel" + error)
+    }
+  };
+
+  const generatePdf = async () => {
+    setIsAction(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/upload/generatePdf`,
+        {
+          method: "GET",
+          headers: {},
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text(); // handle error response as text
+        setIsAction(false);
+        toast.error("Error generating pdf" + errorText)
+        throw new Error(errorText || "Export PDF failed");
+      }
+      const blob = await response.blob();
+      const contentDisposition = response.headers.get("Content-Disposition");
+
+      const fileNameMatch = contentDisposition?.match(/filename="([^"]+)"/);
+      const fileName = fileNameMatch ? fileNameMatch[1] : "default-file.xlsx";
+
+      console.log(blob);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName); 
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      await getExcelReport();
+      setIsAction(false);
+      toast.success("PDF Generated!")
+    } catch (error) {
+      console.error("Export error:", error);
+      setIsAction(false);
+      toast.error("Error generating pdf" + error)
     }
   };
 
@@ -285,8 +374,41 @@ const ReportsTable = () => {
     }, []);
 
   return (
-    
     <div className="p-4">
+      <div className="flex gap-4 items-center my-5">
+        {/* <h1 className="font-bold text-3xl">Reports Log</h1> */}
+        <Button
+          className="bg-white border-2 border-slate-500 text-black hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer"
+          onClick={() => {
+            exportExcel();
+          }}
+          disabled={isAction}
+        >
+          <Image
+            src="/file-export.png"
+            alt="backup-icon"
+            width={20}
+            height={20}
+          />
+          Export Excel
+        </Button>
+        <Button
+          className="bg-blue-400 text-black border-2 border-blue-100 hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer"
+          onClick={() => {
+            generatePdf();
+          }}
+          disabled={isAction}
+        >
+          <Image
+            src="/file-medical-alt.png"
+            alt="backup-icon"
+            width={20}
+            height={20}
+          />
+          Generate Report
+        </Button>
+      </div>
+
       <table className="min-w-full border border-gray-300">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (

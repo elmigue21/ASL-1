@@ -209,8 +209,12 @@ const NavbarDesktop: React.FC = () => {
           }`}
         >
           <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 0.5 /* , ease: "easeInOut" */ }}
+            initial={{ rotate: 0, scale: 1 }}
+            animate={{ rotate: 360, scale: [1, 1.2, 1] }}
+            transition={{
+              duration: 0.5,
+              ease: "easeInOut",
+            }}
             style={{ display: "inline-block" }}
           >
             <Image src="/dempaLogo.png" alt="Logo" height={100} width={100} />
@@ -218,7 +222,6 @@ const NavbarDesktop: React.FC = () => {
           <Image
             src="/dempaLogoTxt.png"
             alt="Logo Text"
-            // className="w-[8.2vw] h-[4.5vh]"
             width={250}
             height={100}
           />
@@ -235,14 +238,14 @@ const NavbarDesktop: React.FC = () => {
         >
           <Link
             href="/dashboardPage"
-            className="hover:scale-120 transition-all duration-300"
+            className="hover:scale-80 rounded-xl hover:bg-[#2a58ad] transition-all duration-300"
           >
             <div
-              className={`items-center h-[10vh] w-full hover:bg-[#2a58ad] ${
+              className={`items-center h-[10vh] w-full ${
                 isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
               } ${
                 pathname === "/dashboardPage" ? "bg-blue-500" : ""
-              } active:scale-120 transition-all duration-300`}
+              } active:scale-120 rounded-md transition-all duration-300`}
             >
               {" "}
               <div>
@@ -266,14 +269,14 @@ const NavbarDesktop: React.FC = () => {
           <Link
             href="/tablesPage"
             prefetch={true}
-            className="hover:scale-120 transition-all duration-300"
+            className="hover:scale-80 rounded-xl hover:bg-[#2a58ad] transition-all duration-300"
           >
             <div
-              className={`items-center h-[10vh] w-full hover:bg-[#2a58ad] ${
+              className={`items-center h-[10vh] w-full ${
                 isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
               } ${
                 pathname === "/tablesPage" ? "bg-blue-500" : ""
-              } active:scale-120 transition-all duration-300`}
+              } active:scale-120 rounded-md transition-all duration-300`}
             >
               {" "}
               <Image
@@ -295,15 +298,15 @@ const NavbarDesktop: React.FC = () => {
           <Link
             href="/uploadPage"
             prefetch={true}
-            className="hover:scale-120 transition-all duration-300"
+            className="hover:scale-80 rounded-xl hover:bg-[#2a58ad] transition-all duration-300"
           >
             {" "}
             <div
-              className={`items-center h-[10vh] w-full hover:bg-[#2a58ad] ${
+              className={`items-center h-[10vh] w-full ${
                 isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
               } ${
                 pathname === "/uploadPage" ? "bg-blue-500" : ""
-              } active:scale-120 transition-all duration-300`}
+              } active:scale-120 rounded-md transition-all duration-300`}
             >
               {" "}
               <Image
@@ -318,7 +321,7 @@ const NavbarDesktop: React.FC = () => {
                   isOpen ? "block" : "hidden"
                 } ${
                   pathname === "/uploadPage" ? "bg-blue-500" : ""
-                } active:scale-120 transition-all duration-300`}
+                } active:scale-120 rounded-md transition-all duration-300`}
               >
                 <h2 className="items-center mt-[0.50vh]">Backups</h2>
               </div>
@@ -327,14 +330,14 @@ const NavbarDesktop: React.FC = () => {
 
           <Link
             href="/addAccPage"
-            className="hover:scale-120 transition-all duration-300"
+            className="hover:scale-80 rounded-xl hover:bg-[#2a58ad] transition-all duration-300"
           >
             <div
-              className={`items-center h-[10vh] w-full hover:bg-[#2a58ad] ${
+              className={`items-center h-[10vh] w-full ${
                 isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
               } ${
                 pathname === "/addAccPage" ? "bg-blue-500" : ""
-              } active:scale-120 transition-all duration-300`}
+              } active:scale-120 rounded-md transition-all duration-300`}
             >
               {" "}
               <Image
@@ -357,7 +360,7 @@ const NavbarDesktop: React.FC = () => {
             <hr className="border-t-[0.3vh] border-white my-[1.50vh] w-4/5 mx-auto opacity-50" />
           </div>
           <div
-            className={`items-center h-[10vh] w-full hover:bg-[#2a58ad] hover:scale-120 transition-all duration-300 hover:cursor-pointer ${
+            className={`items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] transition-all duration-300 hover:cursor-pointer ${
               isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
             }`}
           >
@@ -378,7 +381,7 @@ const NavbarDesktop: React.FC = () => {
             </div>
           </div>
           <div
-            className={`items-center h-[10vh] w-full hover:bg-[#2a58ad] hover:scale-120 transition-all duration-300 hover:cursor-pointer ${
+            className={`items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] transition-all duration-300 hover:cursor-pointer ${
               isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
             } `}
             onClick={() => {
@@ -387,7 +390,7 @@ const NavbarDesktop: React.FC = () => {
           >
             {" "}
             <div
-              className={`${
+              className={` ${
                 openState ? "bg-blue-500 rounded-full p-2" : ""
               } inline-block transition-all duration-300`}
             >
@@ -407,16 +410,18 @@ const NavbarDesktop: React.FC = () => {
             </div>
           </div>
           <div
-            onClick={() => {
+            
+            className="transition-all duration-300"
+          >
+            <div
+              className={`mt-[9vh] items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] hover:cursor-pointer ${
+                isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
+              }`}
+              
+              onClick={() => {
               logout();
               router.replace("/");
             }}
-            className="transition-all duration-300 hover:cursor-pointer"
-          >
-            <div
-              className={`mt-[9vh] items-center h-[10vh] w-full hover:bg-[#2a58ad] ${
-                isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
-              }`}
             >
               {" "}
               <Image

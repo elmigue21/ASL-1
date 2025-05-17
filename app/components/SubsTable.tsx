@@ -11,8 +11,8 @@ import {
   removeSelectedEmails,
 } from "@/store/slices/subscriptionSlice";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+// import { useQuery, useQueryClient } from "@tanstack/react-query";
+// import { supabase } from "@/lib/supabase";
 
 import useMediaQuery from "@/lib/hooks/useMediaQuery";
 
@@ -55,6 +55,7 @@ import { Email } from "@/types/email";
 import EmailWindow from "./EmailWindow";
 
 import { useSubscriptionsQuery } from "@/lib/hooks/useSubscriptionsQuery";
+import { Loader } from "lucide-react";
 
 
 type Pagination = {
@@ -142,6 +143,9 @@ const SubscriptionsTableMobile = ({
   nextPage,
   prevPage,
   appliedSearchBarValue,
+  setAppliedSearchBarValue,
+  searchButtonClicked,
+  setPagination,
 }: SubscriptionsTableProps) => {
 
 
@@ -151,6 +155,10 @@ const SubscriptionsTableMobile = ({
   return (
     <div className="w-full h-full">
       <h1 className="font-bold text-2xl">Subscription Table</h1>
+      <div className="flex">
+      <Input placeholder="Search by name..." onChange={(e)=>setAppliedSearchBarValue(e.target.value)} value={appliedSearchBarValue}/>
+      {/* <Button onClick={()=>{searchButtonClicked()}}>Search</Button> */}
+      </div>
       <div className="min-h-3/4">
         {subscriptions.map((sub: Subscription) => (
           <div
@@ -207,43 +215,41 @@ function SubscriptionsTableDesktop({
   searchButtonClicked,
   setPagination,
 }: SubscriptionsTableProps) {
-    const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
-    const [rowSelection, setRowSelection] = React.useState({});
-
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const dispatch = useDispatch();
   const selectedEmails = useSelector(
     (state: RootState) => state.SubscriptionSlice.selectedEmails
   );
 
-  
-    const [tableCount, setTableCount] = useState<number | null>(null);
-    const [pageCount, setPageCount] = useState<number>(0);
-    useEffect(() => {
-      const getTableCount = async () => {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/table/tableCount?search=${appliedSearchBarValue}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-          }
-        );
+  const [tableCount, setTableCount] = useState<number | null>(null);
+  const [pageCount, setPageCount] = useState<number>(0);
+  useEffect(() => {
+    const getTableCount = async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/table/tableCount?search=${appliedSearchBarValue}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
-        const data = await response.json();
-        const totalCount = data.count ?? 0;
-        console.log("Total count:", data.count);
-        setTableCount(totalCount);
-        setPageCount(Math.ceil(totalCount / pagination.pageSize));
-      };
-      getTableCount();
-    }, [pagination.pageSize]);
-    useEffect(() => {
-      console.log("pagecoutn", pageCount);
-    }, [pageCount]);
+      const data = await response.json();
+      const totalCount = data.count ?? 0;
+      console.log("Total count:", data.count);
+      setTableCount(totalCount);
+      setPageCount(Math.ceil(totalCount / pagination.pageSize));
+    };
+    getTableCount();
+  }, [pagination.pageSize]);
+  useEffect(() => {
+    console.log("pagecoutn", pageCount);
+  }, [pageCount]);
 
   const visiblePages = () => {
     const pages = [];
@@ -500,12 +506,14 @@ function SubscriptionsTableDesktop({
     [dispatch]
   );
 
-//   const searchButtonClicked = async () => {
-//     await queryClient.removeQueries({ queryKey: ["subscriptions"] });
-//     setPagination({ pageIndex: 1, pageSize: 10 });
-//   };
+  //   const searchButtonClicked = async () => {
+  //     await queryClient.removeQueries({ queryKey: ["subscriptions"] });
+  //     setPagination({ pageIndex: 1, pageSize: 10 });
+  //   };
 
-const [searchBarValue, setSearchBarValue] = useState("")
+  const [searchBarValue, setSearchBarValue] = useState("");
+
+  if (isLoading) return <Loader/>; // or a spinner/loading component
 
   return (
     <div className="w-full">
@@ -632,10 +640,10 @@ const [searchBarValue, setSearchBarValue] = useState("")
             variant="outline"
             size="sm"
             onClick={() => {
-            //   setPagination((prev) => ({
-            //     ...prev,
-            //     pageIndex: 0,
-            //   }));
+              //   setPagination((prev) => ({
+              //     ...prev,
+              //     pageIndex: 0,
+              //   }));
             }}
             disabled={!table.getCanPreviousPage()}
           >
@@ -691,7 +699,7 @@ const [searchBarValue, setSearchBarValue] = useState("")
                 ...prev,
                 pageIndex: pageCount - 1,
               }));
-            // goToPage()
+              // goToPage()
             }}
             disabled={pagination.pageIndex + 1 >= pageCount}
           >
