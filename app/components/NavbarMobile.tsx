@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import {useState} from 'react';
 import Link from 'next/link'
 import Image from 'next/image';
-import { X } from 'lucide-react';
+// import { X } from 'lucide-react';
 import {logout} from '@/utils/auth';
 import {useRouter} from 'next/navigation';
 const NavbarMobile = () => {
@@ -124,10 +124,12 @@ const NavbarMobile = () => {
               ease: "easeIn", // Smooth easing for the transitions
             }}
           >
-            <img
+            <Image
               src={expanded ? "/circle-xmark.png" : "/menu-burger.png"} // Swap the image source based on state
               alt={expanded ? "Close Menu" : "Open Menu"}
               className="w-6 h-6"
+              width={30}
+              height={30}
             />
           </motion.div>
         </button>

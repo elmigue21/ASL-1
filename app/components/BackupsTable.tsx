@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -6,8 +6,9 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import {supabase} from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import Image from "next/image";
+import { toast } from "sonner";
 
 // type Backup = {
 //   id: string;
@@ -30,86 +31,102 @@ interface BackupData {
   fileSize: number;
 }
 
-
-
 const BackupsTable = () => {
-
-    const [backups, setBackups] = useState<BackupData[]>([]);
+  const [backups, setBackups] = useState<BackupData[]>([]);
 
   const [selectedRowId, setSelectedRowId] = useState<string>("");
-/* 
-         const backupBucket = async () => {
-           const { data: sessionData } = await supabase.auth.getSession();
-           const token = sessionData.session?.access_token;
-      
-           if (!token) {
-             return;
-           }
-      
-           const response = await fetch(
-             `${process.env.NEXT_PUBLIC_API_URL}/backups/backupBucket`,
-             {
-               method: "GET",
-               headers: {
-                 Authorization: `Bearer ${token}`, // ✅ Attach token in request
-                 "Content-Type": "application/json",
-               },
-             }
-           );
-           const data = await response.json();
-           console.log(data);
-           alert("BACKUPS bucket");
-         };
-  
-      
-          const grabBucket = async () => {
-           const { data: sessionData } = await supabase.auth.getSession();
-           const token = sessionData.session?.access_token;
-           console.log('grab bucket')
-      
-           if (!token) {
-             return;
-           }
-            console.log("grab bucket2");
-      
-           const response = await fetch(
-             `${process.env.NEXT_PUBLIC_API_URL}/backups/grabBucket`,
-             {
-               method: "GET",
-               headers: {
-                 Authorization: `Bearer ${token}`, // ✅ Attach token in request
-                 "Content-Type": "application/json",
-               },
-             }
-           );
-           const data = await response.json();
-           console.log(data);
-           alert("BACKUPS bucket");
-         };
-   */
-         const getBackups = async () => {
-              const { data: sessionData } = await supabase.auth.getSession();
-              const token = sessionData.session?.access_token;
-         
-              if (!token) {
-                return;
-              }
-         
-              const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/backups/getBackups`,
-                {
-                  method: "GET",
-                  headers: {
-                    Authorization: `Bearer ${token}`, // ✅ Attach token in request
-                    "Content-Type": "application/json",
-                  },
-                }
-              );
-              const data = await response.json();
-              console.log(data);
-              setBackups(data);
-            };
-         
+
+  const [backupCreating, setBackupCreating] = useState(false);
+  const [reRender, setReRender] = useState(false);
+
+  const backupBucket = async () => {
+    console.log("back up bucket");
+    try {
+      toast.custom(() => (
+        <div className="border border-black bg-slate-100 text-black px-4 py-2 rounded-md shadow">
+          Creating backup of current data...
+        </div>
+      ));
+      setBackupCreating(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/backups/backupBucket`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+      // toast.success("Backup created successfully!");
+      setReRender(true);
+    } catch (error: any) {
+      console.error("Backup failed:", error);
+      toast.error(`Failed to create backup: ${error.message}`);
+    }
+  };
+
+
+
+  useEffect(() => {
+    // This will run every time backupDone changes
+    if(backupCreating && reRender){
+    toast.success("Backup DONE!")
+    setReRender(false);
+    setBackupCreating(false);
+    getBackups();
+    }
+    // You can fetch new data or do anything here
+  }, [reRender]);
+
+  const grabBucket = async () => {
+
+    const selectedBackup = backups.find(
+  (backup) => String(backup.id) === selectedRowId
+);
+if(!selectedBackup){
+  console.error("no selected backup")
+  return;
+}
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/backups/grabBucket?backupName=${selectedBackup.fileName}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials:"include"
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    alert("BACKUPS bucket");
+  };
+
+  const getBackups = async () => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/backups/getBackups`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    setBackups(data);
+  };
 
   const columns: ColumnDef<BackupData>[] = [
     {
@@ -133,7 +150,7 @@ const BackupsTable = () => {
       ),
     },
     { accessorKey: "id", header: "ID" },
-    {accessorKey: "fileName", header: "File Name"},
+    { accessorKey: "fileName", header: "File Name" },
     {
       accessorKey: "created_at",
       header: "Date Created",
@@ -150,14 +167,14 @@ const BackupsTable = () => {
       },
     },
     {
-  accessorKey: "fileSize",
-  header: "Size (MB)",
-  cell: ({ getValue }) => {
-    const bytes = getValue<number>();
-    const mb = bytes / (1024 * 1024);
-    return `${mb.toFixed(2)} MB`;
-  },
-},
+      accessorKey: "fileSize",
+      header: "Size (MB)",
+      cell: ({ getValue }) => {
+        const bytes = getValue<number>();
+        const mb = bytes / (1024 * 1024);
+        return `${mb.toFixed(2)} MB`;
+      },
+    },
 
     { accessorKey: "status", header: "Status" },
   ];
@@ -177,9 +194,9 @@ const BackupsTable = () => {
     // },
   });
 
-  useEffect(()=>{
+  useEffect(() => {
     getBackups();
-  },[])
+  }, []);
 
   return (
     <div className="p-4">
@@ -187,7 +204,7 @@ const BackupsTable = () => {
       <div className="gap-4 flex">
         <Button
           onClick={() => {
-            console.log(selectedRowId);
+            backupBucket();
           }}
           className="bg-white border-2 border-slate-500 my-5 text-black p-5 hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer"
         >
@@ -201,7 +218,7 @@ const BackupsTable = () => {
         </Button>
         <Button
           onClick={() => {
-            console.log(selectedRowId);
+            grabBucket()
           }}
           className="bg-white border-2 border-slate-500 my-5 text-black p-5 hover:bg-slate-200 hover:border-slate-400 hover:cursor-pointer"
           disabled={selectedRowId == ""}

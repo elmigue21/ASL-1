@@ -1,5 +1,5 @@
 import React from 'react'
-import { CountryBarChart } from '../components/CountryBarChart'
+// import { CountryBarChart } from '../components/CountryBarChart'
 import { usePopupContext } from '../context/PopupContext';
 const BarChartPopup = () => {
     const {isOpen} = usePopupContext();

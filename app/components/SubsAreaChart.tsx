@@ -17,7 +17,7 @@ const chartConfig = {
     color: "#1A2B88",
   },
 } satisfies ChartConfig;
-import { supabase } from "@/lib/supabase";
+// import { supabase } from "@/lib/supabase";
 import { SubsComboBox } from "./SubsComboBox";
 import { useNewSubDateRange } from "../context/NewSubDateRangeContext";
 
@@ -107,21 +107,14 @@ export function SubsAreaChart(/* {chartData} : {chartData:ChartDataProps[]} */) 
   const { dateRange /*  setDateRange */ } = useNewSubDateRange();
 
   const fetchNewSubs = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
-
-    if (!token) {
-      return;
-    }
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/dashboard/newSubs/dateRange?dateRange=${dateRange}`,
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ Attach token in request
           "Content-Type": "application/json",
         },
+        credentials: "include",
       }
     );
 
@@ -168,6 +161,7 @@ export function SubsAreaChart(/* {chartData} : {chartData:ChartDataProps[]} */) 
               tickLine={false}
               axisLine={false}
               tickMargin={8}
+              angle={-30}
               interval={0}
               tickFormatter={(value) => {
                 // If the label is in YYYY-MM format, just show the month (and maybe year)

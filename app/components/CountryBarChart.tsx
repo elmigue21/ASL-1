@@ -119,8 +119,11 @@ export function CountryBarChart({ countryData,expandClickedAction }: { countryDa
         </CardTitle>
         <CardDescription>Top Subscriber Countries</CardDescription>
       </CardHeader>
-      <CardContent className="overflow-y-auto max-h-72">
-        <ChartContainer config={chartConfig}>
+      <CardContent className="h-[350px] overflow-y-scroll">
+        <ChartContainer
+          config={chartConfig}
+          className=""
+        >
           <BarChart
             accessibilityLayer
             data={countryData}
@@ -146,7 +149,7 @@ export function CountryBarChart({ countryData,expandClickedAction }: { countryDa
               dataKey="count"
               type="number"
               hide
-              className="hover:bg-red-500"
+
             />
 
             <ChartTooltip

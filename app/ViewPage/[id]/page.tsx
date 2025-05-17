@@ -4,7 +4,7 @@ import { useState ,useEffect} from 'react';
 import { useParams, useRouter} from "next/navigation";
 import Navbar from '../../components/Navbar'
 import StepperList from '../../components/StepperList'
-import { supabase } from '../../../lib/supabase';
+// import { supabase } from '../../../lib/supabase';
 import Image from 'next/image';
 import { Subscription } from '@/types/subscription';
 
@@ -28,17 +28,14 @@ const fetchSubscriberDetails = async () => {
     console.log("Fetching started...");
     setIsFetching(true);
 
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/subscriptions/${id}`,
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        credentials: "include",
       }
     );
 
@@ -47,11 +44,9 @@ const fetchSubscriberDetails = async () => {
     let data = null;
     if (response.status !== 204) {
       const text = await response.text();
-      console.log("Raw response text:", text);
       data = text ? JSON.parse(text) : null;
     }
 
-    console.log("Parsed subscriber details:", data);
 
     if (response.ok && data) {
       setSubscriberDetails(data);
@@ -103,7 +98,7 @@ const fetchSubscriberDetails = async () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh] px-[3vw] py-[2vh]">
         <div className="font-bold text-[#1E2E80] text-[1.60vw]">
           Subscriber Details
@@ -113,7 +108,9 @@ const fetchSubscriberDetails = async () => {
             onClick={goToPrevSub}
             className="text-[2vh] flex justify-between gap-x-[1vw] absolute left-[2vw] top-[2vh] h-[4vh] object-contain align-center cursor-pointer hover:bg-gray-100 p-[0.5vh] px-[0.5vw] rounded-sm"
           >
-            <img src="/arrow-small-left.png" alt="arrow left" />
+            <Image src="/arrow-small-left.png" alt="arrow left"
+            width={30}
+              height={30} />
             Back
           </button>
 
@@ -122,9 +119,11 @@ const fetchSubscriberDetails = async () => {
             className="text-[2vh] flex justify-between gap-x-[1vw] absolute right-[2vw] top-[2vh] h-[4vh] object-contain align-center cursor-pointer hover:bg-gray-100 py-[0.5vh] px-[0.5vw] rounded-sm"
           >
             Next Profile
-            <img
+            <Image
               src="/arrow-small-right.png"
               alt="arrow right"
+              width={30}
+              height={30}
               // layout="fill" // Fills the container
               // objectFit="contain" // Ensures image scales correctly
             />

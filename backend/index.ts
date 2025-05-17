@@ -4,21 +4,25 @@ import cors from "cors";
 
 import { Request, Response } from "express";
 import subscriptionRoutes from "./routes/SubscriptionRoutes";
-import { supabase } from "../lib/supabase";
-import profileRoutes from "./routes/ProfileRoutes";
+// import { supabase } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
+// import profileRoutes from "./routes/ProfileRoutes";
 import { EmailRequest } from "@/types/emailRequest";
 import { transporter } from "../lib/emailTransporter";
 import dashboardRoutes from "./routes/dashboardRoutes";
 import { authenticateUser } from "./middlewares/authenticateUser";
 import tableRoutes from "./routes/tableRoutes";
-import emailRoutes from "./routes/emailRoutes";
+// import emailRoutes from "./routes/emailRoutes";
 import backupRoutes from './routes/backupRoutes'
 import uploadRoutes from './routes/uploadRoutes'
 import downloadRoutes from './routes/downloadRoutes';
 import landingRoutes from './routes/landingRoutes'
+import authRoutes from './routes/authRoutes'
+import countriesRoutes from './routes/countriesRoutes'
 import path from 'path'
 // const env = process.env.NODE_ENV || "local"; // fallback to local
 // Hardcode the path to the .env.local file
+import cookieParser from "cookie-parser";
 const envPath = path.resolve(__dirname, '../.env.local');
 console.log('Attempting to load .env from:', envPath);
 
@@ -34,6 +38,20 @@ if (result.error) {
 // console.log("EMAIL_SECRET:", process.env.EMAIL_SECRET);
 
 const app = express();
+app.use(cookieParser());
+
+
+
+// const supabaseUrl = process.env.SUPABASE_URL;
+// const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+// console.log('supabase URL', supabaseUrl)
+// console.log("supabase anon key",supabaseAnonKey )
+
+// if (!supabaseUrl || !supabaseAnonKey) {
+//   throw new Error("Supabase environment variables are missing.");
+// }
+
+// const supabase = createClient(supabaseUrl, supabaseAnonKey);
 // // console.log(process.env)
 // console.log("EMAIL_SECRET", process.env.EMAIL_SECRET);
 // console.log(process.env)
@@ -44,66 +62,68 @@ app.use(
     origin:
       process.env.NODE_ENV?.trim() === "production"
         ? "https://asl-topaz.vercel.app"
-        : "*",
+        : "http://localhost:3000", // exact local frontend origin
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     exposedHeaders: ["Content-Disposition"],
     credentials: true,
   })
 );
-
 app.use(express.json());
 const apiRouter = express.Router();
 app.get("/", (req, res) => {
   res.send("Hello from Express API!");
 });
 
-app.get("/postman", async (req, res) => {
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: "user@example.com",
-      password: "12345",
-    });
-    if (error) throw error;
+// app.get("/postman", async (req, res) => {
+//   try {
+//     const { data, error } = await supabase.auth.signInWithPassword({
+//       email: "user@example.com",
+//       password: "12345",
+//     });
+//     if (error) throw error;
 
-    res.redirect("/api/subscriptions/delete");
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(500).json({ error: "Sign-in failed", details: error.message });
-    } else {
-      res.status(500).json({ error: "Sign-in failed", details: String(error) });
-    }
-  }
-});
+//     res.redirect("/api/subscriptions/delete");
+//   } catch (error: unknown) {
+//     if (error instanceof Error) {
+//       res.status(500).json({ error: "Sign-in failed", details: error.message });
+//     } else {
+//       res.status(500).json({ error: "Sign-in failed", details: String(error) });
+//     }
+//   }
+// });
 
-app.get("/debug-token", async (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).json({ error: "No token provided" });
-  }
+// app.get("/debug-token", async (req, res) => {
+//   const authHeader = req.headers.authorization;
+//   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+//     res.status(401).json({ error: "No token provided" });
+//   }
 
-  const token = authHeader?.split(" ")[1];
-  try {
-    const { data: user, error } = await supabase.auth.getUser(token);
-    if (error) {
-      res.status(401).json({ error: "Invalid token", details: error.message });
-    }
-    res.json({ message: "Token is valid", user });
-  } catch (err) {
-    res.status(500).json({ error: "Unexpected error", details: err });
-  }
-});
+//   const token = authHeader?.split(" ")[1];
+//   try {
+//     const { data: user, error } = await supabase.auth.getUser(token);
+//     if (error) {
+//       res.status(401).json({ error: "Invalid token", details: error.message });
+//     }
+//     res.json({ message: "Token is valid", user });
+//   } catch (err) {
+//     res.status(500).json({ error: "Unexpected error", details: err });
+//   }
+// });
 
 
-apiRouter.use("/profiles", profileRoutes);
+// apiRouter.use("/profiles", profileRoutes);
+apiRouter.use("/countries", countriesRoutes)
+apiRouter.use("/auth", authRoutes);
 apiRouter.use("/subscriptions",authenticateUser, subscriptionRoutes);
 apiRouter.use("/dashboard",authenticateUser, dashboardRoutes)
 apiRouter.use("/table", authenticateUser,tableRoutes);
-apiRouter.use("/email"/* ,authenticateUser */,emailRoutes);
+// apiRouter.use("/email"/* ,authenticateUser */,emailRoutes);
 apiRouter.use('/backups',authenticateUser,backupRoutes);
 apiRouter.use('/upload',authenticateUser,uploadRoutes);
 apiRouter.use('/download',authenticateUser,downloadRoutes);
 apiRouter.use('/landing', landingRoutes);
+
 
 
 app.use("/api", apiRouter);

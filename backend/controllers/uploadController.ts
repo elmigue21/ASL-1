@@ -1,7 +1,7 @@
 import { Request, Response, RequestHandler } from "express";
 
 import { SupabaseClient, User } from "@supabase/supabase-js";
-import { supabase } from "../../lib/supabase";
+// import { supabase } from "../../lib/supabase";
 import multer from "multer";
 import xlsx from "xlsx";
 import { stat } from "fs";
@@ -519,5 +519,46 @@ export const downloadFile: RequestHandler = async (req, res) => {
     console.error(e);
     res.status(500).json({ error: "Unexpected server error" });
     return;
+  }
+};
+
+
+export const deleteFile: RequestHandler = async (req, res): Promise<void> => {
+  try {
+    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+    if (!supabaseUser) {
+      res.status(401).json({ error: "Unauthorized from upload file" });
+      return;
+    }
+
+    const { bucket, fileName, tableName, recordId } = req.body;
+    if (!bucket || !fileName || !tableName || !recordId) {
+      res.status(400).json({ error: "Missing required fields." });
+      return;
+    }
+
+    const { error: storageError } = await supabaseUser.storage
+      .from(bucket)
+      .remove([fileName]);
+    if (storageError) {
+      console.error("Error deleting file from storage:", storageError);
+      res.status(500).json({ error: "Failed to delete file from storage." });
+      return;
+    }
+
+    const { error: dbError } = await supabaseUser
+      .from(tableName)
+      .delete()
+      .eq("id", recordId);
+    if (dbError) {
+      console.error("Error deleting record from table:", dbError);
+      res.status(500).json({ error: "Failed to delete record from table." });
+      return;
+    }
+
+    res.json({ message: "File and record deleted successfully." });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error." });
   }
 };

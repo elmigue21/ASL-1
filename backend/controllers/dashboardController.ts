@@ -109,6 +109,9 @@ if(!supabaseUser){
       .rpc("count_countries");
 
 
+
+      console.log('country count data', data);
+
       res.status(200).json(data);
       return
   } catch (e) {
@@ -189,3 +192,24 @@ function getFromDate(range: "7d" | "1m" | "6m" | "1y"): Date {
 
   return from;
 }
+
+// export const getCountries: RequestHandler = async (req, res) => {
+//   const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+
+//   if (!supabaseUser) {
+//      res.status(401).json({ error: "Unauthorized" });
+//      return;
+//   }
+
+//   // Query countries table
+//   const { data, error } = await supabaseUser.from("countries").select("*");
+
+//   if (error) {
+//     console.error("Supabase error:", error);
+//     res.status(500).json({ error: error.message });
+//     return;
+//   }
+
+//    res.json({ countries: data });
+//    return;
+// };

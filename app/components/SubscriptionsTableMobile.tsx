@@ -1,106 +1,112 @@
-'use client'
-import React from 'react'
-import {useState, useEffect} from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
-import { useQueryClient } from '@tanstack/react-query';
-import { Subscription } from '@/types/subscription';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+"use client";
+import React from "react";
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
+import { useQueryClient } from "@tanstack/react-query";
+import { Subscription } from "@/types/subscription";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+// import useMediaQuery from "@/lib/hooks/useMediaQuery";
+
+
+
+// const SubTable = () => {
+//   const isMobile = useMediaQuery("(max-width: 767px)");
+
+//   return (
+//     <div>
+//       {isMobile ? <SubscriptionsTableMobile/> : "SubscriptionsTableDesktop"}
+//     </div>
+//   );
+// };
+// export default SubTable
+
 
 const SubscriptionsTableMobile = () => {
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 5,
+  });
 
-      const [pagination, setPagination] = useState({
-        pageIndex: 0,
-        pageSize: 5,
-      });
+  const [searchBarValue, setSearchBarValue] = useState<string>("");
+  const [appliedSearchBarValue, setAppliedSearchBarValue] =
+    useState<string>("");
+  const queryClient = useQueryClient();
+  const fetchSubscriptions = async ({
+    queryKey,
+  }: {
+    queryKey: [string, { pageIndex: number; pageSize: number }];
+  }) => {
+    // const pageSize = 10; // Fixed page size
+    const [, paginationVal] = queryKey;
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/table?page=${
+        paginationVal.pageIndex + 1
+      }&pageSize=${paginationVal.pageSize}&search=${appliedSearchBarValue}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
 
-     const [searchBarValue, setSearchBarValue] = useState<string>("");
-     const [appliedSearchBarValue, setAppliedSearchBarValue] =
-       useState<string>("");
-     const queryClient = useQueryClient();
-     const fetchSubscriptions = async ({
-       queryKey,
-     }: {
-       queryKey: [string, { pageIndex: number; pageSize: number }];
-     }) => {
-       // const pageSize = 10; // Fixed page size
-       const [, paginationVal] = queryKey;
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
 
-       const { data: sessionData } = await supabase.auth.getSession();
-       const token = sessionData.session?.access_token;
+    const result = await response.json();
+    console.log("table data:", result.data);
+    return result.data;
+  };
 
-       if (!token) {
-         return;
-       }
+  const { data, isLoading /* , isError  */ } = useQuery({
+    queryKey: [
+      "subscriptions",
+      // page,
+      // pagination.pageIndex,
+      // pagination.pageSize,
+      pagination,
+    ],
+    queryFn: fetchSubscriptions,
+    placeholderData: true,
+  });
+  const subscriptions = Array.isArray(data) ? data : [];
 
-       const response = await fetch(
-         `${process.env.NEXT_PUBLIC_API_URL}/table?page=${
-           paginationVal.pageIndex + 1
-         }&pageSize=${paginationVal.pageSize}&search=${appliedSearchBarValue}`,
-         {
-           method: "GET",
-           headers: {
-             Authorization: `Bearer ${token}`, // ✅ Attach token in request
-             "Content-Type": "application/json",
-           },
-         }
-       );
+  const goToPage = (pageNum: number) => {
+    if (pageNum >= 1) {
+      console.log("PAGE NUMBER", pageNum);
+      // setPage(pageNum);
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: pageNum - 1,
+      }));
+    }
+  };
 
-       if (!response.ok) {
-         throw new Error(`HTTP error! Status: ${response.status}`);
-       }
+  const nextPage = () => {
+    if (pagination.pageIndex + 1 > pageCount) {
+      return;
+    }
 
-       const result = await response.json();
-       console.log("table data:", result.data);
-       return result.data;
-     };
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: prev.pageIndex + 1,
+    }));
+  };
 
-     const { data, isLoading /* , isError  */ } = useQuery({
-       queryKey: [
-         "subscriptions",
-         // page,
-         // pagination.pageIndex,
-         // pagination.pageSize,
-         pagination,
-       ],
-       queryFn: fetchSubscriptions,
-       placeholderData: true,
-     });
-     const subscriptions = Array.isArray(data) ? data : [];
+  const prevPage = () => {
+    if (pagination.pageIndex - 1 > pageCount) {
+      return;
+    }
 
-       const goToPage = (pageNum: number) => {
-         if (pageNum >= 1) {
-           console.log("PAGE NUMBER", pageNum);
-           // setPage(pageNum);
-           setPagination((prev) => ({
-             ...prev,
-             pageIndex: pageNum - 1,
-           }));
-         }
-       };
-
-       const nextPage = () => {
-         if (pagination.pageIndex + 1 > pageCount) {
-           return;
-         }
-
-         setPagination((prev) => ({
-           ...prev,
-           pageIndex: prev.pageIndex + 1,
-         }));
-       };
-
-       const prevPage = () => {
-         if (pagination.pageIndex - 1 > pageCount) {
-           return;
-         }
-
-         setPagination((prev) => ({
-           ...prev,
-           pageIndex: prev.pageIndex - 1,
-         }));
-       };
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: prev.pageIndex - 1,
+    }));
+  };
 
   useEffect(() => {
     const getTableCount = async () => {
@@ -120,13 +126,13 @@ const SubscriptionsTableMobile = () => {
     };
     getTableCount();
   }, [pagination.pageSize]);
-//   useEffect(() => {
-//     console.log("pagecoutn", pageCount);
-//   }, [pageCount]);
-     // const {data,isLoading,isError} = useQuery({["subscriptions"]})
+  //   useEffect(() => {
+  //     console.log("pagecoutn", pageCount);
+  //   }, [pageCount]);
+  // const {data,isLoading,isError} = useQuery({["subscriptions"]})
 
-     const [tableCount, setTableCount] = useState<number | null>(null);
-     const [pageCount, setPageCount] = useState<number>(0);
+  const [tableCount, setTableCount] = useState<number | null>(null);
+  const [pageCount, setPageCount] = useState<number>(0);
 
   return (
     <div className="w-full h-full">
@@ -140,7 +146,9 @@ const SubscriptionsTableMobile = () => {
             <h2 className="text-lg font-semibold flex items-center text-left w-3/4">
               <div
                 className={`w-4 h-4 rounded-full ${
-                  sub.active_status ? "bg-green-500 border border-green-200" : "bg-red-500 border border-red-200"
+                  sub.active_status
+                    ? "bg-green-500 border border-green-200"
+                    : "bg-red-500 border border-red-200"
                 }`}
               />
               {sub.first_name} {sub.last_name}
@@ -171,6 +179,6 @@ const SubscriptionsTableMobile = () => {
       </div>
     </div>
   );
-}
+};
 
-export default SubscriptionsTableMobile
+export default SubscriptionsTableMobile;

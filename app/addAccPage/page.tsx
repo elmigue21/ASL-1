@@ -100,28 +100,28 @@ function AddAccPage() {
     }
 
     try {
-      const { data: sessionData, error: sessionError } =
-        await supabase.auth.getSession();
-      if (sessionError) {
-        console.error("Session error:", sessionError);
-        alert("Failed to retrieve session.");
-        return;
-      }
+      // const { data: sessionData, error: sessionError } =
+      //   await supabase.auth.getSession();
+      // if (sessionError) {
+      //   console.error("Session error:", sessionError);
+      //   alert("Failed to retrieve session.");
+      //   return;
+      // }
 
-      const token = sessionData.session?.access_token;
-      if (!token) {
-        alert("User is not authenticated.");
-        return;
-      }
+      // const token = sessionData.session?.access_token;
+      // if (!token) {
+      //   alert("User is not authenticated.");
+      //   return;
+      // }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/subscriptions/create`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`, // ✅ Attach token in request
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             firstName,
             lastName,
@@ -158,7 +158,7 @@ function AddAccPage() {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[88vh] px-[3vw] py-[2vh] overflow-hidden">
         <div className="font-bold text-[#1E2E80] text-[1.60vw]">
           Create Subscription Account

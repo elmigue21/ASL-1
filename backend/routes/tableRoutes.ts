@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { getAllSubscriptions } from "../controllers/tableController";
+import { getAllSubscriptions, getTableCount } from "../controllers/tableController";
 
 const router = Router();
 
 router.get("/", getAllSubscriptions);
+router.get("/tableCount", getTableCount);
 
 
 

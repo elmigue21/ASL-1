@@ -1,11 +1,24 @@
 "use client";
-import { useState, useEffect } from "react";
-import * as React from "react";
+
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store/store";
+import {
+  addSelectedEmails,
+  removeSelectedEmails,
+} from "@/store/slices/subscriptionSlice";
+
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
+
+import useMediaQuery from "@/lib/hooks/useMediaQuery";
+
 import {
   ColumnDef,
-  // ColumnFiltersState,
   SortingState,
-  // VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -14,17 +27,17 @@ import {
   useReactTable,
   getExpandedRowModel,
 } from "@tanstack/react-table";
-import { /* ArrowUpDown  *//* , ChevronDown *//* , */ MoreHorizontal } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { MoreHorizontal } from "lucide-react";
+
 import {
   DropdownMenu,
-  // DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -34,156 +47,203 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { Subscription } from "@/types/subscription";
-import { supabase } from "@/lib/supabase";
-
-import { RootState } from "@/store/store";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  addSelectedEmails,
-  removeSelectedEmails,
-} from "@/store/slices/subscriptionSlice";
-// import {  useInfiniteQuery } from '@tanstack/react-query';
-import { Skeleton } from "@/components/ui/skeleton";
-import { useQueryClient } from "@tanstack/react-query";
 import { Email } from "@/types/email";
-// import { useCallback } from "react";
-import { useQuery /* ,keepPreviousData */ } from "@tanstack/react-query";
-// import { Pagination } from "@/components/ui/pagination";
-import Image from "next/image";
+
 import EmailWindow from "./EmailWindow";
 
-export function SubscriptionsTable() {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  /*  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    []
-  ); */
-  // const [columnVisibility, setColumnVisibility] =
-  //   React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
+import { useSubscriptionsQuery } from "@/lib/hooks/useSubscriptionsQuery";
 
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
+
+type Pagination = {
+  pageIndex: number;
+  pageSize: number;
+};
+
+type SubscriptionsTableProps = {
+  subscriptions: Subscription[];
+  isLoading: boolean;
+  pagination: Pagination;
+  goToPage: (pageNum: number) => void;
+  nextPage: () => void;
+  prevPage: () => void;
+  setAppliedSearchBarValue: (value: string) => void;
+  appliedSearchBarValue: string;
+  searchButtonClicked: () => void;
+  setPagination: React.Dispatch<React.SetStateAction<Pagination>>;
+};
+
+const SubTable = () => {
+  const isMobile = useMediaQuery("(max-width: 767px)");
+
+    const initialPageSize = isMobile ? 5 : 10;
+
+    // Pagination state with dynamic pageSize
+    const [pagination, setPagination] = React.useState({
+      pageIndex: 0,
+      pageSize: initialPageSize,
+    });
+
+    const [appliedSearchBarValue, setAppliedSearchBarValue]= useState("")
+
+      React.useEffect(() => {
+        setPagination((prev) => ({
+          ...prev,
+          pageIndex: 0, // reset to first page on device change (optional)
+          pageSize: initialPageSize,
+        }));
+      }, [initialPageSize]);
+
+      const { subscriptions, isLoading, goToPage, nextPage, prevPage, searchButtonClicked } =
+        useSubscriptionsQuery({
+          pagination,
+          setPagination,
+          appliedSearchBarValue,
+        //   searchButtonClicked,
+        });
+
+    return isMobile ? (
+      <SubscriptionsTableMobile
+        subscriptions={subscriptions}
+        isLoading={isLoading}
+        pagination={pagination}
+        goToPage={goToPage}
+        nextPage={nextPage}
+        prevPage={prevPage}
+        setAppliedSearchBarValue={setAppliedSearchBarValue}
+        appliedSearchBarValue={appliedSearchBarValue}
+        searchButtonClicked={searchButtonClicked}
+        setPagination={setPagination}
+      />
+    ) : (
+      <SubscriptionsTableDesktop
+        subscriptions={subscriptions}
+        isLoading={isLoading}
+        pagination={pagination}
+        goToPage={goToPage}
+        nextPage={nextPage}
+        prevPage={prevPage}
+        setAppliedSearchBarValue={setAppliedSearchBarValue}
+        appliedSearchBarValue={appliedSearchBarValue}
+        searchButtonClicked={searchButtonClicked}
+        setPagination={setPagination}
+      />
+    );
+};
+export default SubTable;
+
+const SubscriptionsTableMobile = ({
+  subscriptions,
+  isLoading,
+  pagination,
+  goToPage,
+  nextPage,
+  prevPage,
+  appliedSearchBarValue,
+}: SubscriptionsTableProps) => {
+
+
+  const [tableCount, setTableCount] = useState<number | null>(null);
+  const [pageCount, setPageCount] = useState<number>(0);
+
+  return (
+    <div className="w-full h-full">
+      <h1 className="font-bold text-2xl">Subscription Table</h1>
+      <div className="min-h-3/4">
+        {subscriptions.map((sub: Subscription) => (
+          <div
+            key={sub.id}
+            className="mb-4 w-full flex items-center justify-evenly p-10 border border-black rounded-md shadow-md"
+          >
+            <h2 className="text-lg font-semibold flex items-center text-left w-3/4">
+              <div
+                className={`w-4 h-4 rounded-full ${
+                  sub.active_status
+                    ? "bg-green-500 border border-green-200"
+                    : "bg-red-500 border border-red-200"
+                }`}
+              />
+              {sub.first_name} {sub.last_name}
+            </h2>
+            <Link href={`/ViewPage/${sub.id}`}>
+              <Button>View</Button>
+            </Link>
+            {/* <p className="text-sm text-gray-600">{sub.email}</p> */}
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-center gap-10">
+        <Button
+          onClick={() => {
+            prevPage();
+          }}
+        >
+          Prev
+        </Button>
+        <Button
+          onClick={() => {
+            nextPage();
+          }}
+          className="active:scale-80 active:bg-slate-400"
+        >
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+function SubscriptionsTableDesktop({
+  subscriptions,
+  isLoading,
+  pagination,
+  goToPage,
+  nextPage,
+  prevPage,
+  appliedSearchBarValue,
+  setAppliedSearchBarValue,
+  searchButtonClicked,
+  setPagination,
+}: SubscriptionsTableProps) {
+    const [sorting, setSorting] = useState<SortingState>([]);
+
+    const [rowSelection, setRowSelection] = React.useState({});
+
 
   const dispatch = useDispatch();
   const selectedEmails = useSelector(
     (state: RootState) => state.SubscriptionSlice.selectedEmails
   );
 
-  const [searchBarValue, setSearchBarValue] = useState<string>("");
-  const [appliedSearchBarValue, setAppliedSearchBarValue] =
-    useState<string>("");
-  const queryClient = useQueryClient();
-  const fetchSubscriptions = async ({
-    queryKey,
-  }: {
-    queryKey: [string, { pageIndex: number; pageSize: number }];
-  }) => {
-    // const pageSize = 10; // Fixed page size
-    const [, paginationVal] = queryKey;
+  
+    const [tableCount, setTableCount] = useState<number | null>(null);
+    const [pageCount, setPageCount] = useState<number>(0);
+    useEffect(() => {
+      const getTableCount = async () => {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/table/tableCount?search=${appliedSearchBarValue}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
 
-
-
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/table?page=${
-        paginationVal.pageIndex + 1
-      }&pageSize=${paginationVal.pageSize}&search=${appliedSearchBarValue}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials:"include"
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    console.log("table data:", result.data);
-    return result.data;
-  };
-
-  const { data, isLoading /* , isError  */ } = useQuery({
-    queryKey: [
-      "subscriptions",
-      // page,
-      // pagination.pageIndex,
-      // pagination.pageSize,
-      pagination,
-    ],
-    queryFn: fetchSubscriptions,
-    placeholderData: true,
-  });
-  const subscriptions = data || [];
-
-  // const {data,isLoading,isError} = useQuery({["subscriptions"]})
-
-  const [tableCount, setTableCount] = useState<number | null>(null);
-  const [pageCount, setPageCount] = useState<number>(0);
-
-  const goToPage = (pageNum: number) => {
-    if (pageNum >= 1) {
-      console.log("PAGE NUMBER", pageNum);
-      // setPage(pageNum);
-      setPagination((prev) => ({
-        ...prev,
-        pageIndex: pageNum - 1,
-      }));
-    }
-  };
-
-  const nextPage = () => {
-    if (pagination.pageIndex + 1 > pageCount) {
-      return;
-    }
-
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: prev.pageIndex + 1,
-    }));
-  };
-
-  const prevPage = () => {
-    if (pagination.pageIndex - 1 > pageCount) {
-      return;
-    }
-
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: prev.pageIndex - 1,
-    }));
-  };
-
-  useEffect(() => {
-    const getTableCount = async () => {
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/table/tableCount?search=${appliedSearchBarValue}`,{
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials:"include"
-        })
-
-        const data = await response.json()
-      const totalCount = data.count ?? 0;
-      console.log("Total count:", data.count);
-      setTableCount(totalCount);
-      setPageCount(Math.ceil(totalCount / pagination.pageSize));
-    };
-    getTableCount();
-  }, [pagination.pageSize]);
-  useEffect(() => {
-    console.log("pagecoutn", pageCount);
-  }, [pageCount]);
+        const data = await response.json();
+        const totalCount = data.count ?? 0;
+        console.log("Total count:", data.count);
+        setTableCount(totalCount);
+        setPageCount(Math.ceil(totalCount / pagination.pageSize));
+      };
+      getTableCount();
+    }, [pagination.pageSize]);
+    useEffect(() => {
+      console.log("pagecoutn", pageCount);
+    }, [pageCount]);
 
   const visiblePages = () => {
     const pages = [];
@@ -203,8 +263,6 @@ export function SubscriptionsTable() {
     }
     return pages;
   };
-
-  
 
   const columns = React.useMemo<ColumnDef<Subscription>[]>(
     () => [
@@ -239,10 +297,10 @@ export function SubscriptionsTable() {
         },
         cell: ({ row }) => {
           const rowId = row.original.id;
-          const isChecked = row.original.emails.every((email: Email) =>
-            selectedEmails.includes(email)
-          ) && row.original.emails.length !== 0;
-
+          const isChecked =
+            row.original.emails.every((email: Email) =>
+              selectedEmails.includes(email)
+            ) && row.original.emails.length !== 0;
 
           return (
             <Checkbox
@@ -269,7 +327,11 @@ export function SubscriptionsTable() {
       {
         accessorFn: (row) => `${row.first_name ?? ""} ${row.last_name ?? ""}`, // ✅ Handles missing names safely
         id: "full_name", // We use `id` instead of `accessorKey` since it's computed
-        header: ({ /* column */ }) => (
+        header: (
+          {
+            /* column */
+          }
+        ) => (
           <Button
             variant="ghost"
             // onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
@@ -291,7 +353,21 @@ export function SubscriptionsTable() {
                   className="p-1 rounded-full transition-all active:scale-80 hover:cursor-pointer duration-200 active:bg-white hover:shadow-xl hover:bg-slate-500 h-1/2 w-auto"
                   {...{ onClick: row.getToggleExpandedHandler() }}
                 >
-                  {row.getIsExpanded() ? <Image src="/angle-down.png" width={15} height={15} alt="arrowdown"/> : <Image src="/angle-right.png" width={15} height={15} alt="arrowright"/>}
+                  {row.getIsExpanded() ? (
+                    <Image
+                      src="/angle-down.png"
+                      width={15}
+                      height={15}
+                      alt="arrowdown"
+                    />
+                  ) : (
+                    <Image
+                      src="/angle-right.png"
+                      width={15}
+                      height={15}
+                      alt="arrowright"
+                    />
+                  )}
                 </button>
               )}
               {emails.length > 0 ? emails[0].email : "No Email"}
@@ -307,7 +383,7 @@ export function SubscriptionsTable() {
           // console.log(row.getValue("addresses"));
           const address = row.getValue("addresses") as { country: string };
 
-          return <div className="capitalize">{address?.country ?? ''}</div>;
+          return <div className="capitalize">{address?.country ?? ""}</div>;
         },
       },
       {
@@ -315,7 +391,7 @@ export function SubscriptionsTable() {
         header: "Company",
         cell: ({ row }) => {
           const company = row.getValue("companies") as { name: string };
-          return <div className="capitalize">{company?.name ?? ''}</div>;
+          return <div className="capitalize">{company?.name ?? ""}</div>;
         },
       },
       {
@@ -363,8 +439,9 @@ export function SubscriptionsTable() {
                   </DropdownMenuItem>
                 </Link>
                 <Link href="/editPage">
-                  <DropdownMenuItem
-                  className="hover:cursor-pointer">Edit Details</DropdownMenuItem>
+                  <DropdownMenuItem className="hover:cursor-pointer">
+                    Edit Details
+                  </DropdownMenuItem>
                 </Link>
                 <DropdownMenuItem className="hover:cursor-pointer">
                   Delete
@@ -375,9 +452,7 @@ export function SubscriptionsTable() {
         },
       },
     ],
-    [
-      selectedEmails, pagination.pageIndex
-    ]
+    [selectedEmails, pagination.pageIndex]
   );
 
   const table = useReactTable({
@@ -405,8 +480,6 @@ export function SubscriptionsTable() {
     },
   });
 
-
-
   const setAllSelectedSubscriptionIds = (checkboxValue: boolean) => {
     const allRows = table.getRowModel().rows;
     allRows.map((row) => {
@@ -427,10 +500,12 @@ export function SubscriptionsTable() {
     [dispatch]
   );
 
-  const searchButtonClicked = async () => {
-    await queryClient.removeQueries({ queryKey: ["subscriptions"] });
-    setPagination({ pageIndex: 1, pageSize: 10 });
-  };
+//   const searchButtonClicked = async () => {
+//     await queryClient.removeQueries({ queryKey: ["subscriptions"] });
+//     setPagination({ pageIndex: 1, pageSize: 10 });
+//   };
+
+const [searchBarValue, setSearchBarValue] = useState("")
 
   return (
     <div className="w-full">
@@ -450,7 +525,6 @@ export function SubscriptionsTable() {
         >
           Search
         </Button>
-
       </div>
       <div className="rounded-md border">
         <Table className="table-fixed w-full border-collapse border border-gray-300">
@@ -558,10 +632,10 @@ export function SubscriptionsTable() {
             variant="outline"
             size="sm"
             onClick={() => {
-              setPagination((prev) => ({
-                ...prev,
-                pageIndex: 0,
-              }));
+            //   setPagination((prev) => ({
+            //     ...prev,
+            //     pageIndex: 0,
+            //   }));
             }}
             disabled={!table.getCanPreviousPage()}
           >
@@ -617,6 +691,7 @@ export function SubscriptionsTable() {
                 ...prev,
                 pageIndex: pageCount - 1,
               }));
+            // goToPage()
             }}
             disabled={pagination.pageIndex + 1 >= pageCount}
           >
@@ -624,7 +699,7 @@ export function SubscriptionsTable() {
           </Button>
         </div>
       </div>
-      <EmailWindow/>
+      <EmailWindow />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { exportToExcel, uploadFile ,generatePdf,downloadFile} from "../controllers/uploadController";
+import { exportToExcel, uploadFile ,generatePdf,downloadFile,deleteFile} from "../controllers/uploadController";
 
 
 import multer from "multer";
@@ -32,6 +32,7 @@ router.post("/uploadFile",upload.single('file'), uploadFile);
 router.get("/exportExcel",exportToExcel);
 router.get("/generatePdf", generatePdf);
 router.get("/downloadFile", downloadFile);
+router.delete("/deleteFile", deleteFile);
 
 
 

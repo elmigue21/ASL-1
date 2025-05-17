@@ -9,8 +9,8 @@ import DateDisplay from "../components/DateDisplay";
 import { useState, useEffect } from "react";
 import { CountryBarChart } from "../components/CountryBarChart";
 
-import { supabase } from "../../lib/supabase";
-import BarChartPopup from "./BarChartPopup";
+// import { supabase } from "../../lib/supabase";
+// import BarChartPopup from "./BarChartPopup";
 
 import { PopupProvider } from "../context/PopupContext";
 
@@ -27,56 +27,50 @@ const Dashboard = () => {
   const [activeSub, setActiveSub] = useState(0);
   const [inactiveSub, setInactiveSub] = useState(0);
   const [countryData, setCountryData] = useState<CountryDataProps[]>([]);
- const fetchCountryCount = async () => {
-   const { data: sessionData } = await supabase.auth.getSession();
-   const token = sessionData.session?.access_token;
-
-   const response = await fetch(
-     `${process.env.NEXT_PUBLIC_API_URL}/dashboard/countrycount`,
-     {
-       method: "GET",
-       headers: {
-         Authorization: `Bearer ${token}`, // ✅ Attach token in request
-         "Content-Type": "application/json",
-       },
-     }
-   );
-
-   let data = await response.json();
-   data = data
-     .map((item: CountryDataProps) => ({
-       ...item,
-       country: item.country?.trim() ? item.country : "N/A",
-     }))
-     .sort(
-       (
-         a: { country: string; count: number },
-         b: { country: string; count: number }
-       ) => b.count - a.count
-     ); // Sort numerically based on count
-
-   setCountryData(data);
-   setCountryCount(data.length)
-   console.log("Countries:", data);
- };
-
-  useEffect(()=>{
-    fetchCountryCount();
-  },[])
-  const fetchTotalSubs = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
-    if (!token) {
-      return;
+const fetchCountryCount = async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/dashboard/countrycount`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // send cookies automatically
     }
+  );
+
+  let data = await response.json();
+
+  data = data
+    .map((item: CountryDataProps) => ({
+      ...item,
+      country: item.country?.trim() ? item.country.trim() : "N/A",
+    }))
+    .sort(
+      (
+        a: { country: string; count: number },
+        b: { country: string; count: number }
+      ) => b.count - a.count
+    );
+
+  setCountryData(data);
+  setCountryCount(data.length);
+  console.log("Countries:", data);
+};
+
+
+  // useEffect(()=>{
+  //   fetchCountryCount();
+  // },[])
+  const fetchTotalSubs = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/dashboard/subCount`,
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, 
           "Content-Type": "application/json",
         },
+        credentials: "include",
       }
     );
 
@@ -85,48 +79,37 @@ const Dashboard = () => {
   };
 
   const fetchInactiveSubs = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
-    if (!token) {
-      return;
-    }
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/dashboard/inactiveCount`,
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ Attach token in request
           "Content-Type": "application/json",
         },
+        credentials: "include",
       }
     );
 
     const data = await response.json();
     setInactiveSub(data);
-    // console.log("inactive:", data);
+    console.log("inactive:", data);
   };
 
   const fetchActiveSubs = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
-
-    if (!token) {
-      return;
-    }
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/dashboard/activeCount`,
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ Attach token in request
           "Content-Type": "application/json",
         },
+        credentials: "include",
       }
     );
 
     const data = await response.json();
     setActiveSub(data.count);
+    console.log("active",data)
   };
 
   useEffect(() => {
@@ -146,7 +129,7 @@ const expandClicked = ()=>{
   return (
     <>
       <PopupProvider>
-        <Navbar />
+        {/* <Navbar /> */}
 
         <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh]">
           <div
@@ -170,7 +153,7 @@ const expandClicked = ()=>{
                   </CardHeader>
                 </div>
                 <div className="flex text-[2vw] text-center font-bold text-blue-900 -mt-[1.8vh] height[1vh]">
-                  {[totalSub, activeSub, inactiveSub, countryCount].every(
+                  {/* {[totalSub, activeSub, inactiveSub, countryCount].every(
                     (val) => {
                       // Ensure val is not null or undefined and handle string and number separately
                       return (
@@ -180,14 +163,14 @@ const expandClicked = ()=>{
                         (typeof val === "number" ? val !== 0 : true) // If val is a number, check it's not 0
                       );
                     }
-                  ) && (
+                  ) && ( */}
                     <>
                       <motion.div
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: [0, 1.5, 1], opacity: [0, 1, 1] }}
                         transition={{ duration: 0.6, ease: "easeOut" }}
                         className="flex-1"
-                        key={totalSub}
+                        key={`total-${totalSub}`}
                       >
                         <CardContent>{totalSub}</CardContent>
                       </motion.div>
@@ -200,7 +183,7 @@ const expandClicked = ()=>{
                           ease: "easeOut",
                           delay: 0.1,
                         }}
-                        key={activeSub}
+                        key={`active-${activeSub}`}
                         className="flex-1"
                       >
                         <CardContent>{activeSub}</CardContent>
@@ -215,7 +198,7 @@ const expandClicked = ()=>{
                           delay: 0.2,
                         }}
                         className="flex-1"
-                        key={inactiveSub}
+                        key={`inactive-${inactiveSub}`}
                       >
                         <CardContent>{inactiveSub}</CardContent>
                       </motion.div>
@@ -229,12 +212,12 @@ const expandClicked = ()=>{
                           delay: 0.3,
                         }}
                         className="flex-1"
-                        key={countryCount}
+                        key={`countryCount-${countryCount}`}
                       >
                         <CardContent>{countryCount}</CardContent>
                       </motion.div>
                     </>
-                  )}
+                  {/* )} */}
                 </div>
                 <div className="-my-[3vh]">
                   <DateDisplay />
@@ -262,7 +245,7 @@ const expandClicked = ()=>{
         {/* <div className="fixed z-50 w-full h-full flex items-center justify-center bottom-20"> */}
         {/* <BarChartPopup /> */}
         <div
-          className={`z-50 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-1/2 w-1/2 bg-blue-500 ${
+          className={`z-50 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-1/2 w-1/2 ${
             isOpen ? "block" : "hidden"
           }`}
           style={{ top: "calc(50% - 60px)" }}

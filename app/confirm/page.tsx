@@ -13,7 +13,7 @@ const ConfirmPage = () => {
 
         console.log('clicked')
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/landing?token=${token}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/landing/confirm?token=${token}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

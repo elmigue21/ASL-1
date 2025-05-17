@@ -6,10 +6,14 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 // import { Button } from "@/components/ui/button";
-import { supabase } from "@/lib/supabase";
+// import { supabase } from "@/lib/supabase";
 import Image from "next/image";
-import  TrashIcon from '@/public/trash-xmark.svg';
+// import  TrashIcon from '@/public/trash-xmark.svg';
 import { Trash } from "lucide-react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
+import { toast } from "sonner";
+import { Loader } from "lucide-react";
 
 
 
@@ -34,29 +38,25 @@ interface ReportsData {
   id: number;
   created_at: Date;
   fileSize: number;
-  attachType:string;
+  attachType: "report" | "excel";
 }
 
 
 
 
-   const downloadFile = async({fileName,fileStorage}:{fileName:string,fileStorage:string}) =>{
-         const { data: sessionData } = await supabase.auth.getSession();
-         const token = sessionData.session?.access_token;
 
-         if (!token) {
-           alert("You are not authenticated.");
-           return;
-         }
-         console.log("export excel");
+
+   const downloadFile = async({fileName,fileStorage}:{fileName:string,fileStorage:string}) =>{
+
          try {
            const response = await fetch(
              `${process.env.NEXT_PUBLIC_API_URL}/upload/downloadFile?fileName=${fileName}&fileStorage=${fileStorage}s`,
              {
                method: "GET",
                headers: {
-                 Authorization: `Bearer ${token}`,
+                 "Content-Type": "application/json",
                },
+               credentials: "include",
              }
            );
 
@@ -88,28 +88,63 @@ interface ReportsData {
 const ReportsTable = () => {
 
   const [excelReportData, setExcelReportData] = useState<ReportsData[]>([]);
+  const [isDeleting, setIsDeleting]= useState(false);
 
   const getExcelReport = async () => {
-    const { data: sessionData } = await supabase.auth.getSession();
-    const token = sessionData.session?.access_token;
-
-    if (!token) {
-      return;
-    }
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/backups/getReportsAndExcel`,
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ Attach token in request
           "Content-Type": "application/json",
         },
+        credentials: "include",
       }
     );
     const data = await response.json();
     console.log(data.merged);
     setExcelReportData(data.merged);
+  };
+
+  const deleteFile = async ({
+    bucket,
+    fileName,
+    tableName,
+    recordId,
+  }: {
+    bucket: string;
+    fileName: string;
+    tableName: string;
+    recordId: string | number;
+  }) => {
+    setIsDeleting(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/upload/deleteFile`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ bucket, fileName, tableName, recordId }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to delete file");
+      }
+
+      const data = await response.json();
+      await getExcelReport();
+      setIsDeleting(false);
+      toast.success("Sucessfully deleted file!")
+      return data;
+    } catch (error: any) {
+      console.error("Error in deleteFile:", error);
+      throw error;
+    }
   };
 
 
@@ -169,11 +204,67 @@ const ReportsTable = () => {
       accessorKey: "fileURL",
       header: "",
       cell: ({ row }) => {
+        const [open, setOpen] = useState(false);
+
+        const bucket =
+          row.original.attachType === "report" ? "reports" : "excels";
+        const fileName = row.original.fileName;
+        const tableName =
+          row.original.attachType === "report" ? "reports_data" : "excels_data";
+        const recordId = row.original.id;
+
+        const handleConfirmDelete = () => {
+          deleteFile({ bucket, fileName, tableName, recordId });
+        };
+
         return (
-          <Trash
-            className="text-red-500 hover:cursor-pointer hover:bg-slate-200 m-1 rounded-full hover:scale-120 transition-all duration-300 hover:text-red-600"
-            // style={{ fill: "#ef4444" }}
-          />
+          <>
+  {     isDeleting? <Loader className="animate-spin text-blue-500"/>   : <Trash
+              className="text-red-500 hover:cursor-pointer hover:bg-slate-200 m-1 rounded-full hover:scale-120 transition-all duration-300 hover:text-red-600"
+              onClick={() => setOpen(true)}
+            />}
+
+            <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
+              <DialogPrimitive.Portal>
+                <DialogPrimitive.Overlay className="fixed inset-0 bg-black/50 z-90" />
+                <DialogPrimitive.Content className="fixed z-100 top-[50%] left-[50%] max-w-md w-full bg-white p-6 rounded-md shadow-lg -translate-x-[50%] -translate-y-[50%] focus:outline-none">
+                  <DialogPrimitive.Title className="text-lg font-semibold">
+                    Confirm Delete
+                  </DialogPrimitive.Title>
+                  <DialogPrimitive.Description className="mt-2 text-sm text-gray-600">
+                    Are you sure you want to delete <strong>{fileName}</strong>?
+                  </DialogPrimitive.Description>
+
+                  <div className="mt-6 flex justify-end gap-4">
+                    <button
+                      className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300"
+                      onClick={() => setOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                      onClick={() => {
+                        handleConfirmDelete();
+                        setOpen(false);
+                      }}
+                    >
+                      Confirm
+                    </button>
+                  </div>
+
+                  <DialogPrimitive.Close asChild>
+                    <button
+                      aria-label="Close"
+                      className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100"
+                    >
+                      <X size={20} />
+                    </button>
+                  </DialogPrimitive.Close>
+                </DialogPrimitive.Content>
+              </DialogPrimitive.Portal>
+            </DialogPrimitive.Root>
+          </>
         );
       },
     },

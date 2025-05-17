@@ -1,12 +1,12 @@
-import { Router } from "express";
-import {sendEmails, verifyEmail} from '../controllers/emailController'
+// import { Router } from "express";
+// import {sendEmails, verifyEmail} from '../controllers/emailController'
 
-const router = Router();
+// const router = Router();
 
-// router.get("/", getAllSubscriptions);
-router.post("/sendEmails",sendEmails);
-router.get("/verifyEmail", verifyEmail);
+// // router.get("/", getAllSubscriptions);
+// router.post("/sendEmails",sendEmails);
+// router.get("/verifyEmail", verifyEmail);
 
 
 
-export default router;
+// export default router;

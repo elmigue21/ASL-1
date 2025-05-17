@@ -5,12 +5,14 @@ import "./globals.css";
 import { Provider } from "react-redux";
 import {store} from "@/store/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import EmailWindow from "./components/EmailWindow";
+// import EmailWindow from "./components/EmailWindow";
 // import { useEffect } from "react";
 // import { supabase } from "@/lib/supabase";
 // import { useSessionRefresher } from "@/lib/hooks/useSessionRefresher";
-import {SessionRefresher} from "./components/SessionRefresher";
+// import {SessionRefresher} from "./components/SessionRefresher";
 import { Toaster } from "sonner";
+import NavbarBoth from "./components/NavbarBoth";
+
 
 // Create a QueryClient instance
 const queryClient = new QueryClient();
@@ -112,15 +114,16 @@ export default function RootLayout({
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <html lang="en">
-          <SessionRefresher>
-            <body
-            // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
-              <Toaster richColors position="bottom-center" />
-              <EmailWindow />
-              {children}
-            </body>
-          </SessionRefresher>
+          {/* <SessionRefresher> */}
+          <body
+          // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            <NavbarBoth/>
+            {/* <EmailWindow /> */}
+            {children}
+            <Toaster richColors position="bottom-center" />
+          </body>
+          {/* </SessionRefresher> */}
         </html>
       </QueryClientProvider>
     </Provider>

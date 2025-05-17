@@ -1,7 +1,7 @@
 import { Request, Response, RequestHandler } from "express";
 
 import { SupabaseClient, User } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
+// import { supabase } from "@/lib/supabase";
 import { Subscription } from "@/types/subscription";
 
 interface AuthenticatedRequest extends Request {
@@ -9,30 +9,6 @@ interface AuthenticatedRequest extends Request {
   user?: User | null;
 }
 
-// Get All Subscriptions
-// export const backupData: RequestHandler = async (req, res) => {
-//   try {
-//     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
-//     if (!supabaseUser) {
-//       res.status(401).json({ error: "Unauthorized" });
-//       return;
-//     }
-
-//     const { data, error } = await supabaseUser.rpc("backup_data");
-
-//     if (error) {
-//       console.log("error", error);
-//       res.status(500).json({ error: error });
-//       return;
-//     }
-
-//     res.json(data);
-//     return;
-//   } catch (err) {
-//     res.status(500).json({ error: (err as Error).message });
-//     return;
-//   }
-// };
 
 export const getBackups: RequestHandler = async (req, res) => {
   try {
@@ -108,9 +84,9 @@ export const backupBucket: RequestHandler = async (req, res) => {
 
     const backupJSON = JSON.stringify(backupData, null, 2);
     const fileSizeBytes = Buffer.byteLength(backupJSON, "utf8");
-   const fileName = `excel-export_${new Date()
+   const fileName = `backup_${new Date()
      .toISOString()
-     .replace(/[:.]/g, "-")}.xlsx`;
+     .replace(/[:.]/g, "-")}.json`;
 
     console.log(" backup jsoned");
 
@@ -159,44 +135,78 @@ export const grabBucket: RequestHandler = async (req, res) => {
     }
 
     console.log("grab bucket backend");
+    const backupName = req.query.backupName as string;
+
 
     const { data: fileData, error: downloadError } = await supabaseUser.storage
       .from("backups") // Your storage bucket
-      .download("backup_2025-04-12T10-15-11-517Z.json"); // Path to the file
+      .download(backupName); // Path to the file
 
-    console.log("filedata,", fileData);
+
     if (fileData) {
-      console.log("file data", fileData);
       const text = await fileData.text(); // Read it as text
       const backupData = JSON.parse(text);
 
-      console.log("Parsed backup data:", backupData);
+      // console.log("Parsed backup data:", backupData);
 
-      const groupedEmails = groupBySubscriberId(backupData.emails, "email");
-      const groupedAddresses = groupBySubscriberId(
-        backupData.addresses,
-        "address"
-      );
+const transformSubscriptions = (backupData: any) => {
+  // Group by subscriber_id (foreign key pointing to subscriber.id)
+  const groupedEmails = groupBySubscriberId(backupData.emails);
+  const groupedAddresses = groupBySubscriberId(backupData.addresses);
+  const groupedPhones = groupBySubscriberId(backupData.phone_numbers);
+  const groupedCompanies = groupBySubscriberId(backupData.companies);
+  const groupedOccupations = groupBySubscriberId(backupData.occupations);
+  const groupedIndustries = groupBySubscriberId(backupData.industries);
 
-      const merged = backupData.subscribers.map((sub: any) => ({
-        ...sub,
-        emails: groupedEmails[sub.subscriber_id] || [],
-        addresses: groupedAddresses[sub.subscriber_id] || [],
-        // Add others here in same way
-      }));
+  return backupData.subscribers.map((sub: any) => {
+    const sid = sub.id;
 
-      // console.log(groupedEmails);
+    const addr = groupedAddresses[sid]?.[0] || {};
+    const emails = groupedEmails[sid] || [];
+    const phones = groupedPhones[sid] || [];
+    const company = groupedCompanies[sid]?.[0] || {};
+    const occupation = groupedOccupations[sid]?.[0]?.occupation || null;
+    const industry = groupedIndustries[sid]?.[0]?.industry || null;
 
-      // const { data: insertData, error: insertError } = await supabaseUser
-      //   .from("subscribers_duplicate") // Your table name
-      //   .upsert(backupData); // Insert or update (depending on your needs)
 
-      // if (insertError) {
-      //   console.error("Error inserting data:", insertError);
-      // } else {
-      //   console.log("Data inserted successfully:", insertData);
-      // }
-      res.json({ data: backupData, merged });
+    return {
+      first_name: sub.first_name || null,
+      last_name: sub.last_name || null,
+      person_facebook_url: sub.person_facebook_url || null,
+      person_linkedin_url: sub.person_linkedin_url || null,
+      created_on: sub.updated_from_linkedin || sub.created_on || null,
+      phones: phones.map((p: any) => p.phone),
+      emails: emails.map((e: any) => e.email),
+      occupation,
+      industry,
+      company_name: company.name || null,
+      company_website: company.website || null,
+      company_linked_in_url: company.linked_in_url || null,
+      address_country: addr.country || null,
+      address_state: addr.state || null,
+      address_city: addr.city || null,
+    };
+  });
+};
+
+
+
+
+const transformedSubscriptions = transformSubscriptions(backupData);
+// console.log(transformedSubscriptions)
+// return;
+
+      const {data: insertData,error: insertError } = await supabaseUser.rpc("backup_table", {
+        subscriptions: transformedSubscriptions,
+      });
+
+      if(insertError){
+        console.error("error inserting ")
+      }
+
+      console.log('insert data' , insertData);
+
+      res.json({ data: backupData });
     }
   } catch (error) {
     const err = error as Error;
@@ -205,11 +215,11 @@ export const grabBucket: RequestHandler = async (req, res) => {
   }
 };
 
-function groupBySubscriberId(data: any, key: any) {
-  return data.reduce((acc: any, item: any) => {
+function groupBySubscriberId(data: any[]) {
+  return data.reduce((acc: Record<string, any[]>, item: any) => {
     const id = item.subscriber_id;
     if (!acc[id]) acc[id] = [];
-    acc[id].push(item[key]);
+    acc[id].push(item);
     return acc;
   }, {});
 }
