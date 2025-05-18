@@ -198,14 +198,15 @@ const NavbarDesktop: React.FC = () => {
              items-center hover:bg-[#2a58ad] cursor-pointer 
           ${isOpen ? "w-[15vw]" : "w-[5vw]"}`}
         >
-          <Image
-            src="/menu-burger.png"
-            alt="Hamburger Menu"
-            // className="w-[2vw] h-[1.7vw]"
-            onClick={() => setIsOpen(!isOpen)}
-            width={30}
-            height={30}
-          />
+           <div className="relative w-[2vw] h-[1.7vw]">
+            <Image
+              src="/menu-burger.png"
+              alt="Hamburger Menu"
+              onClick={() => setIsOpen(!isOpen)}
+              fill
+              className="object-contain cursor-pointer"
+            />
+          </div>
         </div>
         <div
           className={`transition-all duration-100 ease-in-out overflow-hidden flex absolute items-center gap-[1vw] ${
@@ -221,14 +222,18 @@ const NavbarDesktop: React.FC = () => {
             }}
             style={{ display: "inline-block" }}
           >
-            <Image src="/dempaLogo.png" alt="Logo" height={100} width={100} />
+            <div className="relative h-[8.9vh] w-[4.2vw]">
+              <Image src="/dempaLogo.png" alt="Logo" fill />
+            </div>
           </motion.div>
-          <Image
+          <div className="relative w-[8.7vw] h-[5vh]">
+            <Image
             src="/dempaLogoTxt.png"
             alt="Logo Text"
-            width={250}
-            height={100}
+            fill
           />
+          </div>
+          
         </div>
 
         <div className="flex absolute items-center w-auto right-[2vw]">
@@ -252,13 +257,11 @@ const NavbarDesktop: React.FC = () => {
               } active:scale-120 rounded-md transition-all duration-300`}
             >
               {" "}
-              <div>
+              <div className=" relative h-[3.73vh] w-[1.8vw]">
                 <Image
                   src="/layout-fluid.png"
                   alt="Dashboard Icon"
-                  // className="h-[3.73vh]"
-                  width={30}
-                  height={30}
+                  fill
                 />
               </div>
               <div
@@ -283,13 +286,12 @@ const NavbarDesktop: React.FC = () => {
               } active:scale-120 rounded-md transition-all duration-300`}
             >
               {" "}
+              <div className=" relative h-[3.73vh] w-[1.8vw]">
               <Image
                 src="/table-layout.png"
                 alt="Subscription Stats"
-                // className="h-[3.73vh] mt-[1.3vh]"
-                width={30}
-                height={30}
-              />
+                fill
+              /></div>
               <div
                 className={`transition-all duration-100 ease-in-out ${
                   isOpen ? "block" : "hidden"
@@ -313,13 +315,12 @@ const NavbarDesktop: React.FC = () => {
               } active:scale-120 rounded-md transition-all duration-300`}
             >
               {" "}
+              <div className=" relative h-[3.73vh] w-[1.8vw]">
               <Image
                 src="/refresh.png"
                 alt="User Update"
-                // className="h-[3.73vh]"
-                width={30}
-                height={30}
-              />
+                fill
+              /></div>
               <div
                 className={`transition-all duration-100 ease-in-out ${
                   isOpen ? "block" : "hidden"
@@ -344,13 +345,12 @@ const NavbarDesktop: React.FC = () => {
               } active:scale-120 rounded-md transition-all duration-300`}
             >
               {" "}
+              <div className=" relative h-[3.73vh] w-[1.8vw]">
               <Image
                 src="/user-add.png"
                 alt="Add Account"
-                // className="h-[3.73vh]"
-                width={30}
-                height={30}
-              />
+                fill
+              /></div>
               <div
                 className={`transition-all duration-100 ease-in-out ${
                   isOpen ? "block" : "hidden"
@@ -369,13 +369,12 @@ const NavbarDesktop: React.FC = () => {
             }`}
           >
             {" "}
+            <div className=" relative h-[3.73vh] w-[1.8vw]">
             <Image
               src="/circle-user.png"
               alt="Account"
-              // className="h-[3.73vh]"
-              width={30}
-              height={30}
-            />
+              fill
+            /></div>
             <div
               className={`transition-all duration-100 ease-in-out ${
                 isOpen ? "block" : "hidden"
@@ -398,12 +397,12 @@ const NavbarDesktop: React.FC = () => {
                 openState ? "bg-blue-500 rounded-full" : ""
               } inline-block transition-all duration-300 p-2`}
             >
+              <div className=" relative h-[3.73vh] w-[1.8vw]">
               <Image
                 src="/mail-plus-circle.png"
                 alt="Inbox"
-                width={30}
-                height={30}
-              />
+                fill
+              /></div>
             </div>
             <div
               className={`transition-all duration-100 ease-in-out ${
@@ -428,12 +427,12 @@ const NavbarDesktop: React.FC = () => {
             }}
             >
               {" "}
+              <div className=" relative h-[3.73vh] w-[1.8vw]">
               <Image
                 src="/exit.png"
                 alt="Inbox"
-                /* className="h-[3.73vh]" */ width={30}
-                height={30}
-              />
+                fill
+              /></div>
               <div
                 className={`transition-all duration-100 ease-in-out ${
                   isOpen ? "block" : "hidden"
