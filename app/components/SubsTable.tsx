@@ -153,13 +153,17 @@ const SubscriptionsTableMobile = ({
   const [pageCount, setPageCount] = useState<number>(0);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full min-h-[90vh] max-h-[90vh] flex flex-col">
       <h1 className="font-bold text-2xl">Subscription Table</h1>
       <div className="flex">
-      <Input placeholder="Search by name..." onChange={(e)=>setAppliedSearchBarValue(e.target.value)} value={appliedSearchBarValue}/>
-      {/* <Button onClick={()=>{searchButtonClicked()}}>Search</Button> */}
+        <Input
+          placeholder="Search by name..."
+          onChange={(e) => setAppliedSearchBarValue(e.target.value)}
+          value={appliedSearchBarValue}
+        />
+        {/* <Button onClick={()=>{searchButtonClicked()}}>Search</Button> */}
       </div>
-      <div className="min-h-3/4">
+      <div className="min-h-3/4 flex-1">
         {subscriptions.map((sub: Subscription) => (
           <div
             key={sub.id}
@@ -516,7 +520,7 @@ function SubscriptionsTableDesktop({
   if (isLoading) return <Loader/>; // or a spinner/loading component
 
   return (
-    <div className="w-full min-h-[calc(100vh-200px)]">
+    <div className="w-full">
       <div className="flex items-center py-4">
         <Input
           placeholder="Search by name..."

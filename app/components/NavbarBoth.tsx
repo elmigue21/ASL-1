@@ -83,6 +83,7 @@ const NavbarMobile = () => {
                 className="flex flex-col items-center justify-center h-16 bg-blue-500 text-white flex-1"
                 key={index}
                 href={nav.link}
+                onClick={()=>{setExpanded(false)}}
               >
                 <div className="relative w-6 h-6 mr-2">
                   {" "}
@@ -102,6 +103,7 @@ const NavbarMobile = () => {
             className="flex flex-col items-center justify-center h-16 bg-blue-500 text-white flex-1"
             onClick={() => {
               logout();
+              setExpanded(false);
               router.replace("/loginPage");
             }}
           >
