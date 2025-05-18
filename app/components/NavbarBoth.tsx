@@ -13,6 +13,7 @@ import { logout } from "@/utils/auth";
 import { setOpenState } from "@/store/slices/emailWindowSlice";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
+import { ConfirmDialog } from "./ConfirmDialog";
 
 const NavbarBoth = () => {
   const isMobile = useMediaQuery("(max-width: 767px)");
@@ -161,6 +162,7 @@ const NavbarMobile = () => {
             />
           </motion.div>
         </button>
+
       </div>
     </>
   );
@@ -392,9 +394,9 @@ const NavbarDesktop: React.FC = () => {
           >
             {" "}
             <div
-              className={` ${
-                openState ? "bg-blue-500 rounded-full p-2" : ""
-              } inline-block transition-all duration-300`}
+              className={`w-10 h-10 flex items-center justify-center ${
+                openState ? "bg-blue-500 rounded-full" : ""
+              } inline-block transition-all duration-300 p-2`}
             >
               <Image
                 src="/mail-plus-circle.png"

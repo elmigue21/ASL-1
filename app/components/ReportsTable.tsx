@@ -15,6 +15,7 @@ import { X } from "lucide-react";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "./ConfirmDialog";
 
 
 
@@ -308,51 +309,17 @@ const ReportsTable = () => {
 
         return (
           <>
-  {     isDeleting? <Loader className="animate-spin text-blue-500"/>   : <Trash
-              className="text-red-500 hover:cursor-pointer hover:bg-slate-200 m-1 rounded-full hover:scale-120 transition-all duration-300 hover:text-red-600"
-              onClick={() => setOpen(true)}
-            />}
-
-            <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
-              <DialogPrimitive.Portal>
-                <DialogPrimitive.Overlay className="fixed inset-0 bg-black/50 z-90" />
-                <DialogPrimitive.Content className="fixed z-100 top-[50%] left-[50%] max-w-md w-full bg-white p-6 rounded-md shadow-lg -translate-x-[50%] -translate-y-[50%] focus:outline-none">
-                  <DialogPrimitive.Title className="text-lg font-semibold">
-                    Confirm Delete
-                  </DialogPrimitive.Title>
-                  <DialogPrimitive.Description className="mt-2 text-sm text-gray-600">
-                    Are you sure you want to delete <strong>{fileName}</strong>?
-                  </DialogPrimitive.Description>
-
-                  <div className="mt-6 flex justify-end gap-4">
-                    <button
-                      className="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300"
-                      onClick={() => setOpen(false)}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-                      onClick={() => {
-                        handleConfirmDelete();
-                        setOpen(false);
-                      }}
-                    >
-                      Confirm
-                    </button>
-                  </div>
-
-                  <DialogPrimitive.Close asChild>
-                    <button
-                      aria-label="Close"
-                      className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100"
-                    >
-                      <X size={20} />
-                    </button>
-                  </DialogPrimitive.Close>
-                </DialogPrimitive.Content>
-              </DialogPrimitive.Portal>
-            </DialogPrimitive.Root>
+            {isDeleting ? (
+              <Loader className="animate-spin text-blue-500" />
+            ) : (
+              <ConfirmDialog
+                title="Confirm Delete"
+                description= {`Are you sure you want to delete ${fileName}?`}
+                onConfirmAction={handleConfirmDelete}
+              >
+                <Trash className="text-red-500 hover:cursor-pointer hover:bg-slate-200 m-1 rounded-full hover:scale-120 transition-all duration-300 hover:text-red-600" />
+              </ConfirmDialog>
+            )}
           </>
         );
       },

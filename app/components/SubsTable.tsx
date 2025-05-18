@@ -644,10 +644,10 @@ function SubscriptionsTableDesktop({
             variant="outline"
             size="sm"
             onClick={() => {
-              //   setPagination((prev) => ({
-              //     ...prev,
-              //     pageIndex: 0,
-              //   }));
+                setPagination((prev) => ({
+                  ...prev,
+                  pageIndex: 0,
+                }));
             }}
             disabled={!table.getCanPreviousPage()}
           >
