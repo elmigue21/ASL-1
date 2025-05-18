@@ -24,7 +24,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "sonner";
-
+import useMediaQuery from '@/lib/hooks/useMediaQuery'
 function AddAccPage() {
   const [firstName, setFirstName] = useState("Firsttt");
   const [lastName, setLastName] = useState("Lasttt");
@@ -156,8 +156,256 @@ function AddAccPage() {
     }
   };
 
-  return (
-    <>
+    const isMobile = useMediaQuery("(max-width: 767px)");
+    
+    return isMobile ? (
+  AddAccMobile({
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    personLinkedIn,
+    setPersonLinkedIn,
+    personFacebook,
+    setPersonFacebook,
+    phoneNumbers,
+    setPhoneNumbers,
+    emails,
+    setEmails,
+    country,
+    setCountry,
+    state,
+    setState,
+    city,
+    setCity,
+    occupation,
+    setOccupation,
+    industry,
+    setIndustry,
+    company,
+    setCompany,
+    companyLinkedIn,
+    setCompanyLinkedIn,
+    companyWebsite,
+    setCompanyWebsite,
+    phoneInput,
+    setPhoneInput,
+    emailInput,
+    setEmailInput,
+    addPhoneNumber,
+    removePhoneNumber,
+    addEmail,
+    removeEmail,
+  })
+) : (
+  AddAccDesktop({
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    personLinkedIn,
+    setPersonLinkedIn,
+    personFacebook,
+    setPersonFacebook,
+    phoneNumbers,
+    setPhoneNumbers,
+    emails,
+    setEmails,
+    country,
+    setCountry,
+    state,
+    setState,
+    city,
+    setCity,
+    occupation,
+    setOccupation,
+    industry,
+    setIndustry,
+    company,
+    setCompany,
+    companyLinkedIn,
+    setCompanyLinkedIn,
+    companyWebsite,
+    setCompanyWebsite,
+    phoneInput,
+    setPhoneInput,
+    emailInput,
+    setEmailInput,
+    addPhoneNumber,
+    removePhoneNumber,
+    addEmail,
+    removeEmail,
+  })
+);
+
+}
+function AddAccMobile(props: {
+  firstName: string;
+  setFirstName: React.Dispatch<React.SetStateAction<string>>;
+  lastName: string;
+  setLastName: React.Dispatch<React.SetStateAction<string>>;
+  personLinkedIn: string;
+  setPersonLinkedIn: React.Dispatch<React.SetStateAction<string>>;
+  personFacebook: string;
+  setPersonFacebook: React.Dispatch<React.SetStateAction<string>>;
+
+  phoneNumbers: string[];
+  setPhoneNumbers: React.Dispatch<React.SetStateAction<string[]>>;
+  emails: string[];
+  setEmails: React.Dispatch<React.SetStateAction<string[]>>;
+
+  country: string;
+  setCountry: React.Dispatch<React.SetStateAction<string>>;
+  state: string;
+  setState: React.Dispatch<React.SetStateAction<string>>;
+  city: string;
+  setCity: React.Dispatch<React.SetStateAction<string>>;
+
+  occupation: string;
+  setOccupation: React.Dispatch<React.SetStateAction<string>>;
+  industry: string;
+  setIndustry: React.Dispatch<React.SetStateAction<string>>;
+  company: string;
+  setCompany: React.Dispatch<React.SetStateAction<string>>;
+  companyLinkedIn: string;
+  setCompanyLinkedIn: React.Dispatch<React.SetStateAction<string>>;
+  companyWebsite: string;
+  setCompanyWebsite: React.Dispatch<React.SetStateAction<string>>;
+
+  phoneInput: string;
+  setPhoneInput: React.Dispatch<React.SetStateAction<string>>;
+  emailInput: string;
+  setEmailInput: React.Dispatch<React.SetStateAction<string>>;
+
+  addPhoneNumber: (val: string) => void;
+  removePhoneNumber: (index: number) => void;
+  addEmail: (val: string) => void;
+  removeEmail: (index: number) => void;
+}) {
+  const {
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    personLinkedIn,
+    setPersonLinkedIn,
+    personFacebook,
+    setPersonFacebook,
+    phoneNumbers,
+    setPhoneNumbers,
+    emails,
+    setEmails,
+    country,
+    setCountry,
+    state,
+    setState,
+    city,
+    setCity,
+    occupation,
+    setOccupation,
+    industry,
+    setIndustry,
+    company,
+    setCompany,
+    companyLinkedIn,
+    setCompanyLinkedIn,
+    companyWebsite,
+    setCompanyWebsite,
+    phoneInput,
+    setPhoneInput,
+    emailInput,
+    setEmailInput,
+    addPhoneNumber,
+    removePhoneNumber,
+    addEmail,
+    removeEmail,
+  } = props;
+
+}
+
+function AddAccDesktop(props: {
+  firstName: string;
+  setFirstName: React.Dispatch<React.SetStateAction<string>>;
+  lastName: string;
+  setLastName: React.Dispatch<React.SetStateAction<string>>;
+  personLinkedIn: string;
+  setPersonLinkedIn: React.Dispatch<React.SetStateAction<string>>;
+  personFacebook: string;
+  setPersonFacebook: React.Dispatch<React.SetStateAction<string>>;
+
+  phoneNumbers: string[];
+  setPhoneNumbers: React.Dispatch<React.SetStateAction<string[]>>;
+  emails: string[];
+  setEmails: React.Dispatch<React.SetStateAction<string[]>>;
+
+  country: string;
+  setCountry: React.Dispatch<React.SetStateAction<string>>;
+  state: string;
+  setState: React.Dispatch<React.SetStateAction<string>>;
+  city: string;
+  setCity: React.Dispatch<React.SetStateAction<string>>;
+
+  occupation: string;
+  setOccupation: React.Dispatch<React.SetStateAction<string>>;
+  industry: string;
+  setIndustry: React.Dispatch<React.SetStateAction<string>>;
+  company: string;
+  setCompany: React.Dispatch<React.SetStateAction<string>>;
+  companyLinkedIn: string;
+  setCompanyLinkedIn: React.Dispatch<React.SetStateAction<string>>;
+  companyWebsite: string;
+  setCompanyWebsite: React.Dispatch<React.SetStateAction<string>>;
+
+  phoneInput: string;
+  setPhoneInput: React.Dispatch<React.SetStateAction<string>>;
+  emailInput: string;
+  setEmailInput: React.Dispatch<React.SetStateAction<string>>;
+
+  addPhoneNumber: (val: string) => void;
+  removePhoneNumber: (index: number) => void;
+  addEmail: (val: string) => void;
+  removeEmail: (index: number) => void;
+}) {
+  const {
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    personLinkedIn,
+    setPersonLinkedIn,
+    personFacebook,
+    setPersonFacebook,
+    phoneNumbers,
+    setPhoneNumbers,
+    emails,
+    setEmails,
+    country,
+    setCountry,
+    state,
+    setState,
+    city,
+    setCity,
+    occupation,
+    setOccupation,
+    industry,
+    setIndustry,
+    company,
+    setCompany,
+    companyLinkedIn,
+    setCompanyLinkedIn,
+    companyWebsite,
+    setCompanyWebsite,
+    phoneInput,
+    setPhoneInput,
+    emailInput,
+    setEmailInput,
+    addPhoneNumber,
+    removePhoneNumber,
+    addEmail,
+    removeEmail,
+  } = props;
+return(
+<>
       {/* <Navbar /> */}
       <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[88vh] px-[3vw] py-[2vh] overflow-hidden">
         <div className="font-bold text-[#1E2E80] text-[1.60vw]">
@@ -525,7 +773,7 @@ function AddAccPage() {
           </Button>
         </div>
       </div>
-    </>
-  );
+    </>)
 }
+
 export default AddAccPage;
