@@ -516,7 +516,7 @@ function SubscriptionsTableDesktop({
   if (isLoading) return <Loader/>; // or a spinner/loading component
 
   return (
-    <div className="w-full">
+    <div className="w-full min-h-[calc(100vh-200px)]">
       <div className="flex items-center py-4">
         <Input
           placeholder="Search by name..."
@@ -707,7 +707,7 @@ function SubscriptionsTableDesktop({
           </Button>
         </div>
       </div>
-      <EmailWindow />
+      {/* <EmailWindow /> */}
     </div>
   );
 }

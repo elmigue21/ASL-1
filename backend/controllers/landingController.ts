@@ -63,6 +63,8 @@ export const confirmSubscription: RequestHandler = async (
       city: decoded.address.city,
       company_linkedin: decoded.company.linked_in_url,
       company_website: decoded.company.website,
+      verified_status: decoded.verified_status,
+      created_by: decoded.created_by,
     });
 
     if (error) {
@@ -84,8 +86,8 @@ export const sendConfirmationEmail: RequestHandler = async (
   res
 ): Promise<void> => {
   try {
-    console.log(supabaseKey, supabaseUrl);
-    // const { email } = req.body;
+    const API_KEY = process.env.EMAIL_CHECKER_KEY;
+
     const {
       emails,
       firstName,
@@ -102,11 +104,42 @@ export const sendConfirmationEmail: RequestHandler = async (
       companyWebsite,
       companyLinkedIn,
     } = req.body;
-    // if (!email) {
-    //   res.status(400).json({ message: "Email is required" });
-    //   return;
-    // }
 
+    const emailToCheck = emails?.[0]; // assuming `emails` is an array and you want to check the first one
+
+    if (!emailToCheck) {
+      res.status(400).json({ message: "No email provided for verification" });
+      return;
+    }
+
+    // Verify the email
+let verifiedStatus = false;
+
+try {
+  const verifyResponse = await fetch(
+    `https://apilayer.net/api/check?access_key=${API_KEY}&email=${encodeURIComponent(
+      emailToCheck
+    )}&smtp=1&format=1`
+  );
+
+  const data = await verifyResponse.json();
+
+  if (
+    data &&
+    data.success !== false && // check success explicitly
+    data.mx_found &&
+    data.smtp_check &&
+    data.format_valid &&
+    !data.free &&
+    !data.disposable
+  ) {
+    verifiedStatus = true;
+  }
+} catch {
+  // silently fallback to verifiedStatus = false
+}
+
+    // Build payload with verified status
     const payload = {
       first_name: firstName,
       last_name: lastName,
@@ -115,9 +148,6 @@ export const sendConfirmationEmail: RequestHandler = async (
       person_facebook_url: facebook,
       person_linkedin_url: linkedIn,
       address: { country, state, city },
-      // country,
-      // city,
-      // state,
       occupation,
       industry,
       company: {
@@ -125,18 +155,11 @@ export const sendConfirmationEmail: RequestHandler = async (
         website: companyWebsite,
         linked_in_url: companyLinkedIn,
       },
-      // company,
-      // companyWebsite,
-      // companyLinkedIn,
+      verified_status:verifiedStatus,
+      created_by:"Self"
     };
 
-    console.log("email secret", emailSecret);
-    // Generate the JWT token (you can adjust the secret and expiration as needed)
     const token = jwt.sign(payload, emailSecret, { expiresIn: "1h" });
-
-    // Construct the confirmation URL with the token
-    console.log("WEBSITE URL");
-    console.log(websiteUrl);
     const confirmationUrl = `${websiteUrl}/confirm?token=${token}`;
 
     const filePath = path.join(
@@ -147,53 +170,76 @@ export const sendConfirmationEmail: RequestHandler = async (
       "img",
       "dempaLogoTxt.png"
     );
-    const mailOptions = {
-      from: "gueljohnc@gmail.com", // Sender's email address
-      to: /* email */ "gueljohnc@gmail.com", // Recipient's email address
-      subject: "Confirmation Email", // Email subject
-      text: `Thank you for signing up! Please confirm your email by clicking the following link: ${confirmationUrl}`, // Plain text body
-      html: `<p>Thank you for signing up! Please confirm your email by clicking the following link:</p>
-         <a href="${confirmationUrl}">Confirm Email</a>
-         <br />
-         <img src="cid:dempaLogo" width="250" height="auto"/>
-         `, // HTML body with link
 
+    const mailOptions = {
+      from: "gueljohnc@gmail.com",
+      to: emailToCheck,
+      subject: "Confirmation Email",
+      text: `Thank you for signing up! Please confirm your email by clicking the following link: ${confirmationUrl}`,
+      html: `<p>Thank you for signing up! Please confirm your email by clicking the following link:</p>
+             <a href="${confirmationUrl}">Confirm Email</a><br />
+             <img src="cid:dempaLogo" width="250" height="auto"/>`,
       attachments: [
         {
           filename: "image.jpg",
           path: filePath,
-          cid: "dempaLogo", // optional, used for inline images
+          cid: "dempaLogo",
         },
       ],
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "Confirmation email sent" });
-    return;
+    res
+      .status(200)
+      .json({ message: "Confirmation email sent", email: emailToCheck });
   } catch (e) {
-    console.error(e);
+    console.error("Error sending confirmation email:", e);
     res
       .status(500)
       .json({ message: "Error sending confirmation email", details: e });
-    return;
   }
 };
 
-export const getCountries: RequestHandler = async (req, res) => {
+export const verifyEmail: RequestHandler = async (req, res): Promise<void> => {
+  const API_KEY = process.env.EMAIL_CHECKER_KEY;
+  const { email } = req.body;
 
- const supabase = createClient(supabaseUrl, supabaseKey);
-  // Query countries table
-  const { data, error } = await supabase.from("countries").select("*");
+  try {
+    const response = await fetch(
+      `https://apilayer.net/api/check?access_key=${API_KEY}&email=${encodeURIComponent(
+        email
+      )}&smtp=1&format=1`
+    );
 
-  if (error) {
-    console.error("Supabase error:", error);
-    res.status(500).json({ error: error.message });
-    return;
+    if (!response.ok) {
+      throw new Error(`API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("DATA", data);
+
+    if (
+      data.mx_found &&
+      data.smtp_check &&
+      data.format_valid &&
+      !data.free &&
+      !data.disposable
+    ) {
+      console.log("✅ Valid company email.");
+      res.status(200).json({ message: "Company email", email });
+    } else {
+      console.log("❌ Invalid email.");
+      res
+        .status(500)
+        .json({ message: "Invalid or not a company email", email });
+    }
+  } catch (error) {
+    console.error("Error verifying email:", error);
+    res.status(500).json({ error: "Error verifying email", email });
   }
-
-   res.json({ countries: data });
-   return;
 };
+
+
 //////
 
 // export const sendEmails: RequestHandler = async (req, res) => {

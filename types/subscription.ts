@@ -16,4 +16,6 @@ export interface Subscription {
     company:{name:string,linked_in_url:string,website:string};
     occupation:string
     industry:string
+    verified_status:boolean,
+    archived_status:boolean,
 }

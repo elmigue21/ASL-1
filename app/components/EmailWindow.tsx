@@ -1,111 +1,198 @@
-'use client'
-import React from 'react'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea';
-import { RootState
- } from '@/store/store';
- import { useState } from 'react';
- import { useSelector } from 'react-redux';
- import { useDispatch } from 'react-redux';
-import { setOpenState } from '@/store/slices/emailWindowSlice';
-// import { sendEmails } from './../../backend/controllers/emailController';
-// import { supabase } from '@/lib/supabase';
-import {
-  // addSelectedEmails,
-  removeSelectedEmails,
-} from "@/store/slices/subscriptionSlice";
-import { Email } from '@/types/email';
-// import CloseButton from './CloseButton';
-import Image from 'next/image'
-import CloseButton from './CloseButton';
-import { motion, AnimatePresence } from 'framer-motion'
-
-
+"use client";
+import React, { useState, useEffect, useRef } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { RootState } from "@/store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { setOpenState } from "@/store/slices/emailWindowSlice";
+import { removeSelectedEmails } from "@/store/slices/subscriptionSlice";
+import { Email } from "@/types/email";
+import Image from "next/image";
+import CloseButton from "./CloseButton";
+import { motion, AnimatePresence } from "framer-motion";
 
 
 function EmailWindow() {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [highlightIndex, setHighlightIndex] = useState(-1);
+  const messageRef = useRef<HTMLTextAreaElement>(null);
+
   const openState = useSelector(
     (state: RootState) => state.EmailWindowSlice.isOpen
   );
   const dispatch = useDispatch();
-
-  const closeClicked = () =>{
-    dispatch(setOpenState(false));
-  }
 
   const selectedEmails = useSelector(
     (state: RootState) => state.SubscriptionSlice.selectedEmails
   );
 
 
-  const sendEmailsClicked = async () => {
- console.log(selectedEmails)
-const emailIds = Array.isArray(selectedEmails) 
-  ? selectedEmails.map((email) => email?.id).filter(Boolean) 
-  : [];
+  // Phrases for suggestions
+  const phrases = [
+    "Dear Colleagues,",
+    "Hello everyone,",
+    "Greetings,",
+    "Hi all,",
+    "Hello,",
+    "Dear [Name],",
+    "Good day,",
+    "Hi there,",
+    "Dear Valued Customer,",
+    "Dear Partners,",
+    // ... (rest of your phrases)
+    "If you require any clarification, please do not hesitate to contact me.",
+  ];
 
-    try{
-
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/email/sendEmails`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                emailIds,
-                emailSubject: message,
-                emailText: subject,
-                // emailHtml: "<a href=`https://www.youtube.com/watch?v=xvFZjo5PgG0`>test link</a>",
-                fromName: "fname lname",
-                // fromEmail: "",
-              }),
-            }
-          );
-          const data = await response.json()
-          console.log(data);
-
-
-
-    }catch(e){
-      console.error(e)
+  // Filter suggestions based on last word typed
+  useEffect(() => {
+    if (!message) {
+      setSuggestions([]);
+      setHighlightIndex(-1);
+      return;
     }
-  } 
+    const words = message.split(/\s+/);
+    const lastWord = words[words.length - 1].toLowerCase();
 
-    const removeClicked = (email: Email) => {
-      dispatch(removeSelectedEmails(email));
-    };
+    if (lastWord.length === 0) {
+      setSuggestions([]);
+      setHighlightIndex(-1);
+      return;
+    }
 
-const variants = {
-  hidden: { scale: 0, opacity: 0, originX: 1, originY: 1, x: "50%", y: "50%" },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    x: 0,
-    y: 0,
-    originX: 1,
-    originY: 1,
-    transition: { type: "spring", stiffness: 300, damping: 25 },
-  },
-  exit: {
-    scale: 0,
-    opacity: 0,
-    x: "50%",
-    y: "50%",
-    originX: 1,
-    originY: 1,
-    transition: { ease: "easeInOut" },
-  },
-};
+    const filtered = phrases.filter((phrase) =>
+      phrase.toLowerCase().startsWith(lastWord)
+    );
+    setSuggestions(filtered.slice(0, 5));
+    setHighlightIndex(-1);
+  }, [message]);
+
+  // Refs to suggestion <li> elements
+  const suggestionRefs = useRef<(HTMLLIElement | null)[]>([]);
+
+  // Scroll to highlighted suggestion when highlightIndex changes
+useEffect(() => {
+  if (highlightIndex >= 0 && suggestionRefs.current[highlightIndex]) {
+    suggestionRefs.current[highlightIndex]?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
+  }
+}, [highlightIndex]);
+
+
+  // Keyboard navigation for suggestions
+  const handleMessageKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (suggestions.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : 0
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightIndex((prev) =>
+        prev > 0 ? prev - 1 : suggestions.length - 1
+      );
+    } else if (e.key === "Tab" || e.key === "Enter") {
+      if (highlightIndex >= 0) {
+        e.preventDefault();
+        const words = message.split(/\s+/);
+        words[words.length - 1] = suggestions[highlightIndex];
+        const newMessage = words.join(" ") + " ";
+        setMessage(newMessage);
+        setSuggestions([]);
+        setHighlightIndex(-1);
+      }
+    }
+  };
+
+  const closeClicked = () => {
+    dispatch(setOpenState(false));
+  };
+
+  const sendEmailsClicked = async () => {
+    const emailIds = Array.isArray(selectedEmails)
+      ? selectedEmails.map((email) => email?.id).filter(Boolean)
+      : [];
+
+      //  const personalizedMessage = message.replace(/\[Name\]/g, recipientName);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/email/sendEmails`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            emailIds,
+            emailSubject: subject, // Fixed: subject should be emailSubject
+            emailText: message, // Fixed: message should be emailText
+            fromName: "fname lname",
+          }),
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const removeClicked = (email: Email) => {
+    dispatch(removeSelectedEmails(email));
+  };
+
+  const variants = {
+    hidden: {
+      scale: 0,
+      opacity: 0,
+      originX: 1,
+      originY: 1,
+      x: "50%",
+      y: "50%",
+    },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      x: 0,
+      y: 0,
+      originX: 1,
+      originY: 1,
+      transition: { type: "spring", stiffness: 300, damping: 25 },
+    },
+    exit: {
+      scale: 0,
+      opacity: 0,
+      x: "50%",
+      y: "50%",
+      originX: 1,
+      originY: 1,
+      transition: { ease: "easeInOut" },
+    },
+  };
 
   return (
+    <>
+        <div className={`md:hidden absolute bottom-0 left-0 z-[99] w-12 h-12
+        flex items-center justify-center rounded-full bg-red-300 border border-blue-500 m-5 
+        hover:bg-red-500 shadow-xl ${openState ? "bg-white border-5" : ""} active:scale-105 transition-all duration-100`}
+        onClick={()=>{dispatch(setOpenState(!openState)); console.log('email clickkk'); console.log(openState)}}>
+      <Image
+      src="/envelope-plus.png"
+      alt="email"
+      width={30}
+      height={30}
+      />
+    </div>
     <AnimatePresence>
       {openState && (
         <motion.div
-          className="fixed bottom-0 w-[45vw] top-[11vh] right-0 z-50 flex flex-col bg-white shadow-md shadow-gray-700/80"
+          className="fixed bottom-0 md:w-[45vw] md:top-[11vh] right-0 z-50 flex flex-col bg-white shadow-md shadow-gray-700/80 w-full h-[calc(92vh)] md:h-full"
           initial="hidden"
           animate="visible"
           exit="exit"
@@ -145,12 +232,65 @@ const variants = {
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
           />
-          <Textarea
-            placeholder="Message..."
-            className="border-1 border-black flex-1 rounded-none"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
+          <div style={{ position: "relative" }}>
+            <Textarea
+              ref={messageRef}
+              placeholder="Message..."
+              className="border-1 border-black flex-1 rounded-none"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleMessageKeyDown}
+              spellCheck={false}
+              rows={6}
+            />
+            {/* Suggestion box */}
+            {suggestions.length > 0 && (
+              <ul
+                style={{
+                  position: "absolute",
+                  bottom: "100%",
+                  right: 0,
+                  backgroundColor: "white",
+                  border: "1px solid #ccc",
+                  borderRadius: 4,
+                  marginBottom: 4,
+                  maxHeight: 120,
+                  overflowY: "auto",
+                  width: "100%",
+                  zIndex: 1000,
+                  listStyle: "none",
+                  padding: "4px 8px",
+                }}
+              >
+                {suggestions.map((s, i) => (
+                  <li
+                    key={s}
+                    ref={(el) => {
+                      suggestionRefs.current[i] = el; // no return here!
+                    }}
+                    style={{
+                      padding: "4px 8px",
+                      backgroundColor:
+                        i === highlightIndex ? "#bde4ff" : "transparent",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={() => setHighlightIndex(i)}
+                    onMouseDown={(e) => {
+                      e.preventDefault(); // prevent blur
+                      const words = message.split(/\s+/);
+                      words[words.length - 1] = s;
+                      setMessage(words.join(" ") + " ");
+                      setSuggestions([]);
+                      setHighlightIndex(-1);
+                      messageRef.current?.focus();
+                    }}
+                  >
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           <div
             className="absolute bottom-5 right-5 bg-blue-500 rounded-full p-2 cursor-pointer select-none"
             onClick={sendEmailsClicked}
@@ -160,7 +300,8 @@ const variants = {
         </motion.div>
       )}
     </AnimatePresence>
+    </>
   );
 }
 
-export default EmailWindow
+export default EmailWindow;

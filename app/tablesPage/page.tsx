@@ -4,21 +4,19 @@ import SubscriptionsTableMobile from '../components/SubscriptionsTableMobile'
 import Navbar from '../components/Navbar'
 import NavbarMobile from '../components/NavbarMobile'
 import SubTable from '../components/SubsTable'
+import EmailWindow from '../components/EmailWindow'
 
 function TablesPage() {
 
   return (
-    <div className="">
-        {/* <Navbar />
-        <NavbarMobile/> */}
 
-      <div className="z-45 absolute top-[11vh] left-[8.35vw] p-5 flex items-center justify-center w-[calc(100%-100px)]">
 
+      <div className="z-45 absolute top-[11vh] left-[8.35vw] p-5 flex items-center justify-center w-[calc(100%-100px)] md:w-[90vw]">
+  <EmailWindow/>
           <SubTable/>
+         
 
       </div>
-
-    </div>
   );
 }
 
