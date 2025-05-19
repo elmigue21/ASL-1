@@ -414,22 +414,6 @@ function AddAccDesktop({
               <div className="flex">
                 <Popover>
                   <div className="relative w-full">
-                    <Input
-                      value={phoneInput}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value.length > 15 || !/^\+?\d*$/.test(value)) {
-                          return;
-                        }
-                        setPhoneInput(value);
-                      }}
-                      placeholder="Enter phone number"
-                      className="pr-6"
-                      type="tel"
-                      pattern="[0-9]*"
-                      inputMode="numeric"
-                      maxLength={15}
-                    />
                     <PopoverTrigger asChild>
                   <div className="relative w-full">
                     <Input
@@ -514,14 +498,6 @@ function AddAccDesktop({
                 <div className="flex">
                   <Popover>
                     <div className="relative w-full">
-                      <Input
-                        value={emailInput}
-                        onChange={(e) => {
-                          setEmailInput(e.target.value);
-                        }}
-                        placeholder="Enter email"
-                        className="pr-6 h-[4vh] w-[12vw]"
-                      />
                       <PopoverTrigger asChild>
                     <div className="relative w-full">
                       <Input
