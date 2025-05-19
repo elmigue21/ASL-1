@@ -70,8 +70,12 @@ const BackupsTable = () => {
         setIsAction(false);
         return;
       }
+
+      const selectedBackup = backups.find(backup => String(backup.id) === selectedRowId);
+
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/backups/grabBucket`,
+        `${process.env.NEXT_PUBLIC_API_URL}/backups/grabBucket?backupName=${selectedBackup?.fileName}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -102,7 +106,7 @@ const BackupsTable = () => {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/backups/delete`,
+        `${process.env.NEXT_PUBLIC_API_URL}/backups/delete?backupName=${selectedBackup?.fileName}`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },

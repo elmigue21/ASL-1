@@ -198,14 +198,15 @@ const NavbarDesktop: React.FC = () => {
              items-center hover:bg-[#2a58ad] cursor-pointer 
           ${isOpen ? "w-[15vw]" : "w-[5vw]"}`}
         >
-          <Image
-            src="/menu-burger.png"
-            alt="Hamburger Menu"
-            // className="w-[2vw] h-[1.7vw]"
-            onClick={() => setIsOpen(!isOpen)}
-            width={30}
-            height={30}
-          />
+  <div className="relative w-[2vw] h-[1.7vw]">
+  <Image
+    src="/menu-burger.png"
+    alt="Hamburger Menu"
+    onClick={() => setIsOpen(!isOpen)}
+    fill
+    className="object-contain cursor-pointer"
+  />
+</div>
         </div>
         <div
           className={`transition-all duration-100 ease-in-out overflow-hidden flex absolute items-center gap-[1vw] ${
@@ -413,19 +414,15 @@ const NavbarDesktop: React.FC = () => {
               <h2 className="items-center mt-[0.50vh]">Email</h2>
             </div>
           </div>
-          <div
-            
-            className="transition-all duration-300"
-          >
+          <div className="transition-all duration-300">
             <div
               className={`mt-[9vh] items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] hover:cursor-pointer ${
                 isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
               }`}
-              
               onClick={() => {
-              logout();
-              router.replace("/");
-            }}
+                logout();
+                router.replace("/");
+              }}
             >
               {" "}
               <Image

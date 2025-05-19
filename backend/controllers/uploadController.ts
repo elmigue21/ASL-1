@@ -38,8 +38,6 @@ async function fetchAllRows(tableName: string, supabaseUser: SupabaseClient) {
       .select("*")
       .range(start, start + batchSize - 1);
 
-    console.log("FETCHING ERROR?", error);
-
     if (error) throw error;
     if (!data || data.length === 0) break; // Stop when no more rows
 
@@ -75,6 +73,155 @@ async function fetchAllRows(tableName: string, supabaseUser: SupabaseClient) {
 //     original,
 //   };
 // }
+
+export const insertUpload: RequestHandler = async (req, res): Promise<void> => {
+  const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+
+  if (!supabaseUser) {
+    res.status(401).json({ error: "Unauthorized from upload file" });
+    return;
+  }
+
+  try {
+    const { subscriptions } = req.body;
+
+    console.log(`Received ${subscriptions.length} subscriptions`);
+
+    // Fetch existing emails to filter duplicates
+    const emails = await fetchAllRows("emails", supabaseUser);
+
+    const existingEmails = new Set(
+      emails.map((row: any) =>
+        typeof row.email === "string" ? row.email.trim().toLowerCase() : ""
+      )
+    );
+
+    // Helper to normalize emails
+    const normalizeEmail = (val: any) =>
+      typeof val === "string" ? val.trim().toLowerCase() : "";
+
+    // Track filtered out duplicates
+    const filteredOutRows: any[] = [];
+
+    // Filter out duplicates based on emails only
+    const nonDuplicateRows = subscriptions.filter((row: any) => {
+      const email1 = normalizeEmail(row.email1);
+      const email2 = normalizeEmail(row.email2);
+
+      // Reject if neither email1 nor email2 exists
+      if (!email1 && !email2) {
+        filteredOutRows.push(row);
+        console.log("Filtered out due to missing both emails:", row);
+        return false;
+      }
+
+      // Check if either email already exists
+      const isDuplicate =
+        (email1 && existingEmails.has(email1)) ||
+        (email2 && existingEmails.has(email2));
+
+      if (isDuplicate) {
+        filteredOutRows.push(row);
+        console.log("Filtered out duplicate due to existing email:", {
+          email1,
+          email2,
+          row,
+        });
+      }
+
+      return !isDuplicate;
+    });
+
+    console.log(
+      `Filtered out ${filteredOutRows.length} duplicate subscriptions:`
+    );
+    console.dir(filteredOutRows, { depth: null });
+
+    // Clean duplicates inside each row (if email1 === email2, clear email2)
+    const cleanedRows = nonDuplicateRows.map((row: any) => {
+      const email1 = normalizeEmail(row.email1);
+      const email2 = normalizeEmail(row.email2);
+
+      if (email1 && email2 && email1 === email2) {
+        row.email2 = null;
+      }
+      // You can optionally clean phones here or leave as is
+      return row;
+    });
+
+    // Transform rows before insertion
+    const transformedSubscriptions = cleanedRows.map(transformRow);
+
+    // Batch insert to avoid timeout/large payload
+    const batchSize = 100;
+    const chunkArray = <T>(arr: T[], size: number): T[][] => {
+      const chunks: T[][] = [];
+      for (let i = 0; i < arr.length; i += size) {
+        chunks.push(arr.slice(i, i + size));
+      }
+      return chunks;
+    };
+
+    const batches = chunkArray(transformedSubscriptions, batchSize);
+
+    let totalInserted = 0;
+
+    for (const [index, batch] of batches.entries()) {
+      const { data: insertData, error: insertError } = await supabaseUser.rpc(
+        "insert_subscriptions",
+        { subscriptions: batch }
+      );
+
+      if (insertError) {
+        console.error(`Insert RPC error on batch ${index + 1}:`, insertError);
+        res
+          .status(500)
+          .json({ error: "Insert RPC failed", details: insertError.message });
+        return;
+      }
+
+      totalInserted += insertData?.length || 0;
+    }
+
+    res.status(200).json({
+      message: "Batches inserted",
+      insertedCount: totalInserted,
+    });
+  } catch (e) {
+    console.error("Unexpected error in insertUpload:", e);
+    res
+      .status(500)
+      .json({ error: "Unexpected error", details: (e as Error).message });
+  }
+};
+
+function transformRow(row: any) {
+  return {
+    first_name: row.first_name,
+    last_name: row.last_name,
+    active_status: row.active_status || null,
+    emails: [row.email1, row.email2].filter(
+      (email) => email && email.trim() !== ""
+    ),
+    phones: [row.phone1, row.phone2].filter(
+      (phone) => phone && phone.trim() !== ""
+    ),
+
+    address_city: row.city,
+    address_state: row.state,
+    address_country: row.country,
+    person_facebook_url: row.person_facebook_url,
+    person_linkedin_url: row.person_linkedin_url,
+    industry: row.industry,
+    occupation: row.occupation,
+    company_name: row.company,
+    company_website: row.company_website,
+    company_linkedin: row.company_linked_in || row.company_linkedin || "",
+    created_on: row.created_on,
+  };
+}
+
+
 
 export const exportToExcel: RequestHandler = async (req, res) => {
   const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
@@ -119,7 +266,6 @@ export const exportToExcel: RequestHandler = async (req, res) => {
       });
 
     if (uploadError) {
-      console.log("UPLOAD ERROR");
       console.error(uploadError);
     }
 
@@ -151,7 +297,6 @@ export const exportToExcel: RequestHandler = async (req, res) => {
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
-    console.log(fileName);
     res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
 
     res.send(buffer) /* .json({fileName}) */;
@@ -164,7 +309,6 @@ export const exportToExcel: RequestHandler = async (req, res) => {
 
 export const uploadFile: RequestHandler = async (req, res) => {
   try {
-    console.log("UPLOAD FILE");
 
     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
     if (!supabaseUser) {
@@ -174,7 +318,6 @@ export const uploadFile: RequestHandler = async (req, res) => {
 
     const file = req.file;
 
-    // console.log("form data from backend", file);
 
     if (!file) {
       res.status(400).json({ error: "No file provided" });
@@ -182,28 +325,22 @@ export const uploadFile: RequestHandler = async (req, res) => {
     }
 
     const workbook = xlsx.read(file.buffer, { type: "buffer" });
-    //   console.log("Workbook object:", workbook); // Check if the workbook is being created
 
     const sheetName = workbook.SheetNames[0];
-    //   console.log("Sheet Name:", sheetName); // Ensure the sheet name is available
 
     const sheet = workbook.Sheets[sheetName];
-    //   console.log("Sheet data:", sheet);
 
     const data: ExcelData[] = xlsx.utils.sheet_to_json(sheet);
 
     const emails = await fetchAllRows("emails", supabaseUser);
-    //   console.log("Fetched Emails:", emails); // Check if emails are fetched correctly
 
     const phones = await fetchAllRows("phone_numbers", supabaseUser);
-    console.log("Fetched phones:", phones); // Check if emails are fetched correctly
 
     const existingEmails = new Set(
       emails.map((row: any) => row.email.toLowerCase())
     );
 
     const existingPhones = new Set(phones.map((row: any) => row.phone));
-    //   console.log(existingPhones)
 
     const nonDuplicateRows = data
       .filter((row: any) => {
@@ -367,7 +504,6 @@ export const generatePdf: RequestHandler = async (req, res) => {
 
     const stream = new PassThrough();
     doc.pipe(stream);
-    console.log("IMAGE BUFFER", pageWidth);
 
     // doc.image(imageBuffer, x, doc.y, {
     //   width: doc.page.width,
@@ -419,7 +555,6 @@ export const generatePdf: RequestHandler = async (req, res) => {
           },
         ]);
 
-      console.log("REPORTS TABLE DATA", reportsTableData);
 
       if (reportsTableError) {
         console.error(reportsTableError);
@@ -480,7 +615,6 @@ export const downloadFile: RequestHandler = async (req, res) => {
     return;
   }
 
-  console.log("file urll!!", fileName);
 
   try {
     const { data, error } = await supabaseUser.storage
@@ -492,7 +626,6 @@ export const downloadFile: RequestHandler = async (req, res) => {
       res.status(500).json({ error: "Failed to download file" });
       return;
     }
-    console.log("FILEE GOT", data);
 
     const fileBuffer = await data.arrayBuffer();
     const buffer = Buffer.from(fileBuffer);

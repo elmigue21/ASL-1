@@ -5,6 +5,7 @@ import {store} from "@/store/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import NavbarBoth from "./components/NavbarBoth";
+import { useAuthRedirect } from "@/lib/hooks/useAuthRedirect";
 
 
 // Create a QueryClient instance
@@ -18,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
-
+useAuthRedirect();
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
