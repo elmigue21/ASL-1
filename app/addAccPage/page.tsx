@@ -25,6 +25,53 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "sonner";
 import useMediaQuery from '@/lib/hooks/useMediaQuery'
+
+
+interface AddAccProps {
+  firstName: string;
+  setFirstName: React.Dispatch<React.SetStateAction<string>>;
+  lastName: string;
+  setLastName: React.Dispatch<React.SetStateAction<string>>;
+  personLinkedIn: string;
+  setPersonLinkedIn: React.Dispatch<React.SetStateAction<string>>;
+  personFacebook: string;
+  setPersonFacebook: React.Dispatch<React.SetStateAction<string>>;
+
+  phoneNumbers: string[];
+  setPhoneNumbers: React.Dispatch<React.SetStateAction<string[]>>;
+  emails: string[];
+  setEmails: React.Dispatch<React.SetStateAction<string[]>>;
+
+  country: string;
+  setCountry: React.Dispatch<React.SetStateAction<string>>;
+  state: string;
+  setState: React.Dispatch<React.SetStateAction<string>>;
+  city: string;
+  setCity: React.Dispatch<React.SetStateAction<string>>;
+
+  occupation: string;
+  setOccupation: React.Dispatch<React.SetStateAction<string>>;
+  industry: string;
+  setIndustry: React.Dispatch<React.SetStateAction<string>>;
+  company: string;
+  setCompany: React.Dispatch<React.SetStateAction<string>>;
+  companyLinkedIn: string;
+  setCompanyLinkedIn: React.Dispatch<React.SetStateAction<string>>;
+  companyWebsite: string;
+  setCompanyWebsite: React.Dispatch<React.SetStateAction<string>>;
+
+  phoneInput: string;
+  setPhoneInput: React.Dispatch<React.SetStateAction<string>>;
+  emailInput: string;
+  setEmailInput: React.Dispatch<React.SetStateAction<string>>;
+
+  addPhoneNumber: (val: string) => void;
+  removePhoneNumber: (index: number) => void;
+  addEmail: (val: string) => void;
+  removeEmail: (index: number) => void;
+  handleSubmit: () => void;
+}
+
 function AddAccPage() {
   const [firstName, setFirstName] = useState("Firsttt");
   const [lastName, setLastName] = useState("Lasttt");
@@ -196,6 +243,7 @@ function AddAccPage() {
     removePhoneNumber,
     addEmail,
     removeEmail,
+    handleSubmit,
   })
 ) : (
   AddAccDesktop({
@@ -235,177 +283,95 @@ function AddAccPage() {
     removePhoneNumber,
     addEmail,
     removeEmail,
+    handleSubmit,
   })
 );
 
 }
-function AddAccMobile(props: {
-  firstName: string;
-  setFirstName: React.Dispatch<React.SetStateAction<string>>;
-  lastName: string;
-  setLastName: React.Dispatch<React.SetStateAction<string>>;
-  personLinkedIn: string;
-  setPersonLinkedIn: React.Dispatch<React.SetStateAction<string>>;
-  personFacebook: string;
-  setPersonFacebook: React.Dispatch<React.SetStateAction<string>>;
-
-  phoneNumbers: string[];
-  setPhoneNumbers: React.Dispatch<React.SetStateAction<string[]>>;
-  emails: string[];
-  setEmails: React.Dispatch<React.SetStateAction<string[]>>;
-
-  country: string;
-  setCountry: React.Dispatch<React.SetStateAction<string>>;
-  state: string;
-  setState: React.Dispatch<React.SetStateAction<string>>;
-  city: string;
-  setCity: React.Dispatch<React.SetStateAction<string>>;
-
-  occupation: string;
-  setOccupation: React.Dispatch<React.SetStateAction<string>>;
-  industry: string;
-  setIndustry: React.Dispatch<React.SetStateAction<string>>;
-  company: string;
-  setCompany: React.Dispatch<React.SetStateAction<string>>;
-  companyLinkedIn: string;
-  setCompanyLinkedIn: React.Dispatch<React.SetStateAction<string>>;
-  companyWebsite: string;
-  setCompanyWebsite: React.Dispatch<React.SetStateAction<string>>;
-
-  phoneInput: string;
-  setPhoneInput: React.Dispatch<React.SetStateAction<string>>;
-  emailInput: string;
-  setEmailInput: React.Dispatch<React.SetStateAction<string>>;
-
-  addPhoneNumber: (val: string) => void;
-  removePhoneNumber: (index: number) => void;
-  addEmail: (val: string) => void;
-  removeEmail: (index: number) => void;
-}) {
-  const {
-    firstName,
-    setFirstName,
-    lastName,
-    setLastName,
-    personLinkedIn,
-    setPersonLinkedIn,
-    personFacebook,
-    setPersonFacebook,
-    phoneNumbers,
-    setPhoneNumbers,
-    emails,
-    setEmails,
-    country,
-    setCountry,
-    state,
-    setState,
-    city,
-    setCity,
-    occupation,
-    setOccupation,
-    industry,
-    setIndustry,
-    company,
-    setCompany,
-    companyLinkedIn,
-    setCompanyLinkedIn,
-    companyWebsite,
-    setCompanyWebsite,
-    phoneInput,
-    setPhoneInput,
-    emailInput,
-    setEmailInput,
-    addPhoneNumber,
-    removePhoneNumber,
-    addEmail,
-    removeEmail,
-  } = props;
-
+function AddAccMobile({
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
+  personLinkedIn,
+  setPersonLinkedIn,
+  personFacebook,
+  setPersonFacebook,
+  phoneNumbers,
+  setPhoneNumbers,
+  emails,
+  setEmails,
+  country,
+  setCountry,
+  state,
+  setState,
+  city,
+  setCity,
+  occupation,
+  setOccupation,
+  industry,
+  setIndustry,
+  company,
+  setCompany,
+  companyLinkedIn,
+  setCompanyLinkedIn,
+  companyWebsite,
+  setCompanyWebsite,
+  phoneInput,
+  setPhoneInput,
+  emailInput,
+  setEmailInput,
+  addPhoneNumber,
+  removePhoneNumber,
+  addEmail,
+  removeEmail,
+  handleSubmit,
+}: AddAccProps) {
+  // component logic
 }
 
-function AddAccDesktop(props: {
-  firstName: string;
-  setFirstName: React.Dispatch<React.SetStateAction<string>>;
-  lastName: string;
-  setLastName: React.Dispatch<React.SetStateAction<string>>;
-  personLinkedIn: string;
-  setPersonLinkedIn: React.Dispatch<React.SetStateAction<string>>;
-  personFacebook: string;
-  setPersonFacebook: React.Dispatch<React.SetStateAction<string>>;
 
-  phoneNumbers: string[];
-  setPhoneNumbers: React.Dispatch<React.SetStateAction<string[]>>;
-  emails: string[];
-  setEmails: React.Dispatch<React.SetStateAction<string[]>>;
-
-  country: string;
-  setCountry: React.Dispatch<React.SetStateAction<string>>;
-  state: string;
-  setState: React.Dispatch<React.SetStateAction<string>>;
-  city: string;
-  setCity: React.Dispatch<React.SetStateAction<string>>;
-
-  occupation: string;
-  setOccupation: React.Dispatch<React.SetStateAction<string>>;
-  industry: string;
-  setIndustry: React.Dispatch<React.SetStateAction<string>>;
-  company: string;
-  setCompany: React.Dispatch<React.SetStateAction<string>>;
-  companyLinkedIn: string;
-  setCompanyLinkedIn: React.Dispatch<React.SetStateAction<string>>;
-  companyWebsite: string;
-  setCompanyWebsite: React.Dispatch<React.SetStateAction<string>>;
-
-  phoneInput: string;
-  setPhoneInput: React.Dispatch<React.SetStateAction<string>>;
-  emailInput: string;
-  setEmailInput: React.Dispatch<React.SetStateAction<string>>;
-
-  addPhoneNumber: (val: string) => void;
-  removePhoneNumber: (index: number) => void;
-  addEmail: (val: string) => void;
-  removeEmail: (index: number) => void;
-}) {
-  const {
-    firstName,
-    setFirstName,
-    lastName,
-    setLastName,
-    personLinkedIn,
-    setPersonLinkedIn,
-    personFacebook,
-    setPersonFacebook,
-    phoneNumbers,
-    setPhoneNumbers,
-    emails,
-    setEmails,
-    country,
-    setCountry,
-    state,
-    setState,
-    city,
-    setCity,
-    occupation,
-    setOccupation,
-    industry,
-    setIndustry,
-    company,
-    setCompany,
-    companyLinkedIn,
-    setCompanyLinkedIn,
-    companyWebsite,
-    setCompanyWebsite,
-    phoneInput,
-    setPhoneInput,
-    emailInput,
-    setEmailInput,
-    addPhoneNumber,
-    removePhoneNumber,
-    addEmail,
-    removeEmail,
-  } = props;
-return(
-<>
+function AddAccDesktop({
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
+  personLinkedIn,
+  setPersonLinkedIn,
+  personFacebook,
+  setPersonFacebook,
+  phoneNumbers,
+  setPhoneNumbers,
+  emails,
+  setEmails,
+  country,
+  setCountry,
+  state,
+  setState,
+  city,
+  setCity,
+  occupation,
+  setOccupation,
+  industry,
+  setIndustry,
+  company,
+  setCompany,
+  companyLinkedIn,
+  setCompanyLinkedIn,
+  companyWebsite,
+  setCompanyWebsite,
+  phoneInput,
+  setPhoneInput,
+  emailInput,
+  setEmailInput,
+  addPhoneNumber,
+  removePhoneNumber,
+  addEmail,
+  removeEmail,
+  handleSubmit,
+}: AddAccProps) {
+  return (
+    <>
       {/* <Navbar /> */}
       <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[88vh] px-[3vw] py-[2vh] overflow-hidden">
         <div className="font-bold text-[#1E2E80] text-[1.60vw]">
@@ -446,31 +412,30 @@ return(
               <div className="text-[0.85vw]">Phone Number</div>
               <div className="flex">
                 <Popover>
-                  
-                    <div className="relative w-full">
-                      <Input
-                        value={phoneInput}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (value.length > 15 || !/^\+?\d*$/.test(value)) {
-                            return;
-                          }
-                          setPhoneInput(value);
-                        }}
-                        placeholder="Enter phone number"
-                        className="pr-6"
-                        type="tel"
-                        pattern="[0-9]*"
-                        inputMode="numeric"
-                        maxLength={15}
-                      />
-                      <PopoverTrigger asChild>
+                  <div className="relative w-full">
+                    <Input
+                      value={phoneInput}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value.length > 15 || !/^\+?\d*$/.test(value)) {
+                          return;
+                        }
+                        setPhoneInput(value);
+                      }}
+                      placeholder="Enter phone number"
+                      className="pr-6"
+                      type="tel"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
+                      maxLength={15}
+                    />
+                    <PopoverTrigger asChild>
                       <div className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 cursor-pointer">
                         ▼
                       </div>
-                       </PopoverTrigger>
-                    </div>
-                 
+                    </PopoverTrigger>
+                  </div>
+
                   <PopoverContent className="w-[12vw] p-0">
                     <ScrollArea className="h-auto w-full rounded-md border p-2">
                       <h4 className="text-sm font-semibold mb-2">NUMBERS</h4>
@@ -526,23 +491,22 @@ return(
               <div className="text-[0.85vw]">
                 <div className="flex">
                   <Popover>
-                    
-                      <div className="relative w-full">
-                        <Input
-                          value={emailInput}
-                          onChange={(e) => {
-                            setEmailInput(e.target.value);
-                          }}
-                          placeholder="Enter email"
-                          className="pr-6 h-[4vh] w-[12vw]"
-                        />
-                        <PopoverTrigger asChild>
+                    <div className="relative w-full">
+                      <Input
+                        value={emailInput}
+                        onChange={(e) => {
+                          setEmailInput(e.target.value);
+                        }}
+                        placeholder="Enter email"
+                        className="pr-6 h-[4vh] w-[12vw]"
+                      />
+                      <PopoverTrigger asChild>
                         <div className="absolute top-1/2 right-2 -translate-y-1/2 text-black cursor-pointer">
                           ▼
                         </div>
-                        </PopoverTrigger>
-                      </div>
-                    
+                      </PopoverTrigger>
+                    </div>
+
                     <PopoverContent className="w-[15vw] p-0">
                       <ScrollArea className="h-[auto] w-full rounded-md border p-2">
                         <h4 className="text-sm font-semibold mb-2">EMAILS</h4>
@@ -773,7 +737,8 @@ return(
           </Button>
         </div>
       </div>
-    </>)
+    </>
+  );
 }
 
 export default AddAccPage;
