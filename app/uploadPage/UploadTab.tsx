@@ -1,12 +1,17 @@
-import React from 'react'
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import * as XLSX from 'xlsx';
-import { useReactTable, getCoreRowModel, flexRender , ColumnDef,
+import React from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import * as XLSX from "xlsx";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+  ColumnDef,
   Row,
-  Table} from '@tanstack/react-table';
-import CloseButton from '../components/CloseButton';
+  Table,
+} from "@tanstack/react-table";
+import CloseButton from "../components/CloseButton";
 
 type Person = {
   created_on: string;
@@ -29,145 +34,201 @@ type Person = {
   company_linked_in: string;
 };
 
-
 const UploadTab = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-    const [file, setFile] = useState<File | null>(null);
-    const [isUploading, setIsUploading] = useState(false);
+  const [data, setData] = useState<Person[]>([]);
+  const [columns, setColumns] = useState<ColumnDef<Person>[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
 
-      const [data, setData] = useState<Person[]>([]);
-      const [columns, setColumns] = useState<ColumnDef<Person>[]>([]);
-      const [isOpen, setIsOpen] = useState(false);
+  const TARGET_COLUMNS = [
+    "created_on",
+    "first_name",
+    "last_name",
+    "occupation",
+    "person_linkedin_url",
+    "company",
+    "city",
+    "state",
+    "country",
+    "industry",
+    "company_website",
+    "email1",
+    "email2",
+    "phone1",
+    "phone2",
+    "person_facebook_url",
+    "company_linked_in",
+  ];
 
-      const TARGET_COLUMNS = [
-        "created_on",
-        "first_name",
-        "last_name",
-        "occupation",
-        "person_linkedin_url",
-        "company",
-        "city",
-        "state",
-        "country",
-        "industry",
-        "company_website",
-        "email1",
-        "email2",
-        "phone1",
-        "phone2",
-        "person_facebook_url",
-        "company_linked_in",
-      ];
+const handleGetSelectedData = async () => {
+  const selectedData = table
+    .getSelectedRowModel()
+    .rows.map((row) => row.original);
 
-      const handleGetSelectedData = () => {
-  const selectedData = table.getSelectedRowModel().rows.map(row => row.original);
-  console.log("Selected data:", selectedData);
-};
+  console.log("Selected data count:", selectedData.length);
 
+  const batchSize = 50;
 
-const readFileUpload = async () => {
-
-  console.log('read file upload')
-  if (!file) return;
-  setIsUploading(true);
-
-  console.log('file exists')
-
-  const reader = new FileReader();
-
-  reader.onload = (evt) => {
-    const binaryStr = evt.target?.result;
-    const workbook = XLSX.read(binaryStr, { type: "binary" });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const rawJson = XLSX.utils.sheet_to_json<Record<string, any>>(sheet);
-
-    // Only include target columns
-    const filteredData = rawJson.map((row) => {
-      const filteredRow: Record<string, any> = {};
-      TARGET_COLUMNS.forEach((col) => {
-        filteredRow[col] = row[col] ?? ''; // default to empty if missing
-      });
-      return filteredRow;
-    });
-
-    const cols = TARGET_COLUMNS.map((key) => ({
-      header: key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()), // optional: prettify
-      accessorKey: key,
-    }));
-
-    setColumns(cols);
-    setData(filteredData as Person[]);
-    setIsUploading(false);
-    setIsOpen(true);
+  const chunkArray = <T,>(arr: T[], size: number): T[][] => {
+    const chunks: T[][] = [];
+    for (let i = 0; i < arr.length; i += size) {
+      chunks.push(arr.slice(i, i + size));
+    }
+    return chunks;
   };
 
-  reader.readAsBinaryString(file);
-};
+  const batches = chunkArray(selectedData, batchSize);
 
-const checkboxColumn: ColumnDef<Person> = {
-  id: "select",
-  header: ({ table }) => (
-    <input
-      type="checkbox"
-      checked={table.getIsAllPageRowsSelected()}
-      onChange={table.getToggleAllPageRowsSelectedHandler()}
-    />
-  ),
-  cell: ({ row }: { row: Row<Person> }) => (
-    <input
-      type="checkbox"
-      checked={row.getIsSelected()}
-      onChange={row.getToggleSelectedHandler()}
-    />
-  ),
-};
+  console.log("Number of batches:", batches.length);
 
-const allColumns: ColumnDef<Person>[] = [checkboxColumn, ...columns];
+  try {
+    for (const [index, batch] of batches.entries()) {
+      console.log(`Sending batch ${index + 1} with ${batch.length} items`);
 
-const table = useReactTable({
-  data,
-  columns: allColumns,
-  getCoreRowModel: getCoreRowModel(),
-});
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/upload/insertUpload`,
+        {
+          method: "POST",
+          body: JSON.stringify({ subscriptions: batch }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
 
-
-    const handleUpload = async () => {
-      if (!file) {
-        alert("No file selected!");
-        return;
-      }
-
-      setIsUploading(true);
-
-      const formData = new FormData();
-      formData.append("file", file);
-
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/upload/uploadFile`,
-          {
-            method: "POST",
-            body: formData,
-            credentials: "include",
-          }
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error(
+          `Error sending batch ${index + 1}:`,
+          response.statusText,
+          errorBody
         );
-
-        const result = await response.json();
-
-        if (!response.ok) throw new Error(result.error || "Upload failed");
-        console.log(result);
-        alert("Upload successful: " + result.message);
-      } catch (error) {
-        console.error("Upload error:", error);
-        alert("Upload failed");
-      } finally {
-        setIsUploading(false);
+        break; // stop on error, or remove this line to continue
       }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+  const readFileUpload = async () => {
+    console.log("read file upload");
+    if (!file) return;
+    setIsUploading(true);
+
+    console.log("file exists");
+
+    const reader = new FileReader();
+
+    reader.onload = (evt) => {
+      const binaryStr = evt.target?.result;
+      const workbook = XLSX.read(binaryStr, { type: "binary" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const rawJson = XLSX.utils.sheet_to_json<Record<string, any>>(sheet);
+
+      // Only include target columns
+      const filteredData = rawJson.map((row) => {
+        const filteredRow: Record<string, any> = {};
+        TARGET_COLUMNS.forEach((col) => {
+          filteredRow[col] = row[col] ?? ""; // default to empty if missing
+        });
+        return filteredRow;
+      });
+
+      const cols = TARGET_COLUMNS.map((key) => ({
+        header: key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()), // optional: prettify
+        accessorKey: key,
+      }));
+
+      setColumns(cols);
+      setData(filteredData as Person[]);
+      setIsUploading(false);
+      setIsOpen(true);
     };
 
+    reader.readAsBinaryString(file);
+  };
 
+  const checkboxColumn: ColumnDef<Person> = {
+    id: "select",
+    header: ({ table }) => (
+      <input
+        type="checkbox"
+        checked={table.getIsAllPageRowsSelected()}
+        onChange={table.getToggleAllPageRowsSelectedHandler()}
+      />
+    ),
+    cell: ({ row }: { row: Row<Person> }) => (
+      <input
+        type="checkbox"
+        checked={row.getIsSelected()}
+        onChange={row.getToggleSelectedHandler()}
+      />
+    ),
+  };
 
+  const allColumns: ColumnDef<Person>[] = [checkboxColumn, ...columns];
+
+  const table = useReactTable({
+    data,
+    columns: allColumns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+  const handleUpload = async () => {
+    if (!file) {
+      alert("No file selected!");
+      return;
+    }
+
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/upload/uploadFile`,
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) throw new Error(result.error || "Upload failed");
+      console.log(result);
+      alert("Upload successful: " + result.message);
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Upload failed");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const insertUpload = async () => {
+    try {
+      console.log(data);
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/upload/insertUpload`,
+        {
+          method: "POST",
+          // body: {},
+          credentials: "include",
+        }
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div className="space-y-4 w-full">
@@ -261,6 +322,6 @@ const table = useReactTable({
       </div>
     </div>
   );
-}
+};
 
-export default UploadTab
+export default UploadTab;

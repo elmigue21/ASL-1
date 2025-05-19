@@ -33,7 +33,6 @@ export const getSubscription: RequestHandler = async (req, res) => {
       .maybeSingle();
 
     if (error) {
-      console.log("error", error);
       res.status(500).json({ error: error });
       return;
     }
@@ -50,7 +49,6 @@ export const getSubscription: RequestHandler = async (req, res) => {
     occupation: data.occupations?.occupation,
     email: data.emails?.[0]?.email,
   };
-  console.log(result);
 
 
     res.json(result);

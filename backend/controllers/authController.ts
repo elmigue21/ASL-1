@@ -6,7 +6,9 @@ import cookie from "cookie";
 interface AuthenticatedRequest extends Request {
   supabaseUser?: SupabaseClient;
   user?: User | null;
+  // jwtPayload?: JWTPayload;
 }
+// import { JWTPayload } from "jose";
 const supabaseUrl = process.env.SUPABASE_URL
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY
 
@@ -258,4 +260,18 @@ export const changePassword: RequestHandler = async (
   } catch (error) {
     // optionally log error, no response sent
   }
+};
+
+
+export const checkAuth: RequestHandler = (req : AuthenticatedRequest, res) => {
+  //  const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+  if (!req.supabaseUser) {
+     res.status(401).json({ authenticated: false });
+     return
+  }
+  res.status(200).json({
+    authenticated: true,
+    user: req.supabaseUser,
+  });
+  return;
 };

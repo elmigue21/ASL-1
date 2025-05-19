@@ -412,19 +412,15 @@ const NavbarDesktop: React.FC = () => {
               <h2 className="items-center mt-[0.50vh]">Email</h2>
             </div>
           </div>
-          <div
-            
-            className="transition-all duration-300"
-          >
+          <div className="transition-all duration-300">
             <div
               className={`mt-[9vh] items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] hover:cursor-pointer ${
                 isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
               }`}
-              
               onClick={() => {
-              logout();
-              router.replace("/");
-            }}
+                logout();
+                router.replace("/");
+              }}
             >
               {" "}
               <div className=" relative h-[3.73vh] w-[1.8vw]">

@@ -10,7 +10,6 @@ interface AuthenticatedRequest extends Request {
 
 export const getAllSubscriptions: RequestHandler = async (req, res) => {
 
-  console.log('GET ALL SUB')
   try {
     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
     if (!supabaseUser) {
@@ -63,7 +62,6 @@ export const getAllSubscriptions: RequestHandler = async (req, res) => {
  */
 
 
-    console.log('BEFORE FETCH')
     // 📦 Clone query for count before adding .range()
     const {
       data: fullData,
@@ -71,16 +69,11 @@ export const getAllSubscriptions: RequestHandler = async (req, res) => {
       error: countError,
     } = await baseQuery.range(start, end);
 
-    console.log('AFTER FET CH')
-
     if (countError) {
       console.error(countError)
       res.status(500).json({ error: countError.message });
       return;
     }
-    console.log('AFTER COUNT ERROR')
-
-      console.log('TABLE DATA', fullData)
 
     res.json({
       data: fullData,

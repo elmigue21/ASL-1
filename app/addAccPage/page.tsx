@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "sonner";
 import useMediaQuery from '@/lib/hooks/useMediaQuery'
+import { ConfirmDialog } from "../components/ConfirmDialog";
 
 
 interface AddAccProps {
@@ -430,9 +431,30 @@ function AddAccDesktop({
                       maxLength={15}
                     />
                     <PopoverTrigger asChild>
+                  <div className="relative w-full">
+                    <Input
+                      value={phoneInput}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value.length > 15 || !/^\+?\d*$/.test(value)) {
+                          return;
+                        }
+                        setPhoneInput(value);
+                      }}
+                      placeholder="Enter phone number"
+                      className="pr-6"
+                      type="tel"
+                      pattern="[0-9]*"
+                      inputMode="numeric"
+                      maxLength={15}
+                    />
+                    <PopoverTrigger asChild>
                       <div className="absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 cursor-pointer">
                         ▼
                       </div>
+                    </PopoverTrigger>
+                  </div>
+
                     </PopoverTrigger>
                   </div>
 
@@ -501,9 +523,22 @@ function AddAccDesktop({
                         className="pr-6 h-[4vh] w-[12vw]"
                       />
                       <PopoverTrigger asChild>
+                    <div className="relative w-full">
+                      <Input
+                        value={emailInput}
+                        onChange={(e) => {
+                          setEmailInput(e.target.value);
+                        }}
+                        placeholder="Enter email"
+                        className="pr-6 h-[4vh] w-[12vw]"
+                      />
+                      <PopoverTrigger asChild>
                         <div className="absolute top-1/2 right-2 -translate-y-1/2 text-black cursor-pointer">
                           ▼
                         </div>
+                      </PopoverTrigger>
+                    </div>
+
                       </PopoverTrigger>
                     </div>
 
@@ -726,15 +761,16 @@ function AddAccDesktop({
               </div>
             </div>
           </div>
-
-          <Button
-            className="bg-[#000000] text-[1.2vw] h-[5vh] w-[7vw] rounded-[1.5vw] flex justify-center items-center absolute right-[11vw] mt-[6vh]"
-            onClick={() => {
-              handleSubmit();
-            }}
-          >
-            Done
-          </Button>
+          <ConfirmDialog description="Are you sure" title="Add Account" onConfirmAction={()=>{handleSubmit()}}>
+            <Button
+              className="bg-[#000000] text-[1.2vw] h-[5vh] w-[7vw] rounded-[1.5vw] flex justify-center items-center absolute right-[11vw] mt-[6vh]"
+              // onClick={() => {
+              //   handleSubmit();
+              // }}
+            >
+              Done
+            </Button>
+          </ConfirmDialog>
         </div>
       </div>
     </>

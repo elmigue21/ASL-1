@@ -110,8 +110,6 @@ if(!supabaseUser){
 
 
 
-      console.log('country count data', data);
-
       res.status(200).json(data);
       return
   } catch (e) {
@@ -127,7 +125,6 @@ export const getNewSubscribers: RequestHandler = async (req, res) => {
   try {
     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
     const range = (req.query.dateRange as "7d" | "1m" | "6m" | "1y") || "7d";
-    console.log(range);
 
     if (!supabaseUser) {
       res.status(401).json({ message: "User not authenticated" });
@@ -139,23 +136,10 @@ export const getNewSubscribers: RequestHandler = async (req, res) => {
     const groupBy = range === "6m" || range === "1y" ? "month" : "day";
     const formatStr = groupBy === "day" ? "YYYY-MM-DD" : "YYYY-MM";
 
-    console.log("from", from);
-
-    // Refactored Query with Group By
-    // const { data, error } = await supabaseUser
-    //   .from("subscribers")
-    //   .select(`count(*), to_char(created_on, '${formatStr}') as date`)
-    //   .gte("created_on", from.toISOString())
-    //   .lte("created_on", now.toISOString())
-    //   .group("date") // Group by the formatted date
-    //   .order("date");
     const { data, error } = await supabaseUser.rpc("get_new_subscribers_by_range", {
       range: range, // This will fall back to 7 days as default
     });
 
-
-    console.log("new subs data", data);
-    console.log("error", error);
 
     if (error) {
       res.status(500).json({ message: "Error fetching new subscribers", details: error });
@@ -192,24 +176,3 @@ function getFromDate(range: "7d" | "1m" | "6m" | "1y"): Date {
 
   return from;
 }
-
-// export const getCountries: RequestHandler = async (req, res) => {
-//   const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
-
-//   if (!supabaseUser) {
-//      res.status(401).json({ error: "Unauthorized" });
-//      return;
-//   }
-
-//   // Query countries table
-//   const { data, error } = await supabaseUser.from("countries").select("*");
-
-//   if (error) {
-//     console.error("Supabase error:", error);
-//     res.status(500).json({ error: error.message });
-//     return;
-//   }
-
-//    res.json({ countries: data });
-//    return;
-// };

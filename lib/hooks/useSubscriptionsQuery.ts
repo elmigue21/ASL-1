@@ -40,7 +40,7 @@ export function useSubscriptionsQuery({
     return result.data;
   };
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ["subscriptions", pagination, appliedSearchBarValue],
     queryFn: fetchSubscriptions,
     placeholderData: true,
@@ -92,5 +92,6 @@ export function useSubscriptionsQuery({
     prevPage,
     setPageSize,
     searchButtonClicked,
+    isFetching,
   };
 }

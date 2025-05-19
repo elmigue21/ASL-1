@@ -76,9 +76,11 @@ export const authenticateUser = async (
   
   try {
     const token =
-      req.cookies?.access_token || req.headers.authorization?.split(" ")[1];
-
+      req.cookies?.access_token;
+console.log(" NO TOKEN");
+console.log(req.cookies.access_token)
     if (!token) {
+      console.log(" NO TOKEN")
        res.status(401).json({ error: "Unauthorized: No token provided" });
        return
     }

@@ -74,6 +74,7 @@ type SubscriptionsTableProps = {
   appliedSearchBarValue: string;
   searchButtonClicked: () => void;
   setPagination: React.Dispatch<React.SetStateAction<Pagination>>;
+  isFetching: boolean;
 };
 
 const SubTable = () => {
@@ -97,7 +98,7 @@ const SubTable = () => {
         }));
       }, [initialPageSize]);
 
-      const { subscriptions, isLoading, goToPage, nextPage, prevPage, searchButtonClicked } =
+      const { subscriptions, isLoading, goToPage, nextPage, prevPage, searchButtonClicked ,isFetching} =
         useSubscriptionsQuery({
           pagination,
           setPagination,
@@ -117,6 +118,7 @@ const SubTable = () => {
         appliedSearchBarValue={appliedSearchBarValue}
         searchButtonClicked={searchButtonClicked}
         setPagination={setPagination}
+        isFetching={isFetching}
       />
     ) : (
       <SubscriptionsTableDesktop
@@ -130,6 +132,7 @@ const SubTable = () => {
         appliedSearchBarValue={appliedSearchBarValue}
         searchButtonClicked={searchButtonClicked}
         setPagination={setPagination}
+        isFetching={isFetching}
       />
     );
 };
@@ -146,6 +149,7 @@ const SubscriptionsTableMobile = ({
   setAppliedSearchBarValue,
   searchButtonClicked,
   setPagination,
+  isFetching,
 }: SubscriptionsTableProps) => {
 
 
@@ -218,6 +222,7 @@ function SubscriptionsTableDesktop({
   setAppliedSearchBarValue,
   searchButtonClicked,
   setPagination,
+  isFetching,
 }: SubscriptionsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -570,26 +575,36 @@ function SubscriptionsTableDesktop({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <React.Fragment key={row.id}>
-                  <TableRow data-state={row.getIsSelected() && "selected"}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className="truncate overflow-hidden whitespace-nowrap"
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
+            {isFetching ? (
+              [...Array(10)].map((_, index) => (
+                <TableRow key={index}>
+                  {columns.map((_, colIndex) => (
+                    <TableCell key={colIndex}>
+                      <Skeleton className="h-8 w-full rounded-md bg-gray-300 dark:bg-gray-700" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : table.getRowModel().rows?.length ? (
+              <>
+                {table.getRowModel().rows.map((row) => (
+                  <React.Fragment key={row.id}>
+                    <TableRow data-state={row.getIsSelected() && "selected"}>
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className="truncate overflow-hidden whitespace-nowrap"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
 
-                  {row.getIsExpanded() &&
-                    row.original.emails.map(
-                      (email: Email /* , index: number */) => {
+                    {row.getIsExpanded() &&
+                      row.original.emails.map((email: Email) => {
                         const isChecked = selectedEmails.includes(email);
                         return (
                           <TableRow key={email.id}>
@@ -600,26 +615,27 @@ function SubscriptionsTableDesktop({
                                 onCheckedChange={(value) => {
                                   setSelectedEmails(!!value, email);
                                 }}
-                              ></Checkbox>
+                              />
                             </TableCell>
                             <TableCell></TableCell>
                             <TableCell>{email.email}</TableCell>
                           </TableRow>
                         );
-                      }
-                    )}
-                </React.Fragment>
-              ))
-            ) : isLoading ? (
-              [...Array(10)].map((_, index) => (
-                <TableRow key={index}>
-                  {columns.map((_, colIndex) => (
-                    <TableCell key={colIndex}>
-                      <Skeleton className="h-8 w-full rounded-md bg-gray-300 dark:bg-gray-700" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+                      })}
+                  </React.Fragment>
+                ))}
+
+                {/* Fill empty rows if less than 10 */}
+                {Array.from({
+                  length: 10 - table.getRowModel().rows.length,
+                }).map((_, i) => (
+                  <TableRow key={`empty-${i}`}>
+                    {columns.map((_, colIndex) => (
+                      <TableCell key={colIndex} className="h-12" />
+                    ))}
+                  </TableRow>
+                ))}
+              </>
             ) : (
               <TableRow>
                 <TableCell
@@ -644,10 +660,10 @@ function SubscriptionsTableDesktop({
             variant="outline"
             size="sm"
             onClick={() => {
-                setPagination((prev) => ({
-                  ...prev,
-                  pageIndex: 0,
-                }));
+              setPagination((prev) => ({
+                ...prev,
+                pageIndex: 0,
+              }));
             }}
             disabled={!table.getCanPreviousPage()}
           >
