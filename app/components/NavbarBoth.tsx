@@ -37,6 +37,7 @@ const NavbarMobile = () => {
   const [expanded, setExpanded] = useState(false);
 
   const [isSpinning, setIsSpinning] = useState(false);
+  
 
   const handleClick = () => {
     setIsSpinning(true);
@@ -44,6 +45,7 @@ const NavbarMobile = () => {
       setIsSpinning(false); // Stop spinning after the animation duration (e.g., 0.6s)
     }, 600); // 600ms should match the duration of your spin animation
   };
+  
 
   const navItems = [
     {
@@ -74,7 +76,7 @@ const NavbarMobile = () => {
         initial={false}
         animate={{ width: expanded ? "100%" : "0%" }}
         transition={{ duration: 0.3 }}
-        className="h-screen bg-green-500 absolute top-0 left-0 z-[100] overflow-hidden md:hidden block"
+        className={`h-screen bg-green-500 absolute top-0 left-0 z-[100] overflow-hidden md:hidden block ${expanded?"fixed":""}`}
         style={{ pointerEvents: expanded ? "auto" : "none" }}
       >
         <div className="flex flex-col h-[calc(100vh-64px)] mt-[64px] md:hidden">
