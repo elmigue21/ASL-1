@@ -5,7 +5,8 @@ const router = Router();
 
 router.post("/create", createSubscription);
 router.delete('/delete',deleteSubscription);
-router.get("/:id", getSubscription)
+router.get("/:id", getSubscription);
+router.post("/edit", editSubscription);
 
 
 

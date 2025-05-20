@@ -25,6 +25,12 @@ import {
 } from "@/components/ui/popover";
 import { toast } from "sonner";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { Subscription } from "@/types/subscription";
+import { toastError } from "@/utils/toastError";
+
+interface FailedSubscription extends Subscription {
+  reason: string;
+}
 
 function AddAccPage() {
   const [firstName, setFirstName] = useState("Firsttt");
@@ -150,6 +156,14 @@ function AddAccPage() {
       }
 
       const data = await response.json();
+      console.log(data);
+data.failedSubscriptions.forEach((failedSub : FailedSubscription) => {
+  toastError({
+    title: `Failed: ${failedSub.first_name} ${failedSub.last_name}`,
+    description: failedSub.reason,
+  });
+});
+
       return data;
     } catch (error) {
       console.error("Submission error:", error);

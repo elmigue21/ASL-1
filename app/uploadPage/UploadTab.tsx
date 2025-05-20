@@ -12,6 +12,12 @@ import {
   Table,
 } from "@tanstack/react-table";
 import CloseButton from "../components/CloseButton";
+import { toastError } from "@/utils/toastError";
+import { Subscription } from "@/types/subscription";
+
+interface FailedSubscription extends Subscription {
+  reason: string;
+}
 
 type Person = {
   created_on: string;
@@ -108,6 +114,15 @@ const handleGetSelectedData = async () => {
         );
         break; // stop on error, or remove this line to continue
       }
+
+      const data = await response.json();
+      console.log(data);
+      data.invalidSubscriptions.forEach((failedSub : FailedSubscription) => {
+        toastError({
+          title: `Failed: ${failedSub.first_name} ${failedSub.last_name}`,
+          description: failedSub.reason,
+        });
+      });
     }
   } catch (e) {
     console.error(e);

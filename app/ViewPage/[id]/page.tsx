@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Subscription } from "@/types/subscription";
 import StepperList from "../../components/StepperList";
+import { Switch } from "@/components/ui/switch";
 
 function ViewPage() {
   const { id } = useParams();
@@ -92,6 +93,36 @@ function ViewPage() {
     });
   };
 
+  const submitEdit =async ()=>{
+try{
+
+  console.log(subscriberDetails);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/subscriptions/edit`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // 🔥 Required for sending/receiving cookies
+          body: JSON.stringify({ subscriberDetails }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.log('response not ok')
+        console.error("Edit failed:", data.error || "Unknown error");
+        // toast.error(`Login failed: ${data.error}` || "Unknown error");
+        // setIsClicked(false);
+        return;
+      }
+}catch(e){
+  console.error(e);
+}
+  }
+
 return (
   <div className="absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh] px-[3vw] py-[2vh]">
     <div className="font-bold text-[#1E2E80] text-[1.60vw]">
@@ -156,6 +187,12 @@ return (
                   <div className="text-[2vh]">
                     {subscriberDetails.active_status ? "Active" : "Inactive"}
                   </div>
+                  {isEditing?
+                    <Switch id="email-notifications" checked={subscriberDetails.active_status} onCheckedChange={()=>{
+                       setSubscriberDetails((prev) =>
+                         prev ? { ...prev, ["active_status"]: !prev.active_status } : prev
+                       );
+                    }} /> : <></>}
                 </div>
               </div>
 
@@ -429,7 +466,7 @@ return (
               )}{" "}
             </div>{" "}
           </div>
-
+<div className="absolute right-[2vw] bottom-[2vh] flex">
           <button
             onClick={() => {
               setIsEditing(!isEditing);
@@ -437,10 +474,12 @@ return (
                 fetchSubscriberDetails();
               }
             }}
-            className="flex text-[2.5vh] absolute right-[2vw] bottom-[2vh] items-center cursor-pointer py-[0.5vh] px-[2vw] bg-gray-100 hover:bg-gray-400 rounded-full"
+            className="flex text-[2.5vh] items-center cursor-pointer py-[0.5vh] px-[2vw] bg-gray-100 hover:bg-gray-400 rounded-full"
           >
             {isEditing ? "Cancel Edit" : "Edit"}
           </button>
+          { isEditing ? <button className="flex text-[2.5vh] items-center cursor-pointer py-[0.5vh] px-[2vw] bg-green-400 hover:bg-green-200 rounded-full" onClick={()=>{submitEdit(); setIsEditing((prev)=>(!prev))}}>Save</button> :<></>}
+        </div>
         </div>
       ) : isFetching ? (
         <div className="flex items-center justify-center h-full gap-4 font-bold text-2xl">

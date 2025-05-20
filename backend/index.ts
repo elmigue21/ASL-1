@@ -43,20 +43,6 @@ app.use(cookieParser());
 
 
 
-// const supabaseUrl = process.env.SUPABASE_URL;
-// const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-// console.log('supabase URL', supabaseUrl)
-// console.log("supabase anon key",supabaseAnonKey )
-
-// if (!supabaseUrl || !supabaseAnonKey) {
-//   throw new Error("Supabase environment variables are missing.");
-// }
-
-// const supabase = createClient(supabaseUrl, supabaseAnonKey);
-// // console.log(process.env)
-// console.log("EMAIL_SECRET", process.env.EMAIL_SECRET);
-// console.log(process.env)
-
 
 app.use(
   cors({
@@ -65,55 +51,13 @@ app.use(
         ? "https://asl-topaz.vercel.app"
         : "http://localhost:3000", // exact local frontend origin
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type"],
     exposedHeaders: ["Content-Disposition"],
     credentials: true,
   })
 );
 app.use(express.json());
 const apiRouter = express.Router();
-app.get("/", (req, res) => {
-  res.send("Hello from Express API!");
-});
-
-// app.get("/postman", async (req, res) => {
-//   try {
-//     const { data, error } = await supabase.auth.signInWithPassword({
-//       email: "user@example.com",
-//       password: "12345",
-//     });
-//     if (error) throw error;
-
-//     res.redirect("/api/subscriptions/delete");
-//   } catch (error: unknown) {
-//     if (error instanceof Error) {
-//       res.status(500).json({ error: "Sign-in failed", details: error.message });
-//     } else {
-//       res.status(500).json({ error: "Sign-in failed", details: String(error) });
-//     }
-//   }
-// });
-
-// app.get("/debug-token", async (req, res) => {
-//   const authHeader = req.headers.authorization;
-//   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-//     res.status(401).json({ error: "No token provided" });
-//   }
-
-//   const token = authHeader?.split(" ")[1];
-//   try {
-//     const { data: user, error } = await supabase.auth.getUser(token);
-//     if (error) {
-//       res.status(401).json({ error: "Invalid token", details: error.message });
-//     }
-//     res.json({ message: "Token is valid", user });
-//   } catch (err) {
-//     res.status(500).json({ error: "Unexpected error", details: err });
-//   }
-// });
-
-
-// apiRouter.use("/profiles", profileRoutes);
 
 apiRouter.use("/admin", authenticateUser,adminRoutes);
 apiRouter.use("/countries", countriesRoutes);

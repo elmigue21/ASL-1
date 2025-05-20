@@ -100,7 +100,7 @@ export const insertUpload: RequestHandler = async (req, res): Promise<void> => {
     const normalizeEmail = (val: any) =>
       typeof val === "string" ? val.trim().toLowerCase() : "";
 
-    // Track filtered out duplicates
+    // Track filtered out duplicates with reason
     const filteredOutRows: any[] = [];
 
     // Filter out duplicates based on emails only
@@ -110,7 +110,7 @@ export const insertUpload: RequestHandler = async (req, res): Promise<void> => {
 
       // Reject if neither email1 nor email2 exists
       if (!email1 && !email2) {
-        filteredOutRows.push(row);
+        filteredOutRows.push({ ...row, reason: "Missing both emails" });
         console.log("Filtered out due to missing both emails:", row);
         return false;
       }
@@ -121,7 +121,7 @@ export const insertUpload: RequestHandler = async (req, res): Promise<void> => {
         (email2 && existingEmails.has(email2));
 
       if (isDuplicate) {
-        filteredOutRows.push(row);
+        filteredOutRows.push({ ...row, reason: "Email already exists" });
         console.log("Filtered out duplicate due to existing email:", {
           email1,
           email2,
@@ -132,11 +132,6 @@ export const insertUpload: RequestHandler = async (req, res): Promise<void> => {
       return !isDuplicate;
     });
 
-    console.log(
-      `Filtered out ${filteredOutRows.length} duplicate subscriptions:`
-    );
-    console.dir(filteredOutRows, { depth: null });
-
     // Clean duplicates inside each row (if email1 === email2, clear email2)
     const cleanedRows = nonDuplicateRows.map((row: any) => {
       const email1 = normalizeEmail(row.email1);
@@ -145,53 +140,39 @@ export const insertUpload: RequestHandler = async (req, res): Promise<void> => {
       if (email1 && email2 && email1 === email2) {
         row.email2 = null;
       }
-      // You can optionally clean phones here or leave as is
       return row;
     });
 
     // Transform rows before insertion
     const transformedSubscriptions = cleanedRows.map(transformRow);
 
-    // Batch insert to avoid timeout/large payload
-    const batchSize = 100;
-    const chunkArray = <T>(arr: T[], size: number): T[][] => {
-      const chunks: T[][] = [];
-      for (let i = 0; i < arr.length; i += size) {
-        chunks.push(arr.slice(i, i + size));
-      }
-      return chunks;
-    };
+    // Insert valid subscriptions via RPC
+    const { data: insertData, error: insertError } = await supabaseUser.rpc(
+      "insert_subscriptions",
+      { subscriptions: transformedSubscriptions }
+    );
 
-    const batches = chunkArray(transformedSubscriptions, batchSize);
-
-    let totalInserted = 0;
-
-    for (const [index, batch] of batches.entries()) {
-      const { data: insertData, error: insertError } = await supabaseUser.rpc(
-        "insert_subscriptions",
-        { subscriptions: batch }
-      );
-
-      if (insertError) {
-        console.error(`Insert RPC error on batch ${index + 1}:`, insertError);
-        res
-          .status(500)
-          .json({ error: "Insert RPC failed", details: insertError.message });
-        return;
-      }
-
-      totalInserted += insertData?.length || 0;
+    if (insertError) {
+      console.error(`Insert RPC error`, insertError);
+      res
+        .status(500)
+        .json({ error: "Insert RPC failed", details: insertError.message });
+      return;
     }
 
+    // Return success with inserted count and invalid subscriptions + reasons
     res.status(200).json({
-      message: "Batches inserted",
-      insertedCount: totalInserted,
+      message: "Insert completed",
+      insertedCount: Array.isArray(insertData) ? insertData.length : insertData,
+      invalidSubscriptions: filteredOutRows,
     });
+    return;
   } catch (e) {
     console.error("Unexpected error in insertUpload:", e);
     res
       .status(500)
       .json({ error: "Unexpected error", details: (e as Error).message });
+      return;
   }
 };
 
