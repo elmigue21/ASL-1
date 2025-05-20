@@ -83,7 +83,7 @@ const NavbarMobile = () => {
           {navItems.map((nav, index) => {
             return (
               <Link
-                className="flex flex-col items-center justify-center h-16 bg-blue-500 text-white flex-1"
+                className="flex flex-col items-center justify-center h-16 bg-[#1e2e80] text-white flex-1"
                 key={index}
                 href={nav.link}
                 onClick={()=>{setExpanded(false)}}
@@ -103,7 +103,7 @@ const NavbarMobile = () => {
             );
           })}
           <div
-            className="flex flex-col items-center justify-center h-16 bg-blue-500 text-white flex-1"
+            className="flex flex-col items-center justify-center h-16 bg-[#1e2e80] text-white flex-1"
             onClick={() => {
               logout();
               setExpanded(false);
@@ -125,22 +125,21 @@ const NavbarMobile = () => {
         </div>
       </motion.div>
 
-      <div className="fixed top-0 h-16 bg-red-500 md:hidden w-full z-[100] flex justify-between">
-        <Image
-          src="/img/dempaLogoTxt.png"
-          width={500} // No fixed width
-          height={100} // Set a height to maintain aspect ratio
-          alt="logo"
-          layout="intrinsic"
-          style={{ width: "auto" }} // Make the width flexible based on the content's natural size
-        />
+      <div className="fixed top-0 h-16 bg-white md:hidden w-full z-[100] flex justify-between">
+        <div className="relative w-[50vw] h-[5vh] mt-[1vh] ml-[2vw]">
+            <Image
+            src="/dempaLogoTxt.png"
+            alt="Logo Text"
+            fill
+          />
+          </div>
 
         <button
           onClick={() => {
             setExpanded(!expanded);
             handleClick();
           }}
-          className="flex justify-center items-center w-16 h-16 bg-blue-500 text-white rounded active:scale-150 transition-all duration-300"
+          className="flex justify-center items-center w-16 h-16 bg-[#1e2e80] text-white active:scale-150 transition-all duration-300"
         >
           <motion.div
             className="relative w-8 h-8 flex items-center justify-center"
@@ -156,7 +155,7 @@ const NavbarMobile = () => {
             }}
           >
             <Image
-              src={expanded ? "/circle-xmark.png" : "/menu-burger.png"} // Swap the image source based on state
+              src={expanded ? "/circle-xmark-white.png" : "/menu-burger.png"} // Swap the image source based on state
               alt={expanded ? "Close Menu" : "Open Menu"}
               className="w-6 h-6"
               width={30}
