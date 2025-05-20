@@ -381,7 +381,7 @@ function AddAccMobile({
               <div className="flex text-[4vw] gap-x-[2vw]">
                 <Popover>
                   <div className="relative w-full">
-                    <PopoverTrigger asChild>
+                    {/* <PopoverTrigger asChild> */}
                       <div className="relative w-full">
                         <input
                           value={phoneInput}
@@ -405,7 +405,7 @@ function AddAccMobile({
                           </div>
                         </PopoverTrigger>
                       </div>
-                    </PopoverTrigger>
+                    {/* </PopoverTrigger> */}
                   </div>
 
                   <PopoverContent className="w-[95vw] p-0 mx-[3vw]">
@@ -464,7 +464,7 @@ function AddAccMobile({
               <div className="flex text-[4vw] gap-x-[2vw]">
                 <Popover>
                   <div className="relative w-full">
-                    <PopoverTrigger asChild>
+                    {/* <PopoverTrigger asChild> */}
                       <div className="relative w-full">
                         <input
                           value={emailInput}
@@ -480,7 +480,7 @@ function AddAccMobile({
                           </div>
                         </PopoverTrigger>
                       </div>
-                    </PopoverTrigger>
+                    {/* </PopoverTrigger> */}
                   </div>
 
                   <PopoverContent className="w-[95vw] p-0 mx-[3vw]">
@@ -802,7 +802,7 @@ function AddAccDesktop({
               <div className="flex text-[0.85vw] gap-x-[0.5vw]">
                 <Popover>
                   <div className="relative w-full">
-                    <PopoverTrigger asChild>
+                    {/* <PopoverTrigger asChild> */}
                       <div className="relative w-full">
                         <input
                           value={phoneInput}
@@ -826,7 +826,7 @@ function AddAccDesktop({
                           </div>
                         </PopoverTrigger>
                       </div>
-                    </PopoverTrigger>
+                    {/* </PopoverTrigger> */}
                   </div>
 
                   <PopoverContent className="w-[12vw] p-0">
@@ -885,7 +885,7 @@ function AddAccDesktop({
               <div className="text-[0.85vw] flex gap-x-[0.5vw]">
                 <Popover>
                   <div className="relative w-full">
-                    <PopoverTrigger asChild>
+                    {/* <PopoverTrigger asChild> */}
                       <div className="relative w-full">
                         <input
                           value={emailInput}
@@ -901,7 +901,7 @@ function AddAccDesktop({
                           </div>
                         </PopoverTrigger>
                       </div>
-                    </PopoverTrigger>
+                    {/* </PopoverTrigger> */}
                   </div>
 
                   <PopoverContent className="w-[15vw] p-0">
