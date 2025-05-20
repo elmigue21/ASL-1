@@ -33,8 +33,8 @@ export default function Dropdown_Profile() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex flex-row justify-center gap-x-[1.1vw] cursor-pointer items-center border border-slate-200 rounded-xl shadow p-3 hover:bg-slate-200 px-10">
-          <Avatar className=" object-cover h-15 w-15">
+        <div className="flex flex-row justify-center gap-x-[1.1vw] cursor-pointer items-center border border-slate-200 rounded-xl shadow p-3 hover:bg-slate-200 px-[2vw] h-[8vh] w-auto">
+          <Avatar className=" object-cover h-[6vh] w-[3vw]">
             <AvatarImage
               src="https://github.com/shadcn.png"
               alt="@shadcn"
@@ -43,19 +43,18 @@ export default function Dropdown_Profile() {
           </Avatar>
           <div
             style={{ fontFamily: "Inter, sans-serif" }}
-            
-          >
-            <h1 className="font-bold">{name}</h1>
-            <h1 className="">{role}</h1>
+            className=""
+            >
+            <h1 className="font-bold text-[0.9vw]">{name}</h1>
+            <h1 className="text-[0.9vw]">{role}</h1>
           </div>
+          <div className="relative h-[2.4vh] w-[1.2vw]">
           <Image
             src="/down_arrow.png"
             alt="profile menu"
-            // className="h-[2.4vh] "
-            height={20}
-            width={20}
-
+            fill
           />
+          </div>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="z-60">

@@ -1,5 +1,5 @@
 "use client";
-import {supabase} from "@/lib/supabase";
+// import {supabase} from "@/lib/supabase";
 
 import { TrendingUp } from "lucide-react";
 import {
@@ -28,15 +28,6 @@ import {
 // import { useState, useEffect } from "react";
 import Image from "next/image";
 
-/* const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-]; */
-
 interface CountryDataProps{
   country: string;
   count: number;
@@ -57,47 +48,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function CountryBarChart({ countryData,expandClickedAction }: { countryData: CountryDataProps[], expandClickedAction: () => void }) {
-  /*   const [countryData, setCountryData] = useState<CountryDataProps[]>([]);
-  console.log("COUNTRY DATA ISSS", countryData)
-
- const fetchCountryCount = async () => {
-   const { data: sessionData } = await supabase.auth.getSession();
-   const token = sessionData.session?.access_token;
-
-   const response = await fetch(
-     `${process.env.NEXT_PUBLIC_API_URL}/dashboard/countrycount`,
-     {
-       method: "GET",
-       headers: {
-         Authorization: `Bearer ${token}`, // ✅ Attach token in request
-         "Content-Type": "application/json",
-       },
-     }
-   );
-
-   let data = await response.json();
-   data = data
-     .map((item: CountryDataProps) => ({
-       ...item,
-       country: item.country?.trim() ? item.country : "N/A",
-     }))
-     .sort(
-       (
-         a: { country: string; count: number },
-         b: { country: string; count: number }
-       ) => b.count - a.count
-     ); // Sort numerically based on count
-
-   setCountryData(data);
-   console.log("Countries:", data);
- };
-
-  useEffect(()=>{
-    fetchCountryCount();
-  },[]) */
-
-
-  // const { togglePopup } = usePopupContext();
+  
   return (
     <Card className="shadow-none border-none">
       <CardHeader>
