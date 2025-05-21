@@ -13,6 +13,7 @@ import { getName,getRole } from "@/utils/profileController";
 import {useState,useEffect} from 'react'
 import { logout } from "@/utils/profileController";
 import Image from "next/image";
+import Link from "next/link";
 
 
 export default function Dropdown_Profile() {
@@ -58,9 +59,14 @@ export default function Dropdown_Profile() {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="z-60">
-        <DropdownMenuItem onClick={() => console.log("Profile Clicked")} className="hover:cursor-pointer">
-          Profile
-        </DropdownMenuItem>
+            <Link href= "/accountSettings">
+              <div>
+                <DropdownMenuItem onClick={() => console.log("Profile Clicked")} className="hover:cursor-pointer">
+                  Profile
+                </DropdownMenuItem>
+              </div>
+            </Link>
+          
         {/* <DropdownMenuItem onClick={() => console.log("Settings Clicked")}>Settings</DropdownMenuItem> */}
         <div>
           <DropdownMenuItem onClick={() => {logout(); router.replace("/")}} className="hover:cursor-pointer">

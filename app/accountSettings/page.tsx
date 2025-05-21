@@ -14,7 +14,7 @@ import ChangePassword  from "../components/ChangePassword";
 function page() {
   return (
     <>
-    <Navbar/>
+    {/* <Navbar/> */}
     <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh]">
         <div className="place-self-center">
         <div style={{ fontFamily: "Inter, sans-serif" }} className="items-center mt-2 relative w-8/9">
