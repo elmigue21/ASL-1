@@ -24,7 +24,8 @@ const NavbarBoth = () => {
   if (
     pathname === "/loginPage" ||
     pathname === "/" ||
-    pathname === "/confirm" /* || pathname === "/unauthorized" */
+    pathname === "/confirm" /* || pathname === "/unauthorized" */ ||
+    pathname === "/unsubscribe"
   ) {
     return null;
   }

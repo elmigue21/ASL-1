@@ -79,8 +79,10 @@ type SubscriptionsTableProps = {
 
 const SubTable = () => {
   const isMobile = useMediaQuery("(max-width: 767px)");
+  const isTallViewport = useMediaQuery("(min-height: 800px)");
 
-    const initialPageSize = isMobile ? 5 : 10;
+
+    const initialPageSize = isMobile ? 5 : isTallViewport ? 10 : 5;
 
     // Pagination state with dynamic pageSize
     const [pagination, setPagination] = React.useState({
@@ -157,40 +159,42 @@ const SubscriptionsTableMobile = ({
   const [pageCount, setPageCount] = useState<number>(0);
 
   return (
-    <div className="w-full h-full min-h-[90vh] max-h-[90vh] flex flex-col">
-      <h1 className="font-bold text-2xl">Subscription Table</h1>
-      <div className="flex">
-        <Input
-          placeholder="Search by name..."
-          onChange={(e) => setAppliedSearchBarValue(e.target.value)}
-          value={appliedSearchBarValue}
-        />
-        {/* <Button onClick={()=>{searchButtonClicked()}}>Search</Button> */}
+    <>
+      <div className="w-full h-full flex flex-col pb-[500px] ">
+        <h1 className="font-bold text-2xl">Subscription Table</h1>
+        <div className="flex">
+          <Input
+            placeholder="Search by name..."
+            onChange={(e) => setAppliedSearchBarValue(e.target.value)}
+            value={appliedSearchBarValue}
+          />
+          {/* <Button onClick={()=>{searchButtonClicked()}}>Search</Button> */}
+        </div>
+        <div className="min-h-3/4 flex-1 pb-[500]">
+          {subscriptions.map((sub: Subscription) => (
+            <div
+              key={sub.id}
+              className="mb-4 w-full flex items-center justify-evenly p-10 border border-black rounded-md shadow-md"
+            >
+              <h2 className="text-lg font-semibold flex items-center text-left w-3/4">
+                <div
+                  className={`w-4 h-4 rounded-full ${
+                    sub.active_status
+                      ? "bg-green-500 border border-green-200"
+                      : "bg-red-500 border border-red-200"
+                  }`}
+                />
+                {sub.first_name} {sub.last_name}
+              </h2>
+              <Link href={`/ViewPage/${sub.id}`}>
+                <Button>View</Button>
+              </Link>
+              {/* <p className="text-sm text-gray-600">{sub.email}</p> */}
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="min-h-3/4 flex-1">
-        {subscriptions.map((sub: Subscription) => (
-          <div
-            key={sub.id}
-            className="mb-4 w-full flex items-center justify-evenly p-10 border border-black rounded-md shadow-md"
-          >
-            <h2 className="text-lg font-semibold flex items-center text-left w-3/4">
-              <div
-                className={`w-4 h-4 rounded-full ${
-                  sub.active_status
-                    ? "bg-green-500 border border-green-200"
-                    : "bg-red-500 border border-red-200"
-                }`}
-              />
-              {sub.first_name} {sub.last_name}
-            </h2>
-            <Link href={`/ViewPage/${sub.id}`}>
-              <Button>View</Button>
-            </Link>
-            {/* <p className="text-sm text-gray-600">{sub.email}</p> */}
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center justify-center gap-10">
+      <div className="flex items-center justify-center gap-10 bottom-0 bg-blue-800 w-screen left-0 fixed p-5">
         <Button
           onClick={() => {
             prevPage();
@@ -207,7 +211,7 @@ const SubscriptionsTableMobile = ({
           Next
         </Button>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -525,7 +529,7 @@ function SubscriptionsTableDesktop({
   if (isLoading) return <Loader/>; // or a spinner/loading component
 
   return (
-    <div className="w-full">
+    <div className="w-full mb-[500px]">
       <div className="flex items-center py-4">
         <Input
           placeholder="Search by name..."
@@ -627,7 +631,7 @@ function SubscriptionsTableDesktop({
 
                 {/* Fill empty rows if less than 10 */}
                 {Array.from({
-                  length: 10 - table.getRowModel().rows.length,
+                  length: pagination.pageSize - table.getRowModel().rows.length,
                 }).map((_, i) => (
                   <TableRow key={`empty-${i}`}>
                     {columns.map((_, colIndex) => (
@@ -654,7 +658,7 @@ function SubscriptionsTableDesktop({
           {table.getSelectedRowModel().rows.length} of {tableCount}
           row(s) selected.
         </div>
-        <div className="flex flex-row space-x-2">
+        <div className="flex flex-row space-x-2 sticky">
           <Button
             className="hover:cursor-pointer hover:bg-slate-200 active:scale-80 transition-transform duration-300"
             variant="outline"

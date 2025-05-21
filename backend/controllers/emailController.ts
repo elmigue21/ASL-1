@@ -1,74 +1,123 @@
-// import { Request, Response, RequestHandler } from "express";
-// // import { supabase } from "../../lib/supabase"; // ✅ Ensure correct path
-// import { createClient } from "@supabase/supabase-js";
-// import { SupabaseClient, User } from "@supabase/supabase-js";
-// import { transporter } from "../../lib/emailTransporter";
-// import axios from "axios";
-// import { Email } from "@/types/email";
-// // import { axios } from './../../node_modules/axios/dist/esm/axios';
+import { Request, Response, RequestHandler } from "express";
+// import { supabase } from "../../lib/supabase"; // ✅ Ensure correct path
+import { createClient } from "@supabase/supabase-js";
+import { SupabaseClient, User } from "@supabase/supabase-js";
+import { transporter } from "../../lib/emailTransporter";
+import axios from "axios";
+import { Email } from "@/types/email";
+import jwt from 'jsonwebtoken'
 
-// export const sendEmails: RequestHandler = async (req, res) => {
-//   try {
-//     const emailIds = req.body.emailIds;
+// import { axios } from './../../node_modules/axios/dist/esm/axios';
+interface AuthenticatedRequest extends Request {
+  supabaseUser?: SupabaseClient;
+  user?: User | null;
+}
 
-//     if (!emailIds) {
-//       res.json({ message: "no emails selected" });
-//     }
+export const sendEmails: RequestHandler = async (req, res) => {
+  try {
+    // Parse emailIds from req.body, since it's coming from multipart/form-data,
+    // sometimes arrays arrive as strings, so normalize:
+    let emailIdsRaw = req.body.emailIds;
+    // emailIds can be string or array depending on how sent from frontend
+    let emailIds: number[] = [];
 
-//     const supabaseUser = req.supabaseUser;
-//     if (!supabaseUser) {
-//       console.log("no supabase user");
-//       return;
-//     }
-//     const { data, count, error } = await supabaseUser
-//       .from("emails")
-//       .select("*")
-//       .in("id", emailIds);
+    if (Array.isArray(emailIdsRaw)) {
+      emailIds = emailIdsRaw.map((id) => Number(id)).filter((id) => !isNaN(id));
+    } else if (typeof emailIdsRaw === "string") {
+      // Could be comma separated string or single value
+      if (emailIdsRaw.includes(",")) {
+        emailIds = emailIdsRaw
+          .split(",")
+          .map((id) => Number(id.trim()))
+          .filter((id) => !isNaN(id));
+      } else {
+        const singleId = Number(emailIdsRaw);
+        if (!isNaN(singleId)) emailIds = [singleId];
+      }
+    }
 
-//     if (error) {
-//       throw new Error(error.message);
-//     }
+    if (!emailIds.length) {
+       res.status(400).json({ message: "No emails selected" });
+       return
+    }
 
-//     const { emailSubject, emailText, emailHtml, fromName } = req.body;
+    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+    if (!supabaseUser) {
+      console.log("No supabase user");
+       res.status(401).json({ message: "Unauthorized" });
+       return;
+    }
 
-//     let emailResults :string[]= [];
+    const { data, error } = await supabaseUser
+      .from("emails")
+      .select("*")
+      .in("id", emailIds);
 
-//     const emailPromises = data.map((email : Email) => {
-//       const mailOptions = {
-//         from: `${fromName} <companyemail>`,
-//         to: email.email,
-//         subject: emailSubject,
-//         text: emailText,
-//         html: emailHtml,
-//       };
+    if (error) {
+      throw new Error(error.message);
+    }
 
-//       return transporter
-//         .sendMail(mailOptions)
-//         .then((info) => {
-//           console.log(`Email sent to ${email.email}: ${info.response}`);
-//           emailResults.push(`Email sent to ${email.email}: ${info.response}`)
-//           return info;
-//         })
-//         .catch((error) => {
-//           console.error(`Error sending to ${email.email}:`, error);
-//           emailResults.push(`Error sending to ${email.email}:`, error);
-//           return null;
-//         });
-//     });
+    const { emailSubject, emailText, emailHtml, fromName } = req.body;
 
-//     await Promise.all(emailPromises);
+    // Extract attachments from multer
+    const attachments = (req.files as Express.Multer.File[] | undefined) ?? [];
 
-//     res.status(200).json({ emailResults }); 
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       res.status(500).json({ error: error.message });
-//       return;
-//     } else {
-//       res.status(500).json({ error: "An unknown error occurred." });
-//       return;
-//     }
-//   }
-// };
+    let emailResults: string[] = [];
+
+   const EMAIL_SECRET = process.env.EMAIL_SECRET
+   if(!EMAIL_SECRET){
+    console.error("email secret not found")
+    return;
+   }
+
+    const emailPromises = data.map((email: Email) => {
+         const payload = { emailId: email.id };
+         const token = jwt.sign(payload, EMAIL_SECRET, { expiresIn: "30d" }); // token valid for 30 days
+
+         const unsubscribeUrl = `${process.env.NEXT_PUBLIC_URL}/unsubscribe?token=${token}`;
+      const mailOptions = {
+        from: `${fromName} <companyemail@example.com>`, // replace with actual sender
+        to: email.email,
+        subject: emailSubject,
+        text: emailText,
+        html: `${emailHtml}<br/><br/><p>If you want to unsubscribe, click <a href="${unsubscribeUrl}">here</a>.</p>`,
+        attachments: attachments.map((file) => ({
+          filename: file.originalname,
+          content: file.buffer,
+          contentType: file.mimetype,
+        })),
+      };
+
+       transporter
+        .sendMail(mailOptions)
+        .then((info) => {
+          console.log(`Email sent to ${email.email}: ${info.response}`);
+          emailResults.push(`Email sent to ${email.email}: ${info.response}`);
+          return info;
+        })
+        .catch((error) => {
+          console.error(`Error sending to ${email.email}:`, error);
+          emailResults.push(
+            `Error sending to ${email.email}: ${error.message || error}`
+          );
+          return null;
+        });
+        return;
+    });
+
+    await Promise.all(emailPromises);
+
+    res.status(200).json({ emailResults });
+    return;
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "An unknown error occurred." });
+    }
+  }
+};
+
 
 // export const verifyEmail: RequestHandler = async (req, res) :Promise<void> => {
 //   const API_KEY = "d47206f11993aca87daa7156da51f0f6";

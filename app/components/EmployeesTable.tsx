@@ -46,6 +46,29 @@ const getEmployees = async () => {
   }
 };
 
+const deleteEmployee = async (employeeID : string) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/admin/employeeDelete?userId=${employeeID}`,
+      {
+        method: "DELETE", // 👈 set DELETE method
+        credentials: "include",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (e) {
+    console.error("Failed to delete employee:", e);
+    return null;
+  }
+};
+
+
 useEffect(()=>{
 getEmployees();
 },[])
@@ -75,12 +98,14 @@ const columns = useMemo<ColumnDef<Employee>[]>(
         const employee = row.original;
         return (
           <>
-            {/* <Image src="/delete-user.svg" alt="fire" width={30} height={30} className="hover:text-red-500"/> */}
+          {
+            row.original.role == "admin" ? <></>:
             <DeleteIcon
               className="hover:text-red-500 w-6 h-6 hover:cursor-pointer"
               style={{ fill: "currentColor" }}
+              onClick={()=>{deleteEmployee(row.original.id)}}
             />
-            {/* Or use <Image src="/fire.png" alt="Fire" width={20} height={20} /> */}
+          }
           </>
         );
       },
