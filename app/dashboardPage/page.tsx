@@ -150,15 +150,16 @@ function DashboardMobile(props: {
       <PopupProvider>
         {/* <Navbar /> */}
 
-        <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh]">
+        <div className="z-45 absolute top-[10vh] left-[2.5vw] w-[95vw] h-[60vh]">
           <div
-            className="m-[5vh]"
+            className=""
             style={{ fontFamily: "'Nunito Sans', sans-serif" }}
           >
-            <div className="flex justify-evenly gap-[1vh] h-[19vh]">
+            <div className="text-[#1A2B88] font-semibold text-[5vw] mb-[1.5vh]">Dashboard</div>
+            <div className="flex justify-evenly gap-[1vh] h-[19vh] w-[]">
               <Card className="flex-1 p-[0.70vw] gap-[4vh] rounded-[1vh]">
-                <div className="flex text-[1vw] justify-center">
-                  <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
+                <div className="flex text-[3vw] justify-center pt-[1.5vh] align-middle">
+                  <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw] text-[]">
                     Total Subscribers
                   </CardHeader>
                   <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
@@ -167,11 +168,11 @@ function DashboardMobile(props: {
                   <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
                     Inactive Subscribers
                   </CardHeader>
-                  <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw]">
+                  <CardHeader className="flex-1 text-center font-bold gap-[0.5vw] px-[0vw] mt-[1vh]">
                     Countries
                   </CardHeader>
                 </div>
-                <div className="flex text-[2vw] text-center font-bold text-blue-900 -mt-[1.8vh] height[1vh]">
+                <div className="flex text-[7vw] text-center font-bold text-blue-900 -mt-[1.8vh] height[1vh]">
                   <>
                     {totalSub !==null ? (
                       <motion.div
@@ -232,25 +233,30 @@ function DashboardMobile(props: {
                   {/* )} */}
                 </div>
                 <div className="-my-[3vh]">
-                  <DateDisplay />
+                  <DateDisplay className="text-[3vw] ml-[3vw] mt-[1.5vw]"  />
                 </div>
               </Card>
             </div>
           </div>
 
-          <div className="flex justify-evenly h-[40vh] max-h[40vh]">
-            <div className="w-[50vw]">
+          <div className="flex justify-evenly h-[40vh] max-h[40vh] flex-col">
+            <div className="w-[95vw]">
               <CountryBarChart
                 countryData={countryData.slice(0, 5)}
                 expandClickedAction={() => expandClicked()}
+                titleClassName="text-[5vw]"
+                descriptionClassName="text-[4vw]"
+                expandIconClassName="w-[4vw] h-[4vw]"
+                labelClassName="text-[3vw]"
+                chartContainerClassName="text-[4vw] font-medium"
               />
               {/* <DonutChart chartData={countryData} chartHeightVH={30} innerRadiusVW={20} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/> */}
             </div>
-            <NewSubDateRangeProvider>
+            {/* <NewSubDateRangeProvider>
               <div className="w-full">
                 <SubsAreaChart />
               </div>
-            </NewSubDateRangeProvider>
+            </NewSubDateRangeProvider> */}
           </div>
         </div>
 
@@ -370,7 +376,7 @@ const { totalSub, activeSub, inactiveSub, countryCount, countryData, expandClick
                   {/* )} */}
                 </div>
                 <div className="-my-[3vh]">
-                  <DateDisplay />
+                  <DateDisplay className="text-[1vw]" />
                 </div>
               </Card>
             </div>

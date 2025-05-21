@@ -82,7 +82,7 @@ const NavbarMobile = () => {
         className="fixed top-0 right-0 w-full h-screen bg-green-500 z-[100] md:hidden block"
         style={{ pointerEvents: expanded ? "auto" : "none" }}
       >
-        <div className="flex flex-col h-[calc(100vh-64px)] mt-[64px] md:hidden">
+        <div className="flex flex-col h-[calc(100vh-64px)] mt-[64px] md:hidden ">
           {navItems.map((nav, index) => {
             return (
               <Link
@@ -130,7 +130,7 @@ const NavbarMobile = () => {
         </div>
       </motion.div>
 
-      <div className="fixed top-0 h-16 bg-white md:hidden w-full z-[100] flex justify-between">
+      <div className="fixed top-0 h-16 bg-white md:hidden w-full z-[100] flex justify-between shadow-[0px_2px_10px_-3px_#000000]">
         <div className="relative w-[50vw] h-[5vh] mt-[1vh] ml-[2vw]">
           <Image src="/dempaLogoTxt.png" alt="Logo Text" fill />
         </div>

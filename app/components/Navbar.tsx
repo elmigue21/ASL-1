@@ -39,19 +39,18 @@ const Navbar: React.FC = () => {
              items-center hover:bg-[#2a58ad] cursor-pointer 
           ${isOpen ? "w-[15vw]" : "w-[5vw]"}`}
         >
-          <div className="relative w-[2vw] h-[1.7vw]">
-            <Image
-              src="/menu-burger.png"
-              alt="Hamburger Menu"
-              onClick={() => setIsOpen(!isOpen)}
-              fill
-              className="object-contain cursor-pointer"
-            />
-          </div>
+          <Image
+            src="/menu-burger.png"
+            alt="Hamburger Menu"
+            // className="w-[2vw] h-[1.7vw]"
+            onClick={() => setIsOpen(!isOpen)}
+            width={30}
+              height={30}
+          />
         </div>
         <div
           className={`transition-all duration-100 ease-in-out overflow-hidden flex absolute items-center gap-[1vw] ${
-            isOpen ? "left-[16vw]" : "left-[6vw] h-[5vh] w-[8.7vw]"
+            isOpen ? "left-[16vw]" : "left-[6vw]"
           }`}
         >
           <Image
