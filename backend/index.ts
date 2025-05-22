@@ -6,7 +6,7 @@ import { Request, Response } from "express";
 import subscriptionRoutes from "./routes/SubscriptionRoutes";
 // import { supabase } from "@supabase/supabase-js";
 import { createClient } from "@supabase/supabase-js";
-// import profileRoutes from "./routes/ProfileRoutes";
+import profileRoutes from "./routes/ProfileRoutes";
 import { EmailRequest } from "@/types/emailRequest";
 import { transporter } from "../lib/emailTransporter";
 import dashboardRoutes from "./routes/dashboardRoutes";
@@ -20,6 +20,7 @@ import landingRoutes from './routes/landingRoutes'
 import authRoutes from './routes/authRoutes'
 import countriesRoutes from './routes/countriesRoutes'
 import adminRoutes from "./routes/adminRoutes";
+// import profileRoutes from "./routes/profileRoutes";
 import path from 'path'
 // const env = process.env.NODE_ENV || "local"; // fallback to local
 // Hardcode the path to the .env.local file
@@ -70,6 +71,7 @@ apiRouter.use('/upload',authenticateUser,uploadRoutes);
 apiRouter.use('/download',authenticateUser,downloadRoutes);
 apiRouter.use('/landing', landingRoutes);
 apiRouter.use("/auth", authRoutes);
+apiRouter.use('/profile',authenticateUser,profileRoutes)
 
 
 
