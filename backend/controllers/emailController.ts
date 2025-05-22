@@ -15,16 +15,13 @@ interface AuthenticatedRequest extends Request {
 
 export const sendEmails: RequestHandler = async (req, res) => {
   try {
-    // Parse emailIds from req.body, since it's coming from multipart/form-data,
-    // sometimes arrays arrive as strings, so normalize:
+    // Normalize emailIds from req.body
     let emailIdsRaw = req.body.emailIds;
-    // emailIds can be string or array depending on how sent from frontend
     let emailIds: number[] = [];
 
     if (Array.isArray(emailIdsRaw)) {
       emailIds = emailIdsRaw.map((id) => Number(id)).filter((id) => !isNaN(id));
     } else if (typeof emailIdsRaw === "string") {
-      // Could be comma separated string or single value
       if (emailIdsRaw.includes(",")) {
         emailIds = emailIdsRaw
           .split(",")
@@ -37,20 +34,20 @@ export const sendEmails: RequestHandler = async (req, res) => {
     }
 
     if (!emailIds.length) {
-       res.status(400).json({ message: "No emails selected" });
-       return
+      res.status(400).json({ message: "No emails selected" });
+      return;
     }
 
     const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
     if (!supabaseUser) {
       console.log("No supabase user");
-       res.status(401).json({ message: "Unauthorized" });
-       return;
+      res.status(401).json({ message: "Unauthorized" });
+      return;
     }
 
     const { data, error } = await supabaseUser
       .from("emails")
-      .select("*")
+      .select("*") // all columns including subscriber_id
       .in("id", emailIds);
 
     if (error) {
@@ -64,20 +61,29 @@ export const sendEmails: RequestHandler = async (req, res) => {
 
     let emailResults: string[] = [];
 
-   const EMAIL_SECRET = process.env.EMAIL_SECRET
-   if(!EMAIL_SECRET){
-    console.error("email secret not found")
-    return;
-   }
+    const EMAIL_SECRET = process.env.EMAIL_SECRET;
+    if (!EMAIL_SECRET) {
+      console.error("email secret not found");
+      res.status(500).json({ message: "Email secret not configured" });
+      return;
+    }
 
-    const emailPromises = data.map((email: Email) => {
-         const payload = { emailId: email.id };
-         const token = jwt.sign(payload, EMAIL_SECRET, { expiresIn: "30d" }); // token valid for 30 days
+    const emailPromises = data.map((email) => {
+      // Assert that email has subscriber_id (even if Email interface doesn't define it)
+      const emailWithSubscriber = email as typeof email & {
+        subscriber_id: number;
+      };
 
-         const unsubscribeUrl = `${process.env.NEXT_PUBLIC_URL}/unsubscribe?token=${token}`;
+      const payload = {
+        emailId: emailWithSubscriber.id,
+        subscriberId: emailWithSubscriber.subscriber_id,
+      };
+      const token = jwt.sign(payload, EMAIL_SECRET, { expiresIn: "30d" });
+
+      const unsubscribeUrl = `${process.env.NEXT_PUBLIC_URL}/unsubscribe?token=${token}`;
       const mailOptions = {
-        from: `${fromName} <companyemail@example.com>`, // replace with actual sender
-        to: email.email,
+        from: `${fromName} <companyemail@example.com>`,
+        to: emailWithSubscriber.email,
         subject: emailSubject,
         text: emailText,
         html: `${emailHtml}<br/><br/><p>If you want to unsubscribe, click <a href="${unsubscribeUrl}">here</a>.</p>`,
@@ -88,27 +94,34 @@ export const sendEmails: RequestHandler = async (req, res) => {
         })),
       };
 
-       transporter
+      return transporter
         .sendMail(mailOptions)
         .then((info) => {
-          console.log(`Email sent to ${email.email}: ${info.response}`);
-          emailResults.push(`Email sent to ${email.email}: ${info.response}`);
+          console.log(
+            `Email sent to ${emailWithSubscriber.email}: ${info.response}`
+          );
+          emailResults.push(
+            `Email sent to ${emailWithSubscriber.email}: ${info.response}`
+          );
           return info;
         })
         .catch((error) => {
-          console.error(`Error sending to ${email.email}:`, error);
+          console.error(
+            `Error sending to ${emailWithSubscriber.email}:`,
+            error
+          );
           emailResults.push(
-            `Error sending to ${email.email}: ${error.message || error}`
+            `Error sending to ${emailWithSubscriber.email}: ${
+              error.message || error
+            }`
           );
           return null;
         });
-        return;
     });
 
     await Promise.all(emailPromises);
 
     res.status(200).json({ emailResults });
-    return;
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
@@ -117,6 +130,8 @@ export const sendEmails: RequestHandler = async (req, res) => {
     }
   }
 };
+
+
 
 
 // export const verifyEmail: RequestHandler = async (req, res) :Promise<void> => {

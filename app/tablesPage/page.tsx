@@ -9,7 +9,7 @@ import EmailWindow from '../components/EmailWindow'
 function TablesPage() {
 
   return (
-    <div className="z-45 absolute top-[6vh] p-5 flex w-screen justify-center md:top-[11vh] md:w-[calc(100%-9vw)] h-full md:left-[8.35vw] overflow-scroll pb-30 md:overflow-hidden">
+    <div className="z-45 absolute top-[6vh] p-5 flex w-screen justify-center md:top-[11vh] md:w-[calc(100%-9vw)] h-full md:left-[8.35vw] overflow-scroll md:overflow-visible md:h-[calc(100%-11vh)]">
       <EmailWindow />
 
       <SubTable />

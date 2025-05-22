@@ -439,7 +439,11 @@ function SubscriptionsTableDesktop({
           const subscription = row.original;
           return (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger
+                asChild
+                onClick={(e) => e.stopPropagation()} // prevent row click toggling
+                onMouseDown={(e) => e.stopPropagation()}
+              >
                 <Button
                   variant="ghost"
                   className="h-8 w-8 p-0 hover:bg-slate-200 hover:cursor-pointer rounded-full active:bg-slate-800 active:scale-80 transition-all"
@@ -448,21 +452,40 @@ function SubscriptionsTableDesktop({
                   <MoreHorizontal />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+
+              <DropdownMenuContent
+                align="end"
+                className="min-w-[120px] max-w-xs p-0" // limit width here
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Link href={`/ViewPage/${subscription.id}`}>
                   <DropdownMenuItem
-                    onClick={() => console.log(subscription.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log(subscription.id);
+                    }}
                     className="hover:cursor-pointer"
                   >
                     View
                   </DropdownMenuItem>
                 </Link>
+
                 <Link href="/editPage">
-                  <DropdownMenuItem className="hover:cursor-pointer">
+                  <DropdownMenuItem
+                    onClick={(e) => e.stopPropagation()}
+                    className="hover:cursor-pointer"
+                  >
                     Edit Details
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem className="hover:cursor-pointer">
+
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // your delete logic here
+                  }}
+                  className="hover:cursor-pointer"
+                >
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -529,7 +552,7 @@ function SubscriptionsTableDesktop({
   if (isLoading) return <Loader/>; // or a spinner/loading component
 
   return (
-    <div className="w-full mb-[500px]">
+    <div className="w-full z-50">
       <div className="flex items-center py-4">
         <Input
           placeholder="Search by name..."
