@@ -188,115 +188,130 @@ useEffect(() => {
       width={30}
       height={30}
       />
+
     </div>
     <AnimatePresence>
       {openState && (
         <motion.div
-          className="fixed bottom-0 md:w-[45vw] md:top-[11vh] right-0 z-50 flex flex-col bg-white shadow-md shadow-gray-700/80 w-full h-[calc(92vh)] md:h-full"
+          className="fixed bottom-0 md:w-[55vw] md:top-[11vh] right-0 z-50 flex flex-row 
+            bg-white shadow-md shadow-gray-700/80 w-full h-[calc(92vh)] md:h-full"
           initial="hidden"
           animate="visible"
           exit="exit"
           variants={variants}
         >
-          <div className="justify-between w-full flex p-[2vh] items-center">
-            <div className="flex items-center">
-              <Image
-                src="/envelope-plus.png"
-                alt="email icon"
-                width={30}
-                height={30}
-              />
-              <h1 className="text-lg font-medium">Send Email</h1>
-            </div>
-            <CloseButton onClick={closeClicked} />
-          </div>
-          <div className="overflow-x-auto overflow-y-clip whitespace-nowrap gap-2 h-15 touch-auto flex">
-            {selectedEmails.map((email, index) => (
-              <div
-                key={index}
-                className="bg-slate-500 rounded-3xl m-1 p-2 flex items-center justify-center"
-              >
-                {email.email}
-                <p
-                  className="mx-2 hover:cursor-pointer hover:bg-white rounded-full"
-                  onClick={() => removeClicked(email)}
-                >
-                  X
-                </p>
+          {selectedEmails.length > 0 && (
+          <div className="relative h-[90vh] w-[20vw]  z-40 top-0">
+            <div className="flex px-[3vh] pt-[2vw] pb-[1vh] z-10 bg-white shadow-sm w-full">Send To:</div>
+              <div className="flex overflow-y-auto gap-1 h-full touch-auto flex-col pb-[10vh] px-[1vw]">
+                {selectedEmails.map((email, index) => (
+                  <div
+                    key={index}
+                    className="bg-sky-100 rounded-3xl m-1 px-2 py-1 flex items-center gap-[1vw]"
+                  >
+                    <span className="truncate max-w-[10vw] ml-2" title={email.email}>
+                        {email.email}
+                    </span>
+                    
+                  <button
+                    onClick={() => removeClicked(email)}
+                    className={`flex items-center justify-center p-0 w-fit h-fit group cursor-pointer scale-50 flex-shrink-0 ml-auto`}>
+                          <Image src="/circle-xmark.png" alt="Close" className="size-[2vw] block group-hover:hidden" width={30} height={30}/>
+                          <Image src="/circle-xmark-fill-red.png" alt="Close (hover)" className="size-[2vw] hidden group-hover:block" width={30} height={30}/>
+                        
+                  </button>
+                  </div>
+                ))}
               </div>
-            ))}
           </div>
-          <Input
-            placeholder="Subject..."
-            className="border-1 border-black rounded-none"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-          />
-          <div style={{ position: "relative" }}>
-            <Textarea
-              ref={messageRef}
-              placeholder="Message..."
-              className="border-1 border-black flex-1 rounded-none"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={handleMessageKeyDown}
-              spellCheck={false}
-              rows={6}
-            />
-            {/* Suggestion box */}
-            {suggestions.length > 0 && (
-              <ul
-                style={{
-                  position: "absolute",
-                  bottom: "100%",
-                  right: 0,
-                  backgroundColor: "white",
-                  border: "1px solid #ccc",
-                  borderRadius: 4,
-                  marginBottom: 4,
-                  maxHeight: 120,
-                  overflowY: "auto",
-                  width: "100%",
-                  zIndex: 1000,
-                  listStyle: "none",
-                  padding: "4px 8px",
-                }}
-              >
-                {suggestions.map((s, i) => (
-                  <li
-                    key={s}
-                    ref={(el) => {
-                      suggestionRefs.current[i] = el; // no return here!
-                    }}
+          )}
+          <div className="flex-col w-full h-full z-50">
+                <div className="justify-between w-full flex p-[2vh] items-center">
+                <div className="flex items-center gap-[1vw]">
+                  <Image
+                    src="/envelope-plus.png"
+                    alt="email icon"
+                    width={30}
+                    height={30}
+                  />
+                  <h1 className="text-lg font-medium">Send Email</h1>
+                </div>
+                <CloseButton onClick={closeClicked} />
+              </div>
+              
+              <Input
+                placeholder="Subject..."
+                className="rounded-none shadow-none font-medium"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              />
+              <div style={{ position: "relative" }}>
+                <Textarea
+                  ref={messageRef}
+                  placeholder="Message..."
+                  className="rounded-none border-0"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={handleMessageKeyDown}
+                  spellCheck={false}
+                  rows={6}
+                />
+                {/* Suggestion box */}
+                {suggestions.length > 0 && (
+                  <ul
                     style={{
+                      position: "absolute",
+                      bottom: "100%",
+                      right: 0,
+                      backgroundColor: "white",
+                      border: "1px solid #ccc",
+                      borderRadius: 4,
+                      marginBottom: 4,
+                      maxHeight: 120,
+                      overflowY: "auto",
+                      width: "100%",
+                      zIndex: 1000,
+                      listStyle: "none",
                       padding: "4px 8px",
-                      backgroundColor:
-                        i === highlightIndex ? "#bde4ff" : "transparent",
-                      cursor: "pointer",
-                    }}
-                    onMouseEnter={() => setHighlightIndex(i)}
-                    onMouseDown={(e) => {
-                      e.preventDefault(); // prevent blur
-                      const words = message.split(/\s+/);
-                      words[words.length - 1] = s;
-                      setMessage(words.join(" ") + " ");
-                      setSuggestions([]);
-                      setHighlightIndex(-1);
-                      messageRef.current?.focus();
                     }}
                   >
-                    {s}
-                  </li>
-                ))}
-              </ul>
-            )}
+                    {suggestions.map((s, i) => (
+                      <li
+                        key={s}
+                        ref={(el) => {
+                          suggestionRefs.current[i] = el; // no return here!
+                        }}
+                        style={{
+                          padding: "4px 8px",
+                          backgroundColor:
+                            i === highlightIndex ? "#bde4ff" : "transparent",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={() => setHighlightIndex(i)}
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // prevent blur
+                          const words = message.split(/\s+/);
+                          words[words.length - 1] = s;
+                          setMessage(words.join(" ") + " ");
+                          setSuggestions([]);
+                          setHighlightIndex(-1);
+                          messageRef.current?.focus();
+                        }}
+                      >
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div
+                className="absolute bottom-[15vh] right-[2vw] bg-blue-500 rounded-full py-2 px-5 text-white font-medium cursor-pointer select-none"
+                onClick={sendEmailsClicked}
+              >
+                SEND
+              </div>
           </div>
-          <div
-            className="absolute bottom-5 right-5 bg-blue-500 rounded-full p-2 cursor-pointer select-none"
-            onClick={sendEmailsClicked}
-          >
-            SEND
-          </div>
+          
         </motion.div>
       )}
     </AnimatePresence>
