@@ -6,6 +6,7 @@ interface Profile {
   id: string;
   role: string;
   created_at: string; // or Date, depending on how you handle timestamptz
+  profile_picture:string,
 }
 
 export const logout = async () => {
@@ -75,4 +76,25 @@ export const getRole = () =>{
     }
     const role = profile.role;
     return role;
+}
+
+export const getPfp = () =>{
+     if (typeof window === "undefined") return;
+     const storedProfile = localStorage.getItem("profile");
+
+     if (!storedProfile) {
+       console.error("No profile found");
+       return;
+     }
+
+     let profile: Profile;
+     try {
+       profile = JSON.parse(storedProfile);
+     } catch (err) {
+       console.error("Failed to parse profile from localStorage", err);
+       return;
+     }
+    //  console.log("PROFILE FROM GET PFP" , profile.profile_picture)
+     const pfp = profile.profile_picture ?? "";
+     return pfp;
 }

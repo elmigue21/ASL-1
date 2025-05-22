@@ -239,8 +239,8 @@ function DashboardMobile(props: {
             </div>
           </div>
 
-          <div className="flex justify-evenly h-[40vh] max-h[40vh] flex-col">
-            <div className="w-[95vw]">
+          <div className="flex justify-evenly h-[95vh] w-[95vw] flex-col overflow-x-hidden overflow-y-hidden mt-[-8vh]">
+            <div className="w-[95vw] h-[30vh]">
               <CountryBarChart
                 countryData={countryData.slice(0, 5)}
                 expandClickedAction={() => expandClicked()}
@@ -249,21 +249,33 @@ function DashboardMobile(props: {
                 expandIconClassName="w-[4vw] h-[4vw]"
                 labelClassName="text-[3vw]"
                 chartContainerClassName="text-[4vw] font-medium"
+                cardContentClassName="h-[24vh]"
               />
               {/* <DonutChart chartData={countryData} chartHeightVH={30} innerRadiusVW={20} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/> */}
             </div>
-            {/* <NewSubDateRangeProvider>
-              <div className="w-full">
-                <SubsAreaChart />
+            <NewSubDateRangeProvider>
+              <div className="w-[95vw] h-auto">
+                <SubsAreaChart 
+                titleClassName="text-[4.7vw]"
+                cardContentClassName="h-[25vh] w-[113vw] ml-[-10vw]"
+                xAxisClassName="text-[3.5vw]"
+                yAxisClassName="text-[4vw]"
+                scbButton="w-[25vw] text-[3.7vw]"
+                scbPopover="w-[25vw]"
+                scbCommandItem="text-[4vw]"
+                chartMargin={{ left: 12, right: 35, bottom: 55}}
+                
+                
+                />
               </div>
-            </NewSubDateRangeProvider> */}
+            </NewSubDateRangeProvider>
           </div>
         </div>
 
         {/* <div className="fixed z-50 w-full h-full flex items-center justify-center bottom-20"> */}
         {/* <BarChartPopup /> */}
         <div
-          className={`z-50 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-1/2 w-1/2 ${
+          className={`z-50 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-auto w-[95vw] ${
             isOpen ? "block" : "hidden"
           }`}
           style={{ top: "calc(50% - 60px)" }}
@@ -271,6 +283,11 @@ function DashboardMobile(props: {
           <CountryBarChart
             countryData={countryData}
             expandClickedAction={() => expandClicked()}
+            titleClassName="text-[5vw]"
+            descriptionClassName="text-[4vw]"
+            expandIconClassName="w-[4vw] h-[4vw]"
+            labelClassName="text-[3vw]"
+            chartContainerClassName="text-[4vw] font-medium"
           />
         </div>
         {/* </div> */}

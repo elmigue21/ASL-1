@@ -81,6 +81,41 @@ export const confirmSubscription: RequestHandler = async (
   }
 };
 
+export const unsubscribe: RequestHandler = async (req, res): Promise<void> => {
+  try {
+    const token = req.query.token;
+    if (typeof token !== "string") {
+      res.status(400).json({ error: "Token must be a string" });
+      return;
+    }
+
+    // Verify token and decode payload
+    const decoded = jwt.verify(token, emailSecret) as {subscriberId:number};
+    console.log("Decoded token:", decoded);
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Example: mark subscriber or email as unsubscribed
+    // Assuming you have a `subscribers` or `emails` table with an 'unsubscribed' boolean column
+    const { error } = await supabase
+      .from("subscribers")
+      .update({ active_status: false })
+      .eq("id", decoded.subscriberId);
+
+    if (error) {
+      console.error("Supabase update error:", error);
+      res.status(500).json({ error: "Failed to update unsubscribe status" });
+      return;
+    }
+
+    res
+      .status(200)
+      .json({ message: "You have been unsubscribed successfully." });
+  } catch (e) {
+    console.error("Unsubscribe error:", e);
+    res.status(400).json({ error: "Invalid or expired token" });
+  }
+};
 export const sendConfirmationEmail: RequestHandler = async (
   req,
   res

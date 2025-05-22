@@ -173,7 +173,7 @@ const handleSubmit = async () => {
 return (
   <div className="w-3/4 fixed h-3/4 gap-y-4 flex flex-col justify-center bg-white border border-black rounded-2xl z-50 p-5">
     <div className="">
-      <h1 className="absolute top-5 left-5 font-bold text-2xl text-red-500">Subscribe</h1>
+      <h1 className="absolute top-5 left-5 font-bold text-[1.3vw] text-red-500">Subscribe</h1>
       <CloseButton
         onClick={() => {
           setPopupOpen(!popupOpen);
@@ -181,7 +181,7 @@ return (
         className=""
       />
     </div>
-    <div className="flex  justify-evenly gap-x-16 px-16">
+    <div className="flex  justify-evenly gap-x-[3vw] px-[3vw]">
       <span className="flex-1">
         <Label htmlFor="firstname" className="p-1">
           First Name
@@ -214,24 +214,10 @@ return (
         />
       </span>
 
-      {/* <PhoneInputPopover
-        phones={formData.phoneNumbers}
-        removePhone={removePhoneNumber}
-        // emailInput={formData.emailInput}
-        // setEmailInput={formData.emailInput}
-        addPhone={addPhoneNumber}
-      /> */}
     </div>
 
     <Separator className="bg-black" />
-    <div className="flex  justify-evenly gap-x-16 px-16">
-      {/* <EmailInputPopover
-        emails={formData.emails}
-        removeEmail={removeEmail}
-        // emailInput={formData.emailInput}
-        // setEmailInput={formData.emailInput}
-        addEmail={addEmail}
-      /> */}
+    <div className="flex  justify-evenly gap-x-[3vw] px-[3vw]">
       <span className="flex-1">
         <Label htmlFor="email" className="p-1">
           Email
@@ -266,7 +252,7 @@ return (
     </div>
 
     <Separator className="bg-black" />
-    <div className="flex  justify-evenly gap-x-16 px-16">
+    <div className="flex  justify-evenly gap-x-[3vw] px-[3vw]">
       <div className="flex-1">
         <Label htmlFor="country" className="p-1">
           Country
@@ -274,11 +260,6 @@ return (
         <CountriesDropdown
           onSelectCountry={(value) => handleCountrySelect(value)}
         />
-        {/* <Input
-          id="country"
-          className="border border-black"
-          onChange={(e) => handleChange("country", e.target.value)}
-        /> */}
       </div>
       <div className="flex-1">
         <Label htmlFor="city" className="p-1">
@@ -302,7 +283,7 @@ return (
       </div>
     </div>
     <Separator className="bg-black" />
-    <div className="flex  justify-evenly gap-x-16 px-16">
+    <div className="flex  justify-evenly gap-x-[3vw] px-[3vw]">
       <div className="flex-1">
         <Label htmlFor="occupation" className="p-1">
           Occupation
@@ -325,7 +306,7 @@ return (
       </div>
     </div>
     <Separator className="bg-black" />
-    <div className="flex  justify-evenly gap-x-16 px-16">
+    <div className="flex  justify-evenly gap-x-[3vw] px-[3vw]">
       <div className="flex-1">
         <Label htmlFor="companyname" className="p-1">
           Company Name

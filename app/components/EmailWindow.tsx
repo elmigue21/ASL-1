@@ -10,6 +10,7 @@ import { Email } from "@/types/email";
 import Image from "next/image";
 import CloseButton from "./CloseButton";
 import { motion, AnimatePresence } from "framer-motion";
+import { Paperclip } from "lucide-react"; // Lucide icon example
 
 
 function EmailWindow() {
@@ -18,6 +19,8 @@ function EmailWindow() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [highlightIndex, setHighlightIndex] = useState(-1);
   const messageRef = useRef<HTMLTextAreaElement>(null);
+const [attachments, setAttachments] = useState<File[]>([]);
+
 
   const openState = useSelector(
     (state: RootState) => state.EmailWindowSlice.isOpen
@@ -115,33 +118,48 @@ useEffect(() => {
     dispatch(setOpenState(false));
   };
 
-  const sendEmailsClicked = async () => {
-    const emailIds = Array.isArray(selectedEmails)
-      ? selectedEmails.map((email) => email?.id).filter(Boolean)
-      : [];
+const sendEmailsClicked = async () => {
+  const emailIds = Array.isArray(selectedEmails)
+    ? selectedEmails.map((email) => email?.id).filter(Boolean)
+    : [];
 
-      //  const personalizedMessage = message.replace(/\[Name\]/g, recipientName);
+  const formData = new FormData();
+  formData.append("emailSubject", subject);
+  formData.append("emailText", message);
+  formData.append("fromName", "fname lname");
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/email/sendEmails`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            emailIds,
-            emailSubject: subject, // Fixed: subject should be emailSubject
-            emailText: message, // Fixed: message should be emailText
-            fromName: "fname lname",
-          }),
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-    } catch (e) {
-      console.error(e);
+  // Convert each emailId to a string
+  emailIds.forEach((id) => formData.append("emailIds[]", String(id)));
+
+  // Attach files
+  attachments.forEach((file) => {
+    formData.append("attachments", file);
+  });
+
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/email/sendEmails`,
+      {
+        method: "POST",
+        body: formData,
+        credentials:"include",
+      }
+    );
+    if (!response.ok) {
+      // Not 2xx status — read the text response for debugging
+      const errorText = await response.text();
+      console.error("Server error response:", errorText);
+      throw new Error(`Server error: ${response.status}`);
     }
-  };
+
+    const data = await response.json();
+    console.log(data);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+
 
   const removeClicked = (email: Email) => {
     dispatch(removeSelectedEmails(email));
@@ -178,7 +196,8 @@ useEffect(() => {
 
   return (
     <>
-        <div className={`md:hidden absolute bottom-0 left-0 z-[99] w-12 h-12
+      <div
+        className={`fixed md:hidden bottom-0 left-0 z-[99] w-12 h-12
         flex items-center justify-center rounded-full bg-red-300 border border-blue-500 m-5 
         hover:bg-red-500 shadow-xl ${openState ? "bg-white border-5" : ""} active:scale-105 transition-all duration-100`}
         onClick={()=>{dispatch(setOpenState(!openState)); console.log('email clickkk'); console.log(openState)}}>

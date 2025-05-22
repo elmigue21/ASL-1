@@ -8,6 +8,10 @@ import { stat } from "fs";
 import PDFDocument from "pdfkit";
 import { PassThrough } from "stream";
 import { ChartJSNodeCanvas } from "chartjs-node-canvas";
+import path from "path";
+import fs from "fs";
+const logoPath = path.join(__dirname, "../../public/img/dempaLogoTxt.png");
+const logoBuffer = fs.readFileSync(logoPath);
 // import PDFDocument from './../../node_modules/pdfkit/js/pdfkit.esnext';
 // import { downloadFile } from './downloadController';
 // import { ChartConfiguration, ChartTypeRegistry } from 'chart.js';
@@ -413,96 +417,337 @@ const labels = [
 
 const data = [100, 124, 150, 189, 200, 215, 230];
 
+// import { RequestHandler } from "express";
+// import PDFDocument from "pdfkit";
+// import { PassThrough } from "stream";
+// import { ChartJSNodeCanvas } from "chartjs-node-canvas";
+// import { writeText, writeImage } from "../utils/pdfUtils"; // adjust import paths as needed
+
+const generateCountryRows = (
+  doc: PDFKit.PDFDocument,
+  countryData: any[],
+  startX: number,
+  startY: number
+): number => {
+  // Aggregate active/inactive counts by country
+  const summary: Record<string, { active: number; inactive: number }> = {};
+
+  countryData.forEach((subscriber) => {
+    const country = subscriber.addresses?.country || "Unknown";
+
+    if (!summary[country]) {
+      summary[country] = { active: 0, inactive: 0 };
+    }
+
+    if (subscriber.active_status) {
+      summary[country].active += 1;
+    } else {
+      summary[country].inactive += 1;
+    }
+  });
+
+  const summaryRows = Object.entries(summary).map(([country, counts]) => ({
+    country,
+    active: counts.active,
+    inactive: counts.inactive,
+  }));
+
+  const rowHeight = 20;
+  const colWidths = [200, 100, 100];
+  const headers = ["Country", "Active", "Inactive"];
+
+  let y = startY;
+
+  // Title
+  doc.moveDown(1);
+  doc
+    .fontSize(12)
+    .text("Subscriber Status by Country", startX, y, { underline: true });
+  y += 20;
+
+  // Header row
+  doc
+    .rect(
+      startX,
+      y,
+      colWidths.reduce((a, b) => a + b, 0),
+      rowHeight
+    )
+    .fillAndStroke("#eeeeee", "black");
+  doc.fillColor("black").font("Helvetica-Bold").fontSize(10);
+
+  let x = startX;
+  headers.forEach((header, i) => {
+    doc.text(header, x + 5, y + 5, { width: colWidths[i] - 10, align: "left" });
+    x += colWidths[i];
+  });
+
+  y += rowHeight;
+  doc
+    .moveTo(startX, y)
+    .lineTo(startX + colWidths.reduce((a, b) => a + b, 0), y)
+    .stroke();
+
+  doc.font("Helvetica").fontSize(9);
+
+  // Data rows with alternate shading
+  summaryRows.forEach((row, i) => {
+    x = startX;
+
+    if (i % 2 === 0) {
+      doc
+        .rect(
+          x,
+          y,
+          colWidths.reduce((a, b) => a + b, 0),
+          rowHeight
+        )
+        .fillAndStroke("#f9f9f9", "black");
+      doc.fillColor("black");
+    }
+
+    doc.text(row.country, x + 5, y + 5, {
+      width: colWidths[0] - 10,
+      align: "left",
+    });
+    x += colWidths[0];
+    doc.text(row.active.toString(), x + 5, y + 5, {
+      width: colWidths[1] - 10,
+      align: "left",
+    });
+    x += colWidths[1];
+    doc.text(row.inactive.toString(), x + 5, y + 5, {
+      width: colWidths[2] - 10,
+      align: "left",
+    });
+    x += colWidths[2];
+
+    y += rowHeight;
+  });
+
+  // Bottom border
+  doc
+    .moveTo(startX, y)
+    .lineTo(startX + colWidths.reduce((a, b) => a + b, 0), y)
+    .stroke();
+
+  // Vertical lines for the whole table
+  x = startX;
+  for (let i = 0; i <= headers.length; i++) {
+    doc
+      .moveTo(x, y - rowHeight * (summaryRows.length + 1))
+      .lineTo(x, y)
+      .stroke();
+    if (i < headers.length) x += colWidths[i];
+  }
+
+  return y + 10; // Return new y position after table + some padding
+};
+const drawSubscriberTable = (
+  doc: PDFKit.PDFDocument,
+  data: any[],
+  startX: number,
+  startY: number
+): number => {
+  const headers = [
+    "ID",
+    "First Name",
+    "Last Name",
+    "Country",
+    "Occupation",
+    "Industry",
+    "Active",
+    "Verified",
+    "Created On",
+  ];
+  const colWidths = [30, 60, 60, 70, 70, 70, 40, 40, 72];
+  const rowHeight = 16;
+
+  let y = startY;
+
+  // Draw header row
+  doc
+    .rect(
+      startX,
+      y,
+      colWidths.reduce((a, b) => a + b, 0),
+      rowHeight
+    )
+    .fillAndStroke("#eeeeee", "black");
+  doc.fillColor("black").font("Helvetica-Bold");
+
+  let x = startX;
+  headers.forEach((header, i) => {
+    doc.fontSize(8).text(header, x + 2, y + 4, {
+      width: colWidths[i] - 4,
+      align: "left",
+    });
+    x += colWidths[i];
+  });
+
+  // Draw horizontal line below header
+  doc
+    .moveTo(startX, y + rowHeight)
+    .lineTo(startX + colWidths.reduce((a, b) => a + b, 0), y + rowHeight)
+    .stroke();
+
+  // Draw vertical lines for header
+  x = startX;
+  for (let i = 0; i <= headers.length; i++) {
+    doc
+      .moveTo(x, y)
+      .lineTo(x, y + rowHeight + (data?.length || 0) * rowHeight)
+      .stroke();
+    if (i < headers.length) x += colWidths[i];
+  }
+
+  doc.font("Helvetica");
+
+  // Draw data rows
+  data?.forEach((subscriber, rowIndex) => {
+    const rowY = y + rowHeight + rowIndex * rowHeight;
+
+    if (rowIndex % 2 === 0) {
+      doc
+        .rect(
+          startX,
+          rowY,
+          colWidths.reduce((a, b) => a + b, 0),
+          rowHeight
+        )
+        .fillAndStroke("#f9f9f9", "black");
+      doc.fillColor("black");
+    }
+
+    x = startX;
+    const rowValues = [
+      subscriber.id?.toString() || "",
+      subscriber.first_name || "-",
+      subscriber.last_name || "-",
+      subscriber.addresses?.country || "-",
+      subscriber.occupations?.occupation || "-",
+      subscriber.industries?.industry || "-",
+      subscriber.active_status ? "Yes" : "No",
+      subscriber.verified_status ? "Yes" : "No",
+      subscriber.created_on
+        ? new Date(subscriber.created_on).toLocaleDateString()
+        : "-",
+    ];
+
+    rowValues.forEach((text, i) => {
+      doc.fontSize(7).text(text, x + 2, rowY + 4, {
+        width: colWidths[i] - 4,
+        align: "left",
+      });
+      x += colWidths[i];
+    });
+  });
+
+  const tableBottomY = y + rowHeight + (data?.length || 0) * rowHeight;
+
+  // Draw bottom border
+  doc
+    .moveTo(startX, tableBottomY)
+    .lineTo(startX + colWidths.reduce((a, b) => a + b, 0), tableBottomY)
+    .stroke();
+
+  // Draw vertical lines after rows
+  x = startX;
+  for (let i = 0; i <= headers.length; i++) {
+    doc
+      .moveTo(x, y + rowHeight)
+      .lineTo(x, tableBottomY)
+      .stroke();
+    if (i < headers.length) x += colWidths[i];
+  }
+
+  return tableBottomY + 10; // return the y position after the table plus padding
+};
+
+
 export const generatePdf: RequestHandler = async (req, res) => {
-  const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+  const supabaseUser = (req as any).supabaseUser;
   if (!supabaseUser) {
-    res.status(401).json({ error: "Unauthorized from upload file" });
-    return;
+     res.status(401).json({ error: "Unauthorized from upload file" });
+     return;
   }
 
   try {
-    const doc = new PDFDocument();
+    const doc = new PDFDocument({ margin: 50 });
 
-    const chartData = {
-      labels: [
-        "2025-05-01",
-        "2025-05-02",
-        "2025-05-03",
-        "2025-05-04",
-        "2025-05-05",
-        "2025-05-06",
-        "2025-05-07",
-      ],
-      datasets: [
-        {
-          label: "Subscribers",
-          data: [100, 124, 150, 189, 200, 215, 230],
-          fill: true,
-          borderColor: "#1A2B88",
-          backgroundColor: "rgba(26, 43, 136, 0.1)",
-          tension: 0.4,
-        },
-      ],
-    };
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-    const imageWidth = 600; // width used in fit
-    const imageHeight = 300;
-    const pageWidth = doc.page.width;
+    const { data, error } = await supabaseUser
+      .from("subscribers")
+      .select(
+        `
+        id,
+        first_name,
+        last_name,
+        active_status,
+        verified_status,
+        created_on,
+        addresses (country),
+        occupations(occupation),
+        industries(industry)
+      `
+      )
+      .gte("created_on", oneWeekAgo.toISOString());
 
-    const x = pageWidth - imageWidth;
-    const y = doc.y;
+    if (error) {
+      console.error("Supabase query error:", error);
+       res.status(500).json({ error: "Failed to fetch subscribers" });
+       return;
+    }
 
-    const chartJSNodeCanvas = new ChartJSNodeCanvas({
-      width: 600,
-      height: 400,
+    writeImage(doc, logoBuffer, 90);
+    // Title
+    doc.moveDown(2);
+    doc.fontSize(12).text("Subscribers This Week", { underline: true });
+
+let y = doc.y + 10;
+const startX = 50;
+const tableBottomY = drawSubscriberTable(doc, data, startX, y);
+
+    const { data:countryData, error:countryError } = await supabaseUser.from("subscribers").select(`
+    active_status,
+    addresses (
+      country
+    )
+  `);
+
+  if (countryError) {
+    console.error("Supabase country data error:", countryError);
+  } else if (countryData) {
+    const newY = generateCountryRows(doc, countryData, 50, tableBottomY + 20);
+
+  }
+
+
+
+
+
+
+    doc.moveDown(2);
+    doc.fontSize(8).text("Generated on: " + new Date().toLocaleString(), {
+      align: "center",
     });
-    const imageBuffer = await chartJSNodeCanvas.renderToBuffer({
-      type: "line", // Type of the chart
-      data: chartData, // The data for the chart
-      options: {
-        // Set the background color for the entire canvas
-        plugins: {
-          legend: {
-            position: "top", // Customize the legend if necessary
-          },
-        },
-        // Set the canvas background color
-        backgroundColor: "green", // This sets the background color to green
-      },
-    });
 
-
-        writeText(
-          doc,
-          "Subscriber Growth Report",
-          { align: "center", underline: true },
-          20
-        );
-        writeImage(doc, imageBuffer, 300);
-        writeText(doc, "Generated on: " + new Date().toLocaleString());
-
+    // Stream PDF
     const bufferChunks: Buffer[] = [];
-
     const stream = new PassThrough();
     doc.pipe(stream);
-
-    // doc.image(imageBuffer, x, doc.y, {
-    //   width: doc.page.width,
-    // });
-
-    // Collect PDF data in bufferChunks
-    stream.on("data", (chunk) => {
-      bufferChunks.push(chunk);
-    });
-
+    stream.on("data", (chunk) => bufferChunks.push(chunk));
     stream.on("end", async () => {
       const buffer = Buffer.concat(bufferChunks);
       const now = new Date();
-      const datePart = now.toISOString().split("T")[0]; // e.g., "2025-05-04"
-      const timePart = now.toTimeString().split(" ")[0].replace(/:/g, "-"); // e.g., "14-30-05"
-      const fileName = `data-report-${datePart}_${timePart}.pdf`;
-      const fileSizeBytes = Buffer.byteLength(buffer, "utf8");
+      const fileName = `data-report-${now.toISOString().split("T")[0]}_${now
+        .toTimeString()
+        .split(" ")[0]
+        .replace(/:/g, "-")}.pdf`;
 
+      const fileSizeBytes = Buffer.byteLength(buffer);
       const { data: fileData, error: uploadError } = await supabaseUser.storage
         .from("reports")
         .upload(fileName, buffer, {
@@ -513,33 +758,19 @@ export const generatePdf: RequestHandler = async (req, res) => {
 
       if (uploadError) {
         console.error(uploadError);
-        res.status(500).json({ error: "Upload failed" });
-        return;
+         res.status(500).json({ error: "Upload failed" });
+         return;
       }
 
       const { data: publicData } = supabaseUser.storage
         .from("reports")
         .getPublicUrl(fileName);
 
-      if (!publicData) {
-        console.log(" NO FILE FOUND");
-      }
+      const publicURL = publicData?.publicUrl || "";
 
-      const publicURL = publicData.publicUrl;
-
-      const { data: reportsTableData, error: reportsTableError } =
-        await supabaseUser.from("reports_data").insert([
-          {
-            url: publicURL,
-            fileName: fileName,
-            fileSize: fileSizeBytes,
-          },
-        ]);
-
-
-      if (reportsTableError) {
-        console.error(reportsTableError);
-      }
+      await supabaseUser
+        .from("reports_data")
+        .insert([{ url: publicURL, fileName, fileSize: fileSizeBytes }]);
 
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
@@ -557,6 +788,8 @@ export const generatePdf: RequestHandler = async (req, res) => {
   }
 };
 
+
+
 const writeText = (
   doc: PDFKit.PDFDocument,
   text: string,
@@ -572,13 +805,17 @@ const writeImage = (
   imageBuffer: Buffer,
   imageHeight: number
 ) => {
-  doc.image(imageBuffer, {
-    width: doc.page.width,
-    align: "center",
+  const imageWidth = 500; // Set a fixed width
+  const x = (doc.page.width - imageWidth) / 2; // Center horizontally
+
+  doc.image(imageBuffer, x, doc.y, {
+    width: imageWidth,
+    height: imageHeight,
   });
 
   doc.y += imageHeight + 10; // Move cursor down after image
 };
+
 
 export const downloadFile: RequestHandler = async (req, res) => {
   const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
