@@ -47,7 +47,7 @@ export const getAllSubscriptions: RequestHandler = async (req, res) => {
     }
     // ✅ Status filters
     console.log()
-        if (req.query.archive === "true") {
+        if (req.query.archive !== "true") {
       console.log("ARCHIVE TRUE")
       baseQuery = baseQuery.eq("active_status", true);
     }
