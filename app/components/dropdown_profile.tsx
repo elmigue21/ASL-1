@@ -16,6 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 
+
 export default function Dropdown_Profile() {
 
   const router = useRouter();
@@ -23,6 +24,8 @@ export default function Dropdown_Profile() {
   const [name,setName] = useState("")
   const [role,setRole] = useState("")
   const [pfp,setPfp] = useState("")
+
+    // const profile = useAppSelector((state) => state.userInfo.profile);
   
   useEffect(()=>{
     let fetchName = getName() ?? '';

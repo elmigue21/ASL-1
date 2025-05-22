@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface Pagination {
@@ -18,30 +19,31 @@ export function useSubscriptionsQuery({
 }: UseSubscriptionsQueryParams) {
   const queryClient = useQueryClient();
 
-  const fetchSubscriptions = async () => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/table?page=${
-        pagination.pageIndex + 1
-      }&pageSize=${pagination.pageSize}&search=${appliedSearchBarValue}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      }
-    );
+      const [archiveFilter, setArchiveFilter] = useState<boolean>(false);
+    const [verifiedFilter, setVerifiedFilter] = useState<boolean>(true);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
+  const fetchSubscriptions = async () => {
+    const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/table`);
+    url.searchParams.append("page", String(pagination.pageIndex + 1));
+    url.searchParams.append("pageSize", String(pagination.pageSize));
+    url.searchParams.append("search", appliedSearchBarValue);
+    url.searchParams.append("archive", archiveFilter ? "true" : "false");
+    url.searchParams.append("verified", verifiedFilter ? "true" : "false");
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
     const result = await response.json();
     return result.data;
   };
 
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["subscriptions", pagination, appliedSearchBarValue],
+    queryKey: ["subscriptions", pagination, appliedSearchBarValue, archiveFilter, verifiedFilter],
     queryFn: fetchSubscriptions,
     placeholderData: true,
     // keepPreviousData: true,
@@ -83,6 +85,26 @@ export function useSubscriptionsQuery({
     setPagination({ pageIndex: 0, pageSize: 10 });
   };
 
+  const archiveRow = async (id : number | string) => {
+     const response = await fetch(
+       `${process.env.NEXT_PUBLIC_API_URL}/table/archive?id=${id}`,
+       {
+         method: "GET",
+         headers: {
+           "Content-Type": "application/json",
+         },
+         credentials: "include",
+       }
+     );
+
+     if (!response.ok) {
+       throw new Error(`HTTP error! Status: ${response.status}`);
+     }
+
+     const result = await response.json();
+     return result.data;
+  }
+
   return {
     subscriptions: Array.isArray(data) ? data : [],
     isLoading,
@@ -93,5 +115,10 @@ export function useSubscriptionsQuery({
     setPageSize,
     searchButtonClicked,
     isFetching,
+    archiveRow,
+      archiveFilter,
+    setArchiveFilter,
+    verifiedFilter,
+    setVerifiedFilter,
   };
 }
