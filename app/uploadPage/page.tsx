@@ -71,7 +71,7 @@ function UploadPage() {
     <>
       {/* <Navbar /> */}
       <div className="flex border border-slate-400 box-border z-45 absolute top-[11vh] left-[5vw] w-[95vw] h-[89vh] overflow-hidden">
-        <div className="box-border border-3 border-slate-900 rounded p-2">
+        <div className="box-border border-3 rounded p-2 shadow-md">
           <h1 className="p-5">Backup & Retrieval Console</h1>
           <Separator />
 

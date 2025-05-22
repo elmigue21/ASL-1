@@ -271,7 +271,6 @@ export const checkAuth: RequestHandler = (req : AuthenticatedRequest, res) => {
   }
   res.status(200).json({
     authenticated: true,
-    user: req.supabaseUser,
   });
   return;
 };

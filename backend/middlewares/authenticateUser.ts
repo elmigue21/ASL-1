@@ -21,36 +21,6 @@ declare global {
   }
 }
 
-// export const authenticateUser: RequestHandler = async (req, res, next) => {
-//   try {
-//     const token = req.headers.authorization?.split(" ")[1];
-//     if (!token) {
-//        res.status(401).json({ error: "Unauthorized: No token provided" });
-//     }
-
-//     const supabaseUser = createClient(
-//       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-//       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-//       { global: { headers: { Authorization: `Bearer ${token}` } } }
-//     );
-
-//     const { data, error } = await supabaseUser.auth.getUser();
-//     const user = data?.user;
-
-//     if (error || !user) {
-//        res.status(401).json({ error: "Unauthorized: Invalid token" });
-//     }
-
-//     req.supabaseUser = supabaseUser; 
-//     req.user = user; 
-
-    
-//     next(); 
-//   } catch (error) {
-//     console.error("Auth Middleware Error:", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
 
 import { Request, Response, NextFunction } from "express";
 
@@ -73,26 +43,28 @@ export const authenticateUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  
+  // console.log(`[Auth] ${req.method} ${req.originalUrl} Cookies:`, req.cookies);
+
+  if (req.method === "OPTIONS") {
+    return next(); // return here to stop execution on OPTIONS requests
+  }
+
+  console.log("MIDDLEWARE TRIGGERED");
   try {
-    const token =
-      req.cookies?.access_token;
-console.log(" NO TOKEN");
-console.log(req.cookies.access_token)
+    const token = req.cookies?.access_token;
+
     if (!token) {
-      console.log(" NO TOKEN")
-       res.status(401).json({ error: "Unauthorized: No token provided" });
-       return
+      console.log("NO TOKEN");
+      res.status(401).json({ error: "Unauthorized: No token provided" });
+      return;
     }
 
-     const { jwtVerify } = await import("jose");
+    const { jwtVerify } = await import("jose");
 
-    // Verify token
     const secret = new TextEncoder().encode(SUPABASE_JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
 
-    // Create Supabase client with token
-    const supabaseUser = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    const supabaseUser = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
       global: {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -100,23 +72,19 @@ console.log(req.cookies.access_token)
       },
     });
 
-    // Optional: Confirm user identity with Supabase
     const { data, error } = await supabaseUser.auth.getUser();
     if (error || !data.user) {
-       res
-        .status(401)
-        .json({ error: "Unauthorized: Invalid Supabase user" });
-        return
+      res.status(401).json({ error: "Unauthorized: Invalid Supabase user" });
+      return;
     }
 
-    // Attach to request
     req.supabaseUser = supabaseUser;
     req.user = data.user;
 
-    next();
+    return next();
   } catch (error) {
     console.error("Auth Middleware Error:", error);
-     res.status(500).json({ error: "Internal Server Error" });
-     return
+    res.status(500).json({ error: "Internal Server Error" });
+    return;
   }
 };

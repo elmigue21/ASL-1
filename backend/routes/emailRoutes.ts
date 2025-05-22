@@ -1,12 +1,17 @@
-// import { Router } from "express";
-// import {sendEmails, verifyEmail} from '../controllers/emailController'
+import { Router } from "express";
+import {sendEmails/* , verifyEmail */} from '../controllers/emailController'
+import multer from "multer";
 
-// const router = Router();
+// Use memory storage so files are available in `req.files` as buffers
+const upload = multer({ storage: multer.memoryStorage() });
 
-// // router.get("/", getAllSubscriptions);
-// router.post("/sendEmails",sendEmails);
+
+const router = Router();
+
+// router.get("/", getAllSubscriptions);
+router.post("/sendEmails", upload.array("attachments"),sendEmails);
 // router.get("/verifyEmail", verifyEmail);
 
 
 
-// export default router;
+export default router;

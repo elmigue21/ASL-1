@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { confirmSubscription, sendConfirmationEmail/* ,getCountries */ } from "../controllers/landingController";
+import { confirmSubscription, sendConfirmationEmail/* ,getCountries */,unsubscribe } from "../controllers/landingController";
 import rateLimit from "express-rate-limit";
 
 const router = Router();
@@ -17,7 +17,11 @@ const limiter = rateLimit({
     });
   },
 });
-
+router.get(
+  "/unsubscribe",
+/*   limiter, */
+  unsubscribe
+); // Pass control to the landingSubmit handler
 router.get(
   "/confirm",
 /*   limiter, */

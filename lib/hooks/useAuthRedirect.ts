@@ -1,54 +1,51 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 export function useAuthRedirect() {
   const router = useRouter();
+  const hasRun = useRef(false); // prevents double-run logic
 
   useEffect(() => {
-    // Run only in browser
+    if (hasRun.current) return; // only run once
+    hasRun.current = true;
+
     if (typeof window === "undefined") return;
 
-    // Defensive: wait for cookies to be accessible
     const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
     const checkAuth = async () => {
-      // Check if cookie exists in document.cookie before fetching
-      if (!document.cookie.includes("access_token")) {
-        console.log(
-          "No access_token cookie in document.cookie — skipping auth check for now"
-        );
-        return;
-      }
+     await delay(1000);
 
-      // Small delay to ensure cookies are fully set
-      await delay(300);
+      // const hasToken = document.cookie.includes("access_token");
+      // if (!hasToken) {
+      //   console.log("No access_token cookie, skipping auth check.");
+      //   return;
+      // }
 
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/auth`,
           {
-            credentials: "include", // Send cookies with request
+            credentials: "include",
           }
         );
 
         if (!response.ok) {
-          console.log("Not authenticated, redirecting...");
+          console.warn("Auth API call failed, redirecting...");
           router.push("/loginPage");
           return;
         }
 
-        const data = await response.json();
-
-        if (!data.authenticated) {
-          console.log("Auth check failed: not authenticated, redirecting...");
+        const { authenticated } = await response.json();
+        if (!authenticated) {
+          console.warn("Not authenticated, redirecting...");
           router.push("/loginPage");
-          return;
+        } else {
+          console.log("Authenticated, staying on page.");
         }
-
-        console.log("Authenticated, continuing");
       } catch (error) {
-        console.error("Failed to verify auth:", error);
+        console.error("Auth check error, redirecting:", error);
         router.push("/loginPage");
       }
     };

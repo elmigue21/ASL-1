@@ -9,7 +9,7 @@ import {
 // import Link from 'next/link'
 // import { logout } from "@/utils/auth";
 import { useRouter } from "next/navigation";
-import { getName,getRole } from "@/utils/profileController";
+import { getName,getRole ,getPfp} from "@/utils/profileController";
 import {useState,useEffect} from 'react'
 import { logout } from "@/utils/profileController";
 import Image from "next/image";
@@ -22,12 +22,17 @@ export default function Dropdown_Profile() {
 
   const [name,setName] = useState("")
   const [role,setRole] = useState("")
+  const [pfp,setPfp] = useState("")
   
   useEffect(()=>{
     let fetchName = getName() ?? '';
     let fetchRole = getRole() ?? '';
+    let fetchPfp = getPfp() ?? '';
     setName(fetchName);
     setRole(fetchRole);
+    setPfp(fetchPfp);
+
+    console.log("PROFILE PICTURE",pfp)
 
   },[])
   
@@ -37,7 +42,7 @@ export default function Dropdown_Profile() {
         <div className="flex flex-row justify-center gap-x-[1.1vw] cursor-pointer items-center border border-slate-200 rounded-xl shadow p-3 hover:bg-slate-200 px-[2vw] h-[8vh] w-auto">
           <Avatar className=" object-cover h-[6vh] w-[3vw]">
             <AvatarImage
-              src="https://github.com/shadcn.png"
+              src={pfp || "/user.png"}
               alt="@shadcn"
             />
             <AvatarFallback>CN</AvatarFallback>
