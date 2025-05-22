@@ -56,6 +56,7 @@ const chartConfig = {
   labelClassName = "",
   expandIconClassName = "",
   chartContainerClassName = "",
+  cardContentClassName =""
 }: {
   countryData: CountryDataProps[];
   expandClickedAction: () => void;
@@ -64,6 +65,7 @@ const chartConfig = {
   labelClassName?: string;
   expandIconClassName?: string,
   chartContainerClassName?: string
+  cardContentClassName?: string
 }) {
   return (
     <Card className="shadow-none border-none">
@@ -87,7 +89,7 @@ const chartConfig = {
         </CardTitle>
         <CardDescription className={`text-[0.8vw] ${descriptionClassName}`}>Top Subscriber Countries</CardDescription>
       </CardHeader>
-      <CardContent className="h-[40vh] overflow-hidden">
+      <CardContent className={`h-[40vh] overflow-hidden ${cardContentClassName}`}>
         <ChartContainer
           config={chartConfig}
           className={`w-full text-[0.8vw] ${chartContainerClassName}`}
