@@ -96,5 +96,6 @@ export const getPfp = () =>{
      }
     //  console.log("PROFILE FROM GET PFP" , profile.profile_picture)
      const pfp = profile.profile_picture ?? "";
+     console.log("PROFILE PICTURE",pfp)
      return pfp;
 }

@@ -45,9 +45,18 @@ export const getAllSubscriptions: RequestHandler = async (req, res) => {
         `first_name.ilike.%${search}%,last_name.ilike.%${search}%`
       );
     }
+    // ✅ Status filters
+    console.log()
+        if (req.query.archive !== "true") {
+      console.log("ARCHIVE TRUE")
+      baseQuery = baseQuery.eq("active_status", true);
+    }
+    if (req.query.verified === "true") {
+      baseQuery = baseQuery.eq("verified_status", true);
+    }
 
     // ✅ Status filters
-/*     const statusFilters: string[] = [];
+    /*     const statusFilters: string[] = [];
 
     if (req.query.verified === "true")
       statusFilters.push("verified_status.eq.true");
@@ -61,7 +70,6 @@ export const getAllSubscriptions: RequestHandler = async (req, res) => {
     }
  */
 
-
     // 📦 Clone query for count before adding .range()
     const {
       data: fullData,
@@ -70,7 +78,7 @@ export const getAllSubscriptions: RequestHandler = async (req, res) => {
     } = await baseQuery.range(start, end);
 
     if (countError) {
-      console.error(countError)
+      console.error(countError);
       res.status(500).json({ error: countError.message });
       return;
     }
@@ -111,5 +119,60 @@ export const getTableCount : RequestHandler = async (req, res) => {
     return;
   }
 }
+export const archiveSubscriber: RequestHandler = async (req, res) => {
+  try {
+    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+    if (!supabaseUser) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const id = req.query.id as string;
+    if (!id) {
+      res.status(400).json({ error: "No subscriber ID provided" });
+      return;
+    }
+
+    // Fetch current active_status of the subscriber
+    const { data: subscriber, error: fetchError } = await supabaseUser
+      .from("subscribers")
+      .select("active_status")
+      .eq("id", id)
+      .single();
+
+    if (fetchError) {
+      res.status(500).json({ error: fetchError.message });
+      return;
+    }
+
+    if (!subscriber) {
+      res.status(404).json({ error: "Subscriber not found" });
+      return;
+    }
+
+    // Toggle active_status
+    const newStatus = !subscriber.active_status;
+
+    const { error: updateError } = await supabaseUser
+      .from("subscribers")
+      .update({ active_status: newStatus })
+      .eq("id", id);
+
+    if (updateError) {
+      res.status(500).json({ error: updateError.message });
+      return;
+    }
+
+    res
+      .status(200)
+      .json({
+        message: "Subscriber active_status toggled successfully",
+        active_status: newStatus,
+      });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: (e as Error).message });
+  }
+};
 
 
