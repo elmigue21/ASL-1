@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import NavbarBoth from "./components/NavbarBoth";
 import { useAuthRedirect } from "@/lib/hooks/useAuthRedirect";
+import { useState } from "react";
 
 
 // Create a QueryClient instance
@@ -19,6 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
+  const [isEmailModalOpen, setEmailModalOpen] = useState(false);
+  
 useAuthRedirect();
   return (
     <Provider store={store}>

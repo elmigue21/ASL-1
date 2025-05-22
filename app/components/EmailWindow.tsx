@@ -19,7 +19,7 @@ function EmailWindow() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [highlightIndex, setHighlightIndex] = useState(-1);
   const messageRef = useRef<HTMLTextAreaElement>(null);
-const [attachments, setAttachments] = useState<File[]>([]);
+  const [attachments, setAttachments] = useState<File[]>([]);
 
 
   const openState = useSelector(
@@ -212,7 +212,7 @@ const sendEmailsClicked = async () => {
     <AnimatePresence>
       {openState && (
         <motion.div
-          className="fixed bottom-0 md:w-[55vw] md:top-[11vh] right-0 z-50 flex flex-row 
+          className="fixed z-60 bottom-0 md:w-[48vw] md:top-[11vh] right-0 flex flex-row 
             bg-white shadow-md shadow-gray-700/80 w-full h-[calc(92vh)] md:h-full"
           initial="hidden"
           animate="visible"
@@ -220,9 +220,9 @@ const sendEmailsClicked = async () => {
           variants={variants}
         >
           {selectedEmails.length > 0 && (
-          <div className="relative h-[90vh] w-[20vw]  z-40 top-0">
-            <div className="flex px-[3vh] pt-[2vw] pb-[1vh] z-10 bg-white shadow-sm w-full">Send To:</div>
-              <div className="flex overflow-y-auto gap-1 h-full touch-auto flex-col pb-[10vh] px-[1vw]">
+          <div className="relative h-[90vh] w-[20vw]  top-0">
+            <div className="flex px-[3vh] pt-[2vw] pb-[1vh] bg-white shadow-sm w-full bg-white">Send To:</div>
+              <div className="flex overflow-y-auto gap-1 h-full touch-auto flex-col pb-[10vh] px-[1vw] bg-white">
                 {selectedEmails.map((email, index) => (
                   <div
                     key={index}
@@ -323,6 +323,36 @@ const sendEmailsClicked = async () => {
                   </ul>
                 )}
               </div>
+              <div className="mt-2 flex items-center gap-2 mx-4">
+                    <label
+                      htmlFor="file-upload"
+                      className="cursor-pointer p-2 bg-blue-200 hover:bg-gray-300 rounded-full "
+                      title="Attach files"
+                    >
+                      <Paperclip className="w-5 h-5 text-gray-700" />
+                    </label>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      multiple
+                      onChange={(e) => {
+                        if (e.target.files) {
+                          setAttachments(Array.from(e.target.files));
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </div>
+                <div className="flex items-center gap-2 mx-4">
+                  Attachments:
+                  {attachments.length > 0 && (
+                    <ul className="text-sm text-gray-600 items-center">
+                      {attachments.map((file, i) => (
+                        <li key={i}>{file.name}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               <div
                 className="absolute bottom-[15vh] right-[2vw] bg-blue-500 rounded-full py-2 px-5 text-white font-medium cursor-pointer select-none"
                 onClick={sendEmailsClicked}
