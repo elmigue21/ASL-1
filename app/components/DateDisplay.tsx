@@ -1,7 +1,10 @@
 "use client"
 import { useState, useEffect } from "react";
+type DateDisplayProps = {
+  className?: string;
+};
 
-const DateDisplay: React.FC = () => {
+const DateDisplay: React.FC<DateDisplayProps> = ({ className }) => {
   const [date, setDate] = useState<string>("");
 
   useEffect(() => {
@@ -24,7 +27,7 @@ const DateDisplay: React.FC = () => {
 
   return (
       <div>
-        <h2 className="text-[1vw] font-bold text-black">{date}</h2>
+        <h2 className={`text-[1vw] font-bold text-black ${className ?? ""}`}>{date}</h2>
       </div>
   );
 };
