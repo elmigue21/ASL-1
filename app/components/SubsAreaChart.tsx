@@ -98,9 +98,25 @@ rawData.forEach((d: SubData) => {
   }));
 };
 
-export function SubsAreaChart(/* {chartData} : {chartData:ChartDataProps[]} */) {
-  // console.log('CHART DATAAAAAA', chartData)
-
+export function SubsAreaChart({
+  titleClassName = "",
+  cardContentClassName = "",
+  xAxisClassName = "",
+  yAxisClassName = "",
+  chartMargin = { left: 12, right: 25, bottom: 19 },
+  scbButton="",
+  scbPopover="",
+  scbCommandItem=""
+}: {
+  titleClassName?: string;
+  cardContentClassName?: string;
+  xAxisClassName?: string;
+  yAxisClassName?: string;
+  chartMargin?: { top?: number; right?: number; bottom?: number; left?: number };
+  scbButton?: string;
+  scbPopover?: string,
+  scbCommandItem?: string
+}) {
   const [newSubs, setNewSubs] = useState<SubData[]>([]);
 
   // const [dateRange, setDateRange] = useState<"7d" | "1m" | "6m" | "1y">("7d");
@@ -136,12 +152,17 @@ export function SubsAreaChart(/* {chartData} : {chartData:ChartDataProps[]} */) 
   return (
     <Card className="shadow-none border-0">
       <CardHeader>
-        <CardTitle className="font-bold justify-between flex items-center">
+        <CardTitle className={`font-bold justify-between flex items-center text-[1vw] ${titleClassName}`}>
           <h1>New Subscribers</h1>
-          <SubsComboBox />
+          <SubsComboBox 
+          buttonClassName={`${scbButton}`}
+          popoverContentClassName={`${scbPopover}`}
+          commandItemClassName={`${scbCommandItem}`}
+
+          />
         </CardTitle>
       </CardHeader>
-      <CardContent className="h-[200px]">
+      <CardContent className={`h-[26vh] w-[54vw] ${cardContentClassName}`}>
         <ChartContainer
           config={chartConfig}
           style={{ width: "100%", height: "150%" }}
@@ -149,19 +170,17 @@ export function SubsAreaChart(/* {chartData} : {chartData:ChartDataProps[]} */) 
           <AreaChart
             accessibilityLayer
             data={newSubs}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
+            margin={chartMargin}
           >
             <CartesianGrid vertical={false} />
 
             <XAxis
+              className={`text-[0.6vw] overflow-visible ${xAxisClassName}`}
               dataKey="date"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              angle={-30}
+              angle={-40}
               interval={0}
               tickFormatter={(value) => {
                 // If the label is in YYYY-MM format, just show the month (and maybe year)
@@ -186,6 +205,7 @@ export function SubsAreaChart(/* {chartData} : {chartData:ChartDataProps[]} */) 
               }}
             />
             <YAxis
+              className={`text-[0.8vw] ${yAxisClassName}`}
               tickLine={false}
               axisLine={false}
               tickMargin={8}

@@ -1,50 +1,60 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
-
+import useMediaQuery from '@/lib/hooks/useMediaQuery'
 import React from 'react'
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 // import { Input } from '@/components/ui/input';
 // import { Label } from '@/components/ui/label';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import CloseButton from "./CloseButton";
+import { toast } from "sonner";
+import { CountriesDropdown } from "./CountriesDropdown";
+
+
 import LandingPagePopup from './components/LandingPagePopup';
 function Page() {
 
   const [popupOpen,setPopupOpen] = useState(false);
+   const isMobile = useMediaQuery("(max-width: 767px)");
 
-  return (
-    <>
+    return isMobile? landingPageMobile({ popupOpen, setPopupOpen }) : (landingPageDesktop({ popupOpen, setPopupOpen })); 
+}
+
+function landingPageMobile(props: {
+  popupOpen: boolean;
+  setPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const { popupOpen, setPopupOpen } = props;
+  return(
+<>
       <div className="h-screen w-full bg-cover bg-center bg-[url(/img/whiteAbstractBg.jpg)] filter brightness-108">
         <div className="flex flex-col items-center justify-center h-screen">
           <img
             src="/img/dempaLogo.png"
             alt="Dempa Logo"
-            //className="drop-shadow-lg shadow-black/90 h-[60vh] w-auto xsm:h-[37.32vh] xsm:w-[66.25vw] sm:h-[30.89vh] sm:w-[67.29vw] md:h-[50.47vh] md:w-[67.19vw] lg:h-[51.47vh] lg:w-[68.75vw] xl:h-[60vh] xl:w-auto"
-            className="drop-shadow-lg shadow-black/90 h-[60vh] w-auto xsm:h-[37.32vh] sm:h-[30.89vh] md:h-[50.47vh] lg:h-[51.47vh] xl:h-[60vh]"
+            className="drop-shadow-lg shadow-black/90 h-[45vh] w-[100vw]"
           ></img>
           <img
             src="/img/dempaLogoTxt.png"
             alt="Logo Text"
-            //className="h-[11.4vh] drop-shadow-lg shadow-black/90 xsm:h-[13.38vh] xsm:w-[66.25vw] sm:h-[9.72vh] sm:w-[75.29vw] md:h-[17.97vh] md:w-[67.19vw] lg:h-[18.36vh] lg:w-[68.56vw] xl:h-[11.4vh] xl:w-auto"
-            className="h-[11.4vh] drop-shadow-lg shadow-black/90 xsm:h-[13.38vh] sm:h-[9.72vh] md:h-[17.97vh] lg:h-[18.36vh] xl:h-[11.4vh]"
+            className="h-[9vh] w-auto drop-shadow-lg shadow-black/90"
           ></img>
-
-          <div className=" xsm:bg-green-600 sm:bg-red-500 md:bg-blue-500 lg:bg-orange-600 xl:bg-black">
-            asdfasdfasdfsdaf
-          </div>
           <LandingPagePopup popupOpen={popupOpen} setPopupOpen={setPopupOpen} />
         </div>
 
         <Link href={"/loginPage"}>
           <Button
-            //className="w-auto h-auto bg-red-600 rounded-full text-white text-[3vw] cursor-pointer hover:bg-red-700 absolute bottom-[6.5vh] right-[4.2vw] xsm:h-[4.40vh] xsm:w-[24.69vw] xsm:text-[4.69vw] sm:h-[3.46vh] sm:w-[26.59vw] sm:text-[3.53vw] md:h-[5.18vh] md:w-[19.53vw] md:text-[2.73vw] lg:w-[20.05vw] lg:h-[5.34vh] lg:text-[2.64vw] xl:h-[6vh] xl:w-[10vw]  xl:text-[1.50vw]"
-            className="w-auto bg-red-600 rounded-full text-white text-[3vw] cursor-pointer hover:bg-red-700 absolute bottom-[6.5vh] right-[4.2vw] xsm:text-[4.69vw] sm:text-[3.53vw] md:text-[2.73vw] lg:text-[2vw] xl:text-[1.50vw] active:scale-90 transition-all duration-300"
+            className=" bg-red-600 rounded-[5vw] text-white w-[25vw] h-[4vh] text-[5vw] cursor-pointer hover:bg-red-700 absolute bottom-[6.5vh] right-[4.2vw] active:scale-90 transition-all duration-300"
           >
             LOGIN
           </Button>
         </Link>
         <Button
-          className="fixed top-5 right-5 cursor-pointer transition-all duration-500 active:scale-70"
+          className="fixed top-5 right-5 cursor-pointer transition-all duration-500 active:scale-70 w-[25vw] h-[5vh] text-[4vw]"
           onClick={() => {
             setPopupOpen(!popupOpen);
           }}
@@ -52,15 +62,53 @@ function Page() {
           Subscribe
         </Button>
       </div>
-      {/* <div className="h-screen">
-        <div>
-          <Label htmlFor="asd">qweqwe</Label>
-          <Input id="asd"/>
-        </div>
-      </div> */}
-      {/* <LandingPagePopup/> */}
     </>
   );
-
 }
+
+function landingPageDesktop(props: {
+  popupOpen: boolean;
+  setPopupOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const { popupOpen, setPopupOpen } = props;
+  return(
+    <>
+      <div className="h-screen w-full bg-cover bg-center bg-[url(/img/whiteAbstractBg.jpg)] filter brightness-108">
+        <div className="flex flex-col items-center justify-center h-screen">
+          <img
+            src="/img/dempaLogo.png"
+            alt="Dempa Logo"
+            className="drop-shadow-lg shadow-black/90 h-[60vh] w-auto"
+          ></img>
+          <img
+            src="/img/dempaLogoTxt.png"
+            alt="Logo Text"
+            className="h-[11.4vh] drop-shadow-lg shadow-black/90"
+          ></img>
+
+          <LandingPagePopup popupOpen={popupOpen} setPopupOpen={setPopupOpen} />
+        </div>
+
+        <Link href={"/loginPage"}>
+          <Button
+            className="w-auto h-[4vh] bg-red-600 rounded-full text-white text-[1vw] cursor-pointer hover:bg-red-700 absolute bottom-[6.5vh] right-[4.2vw] active:scale-90 transition-all duration-300"
+          >
+            LOGIN
+          </Button>
+        </Link>
+        <Button
+          className="fixed top-5 right-5 cursor-pointer transition-all duration-500 active:scale-70 w-[6vw] h-[4vh] text-[1vw]"
+          onClick={() => {
+            setPopupOpen(!popupOpen);
+          }}
+        >
+          Subscribe
+        </Button>
+        
+      </div>
+    </>
+  );
+}
+
+
 export default Page

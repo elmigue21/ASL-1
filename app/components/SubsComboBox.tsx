@@ -38,7 +38,15 @@ const frameworks = [
 ];
 
 
-export function SubsComboBox() {
+export function SubsComboBox({
+  buttonClassName = "",
+  popoverContentClassName = "",
+  commandItemClassName = "",
+}: {
+  buttonClassName?: string;
+  popoverContentClassName?: string;
+  commandItemClassName?: string;
+}) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState<"7d" | "1m" | "6m" | "1y">("7d");
     const {setDateRange} = useNewSubDateRange();
@@ -54,7 +62,7 @@ export function SubsComboBox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between hover:cursor-pointer"
+          className={`w-[13vw] justify-between hover:cursor-pointer text-[0.9vw] ${buttonClassName}`}
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.value
@@ -62,7 +70,7 @@ export function SubsComboBox() {
           <ChevronsUpDown className="opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className={`w-[13vw] p-0 ${popoverContentClassName}`}>
         <Command>
           {/* <CommandInput placeholder="Search framework..." className="h-9" /> */}
           <CommandList>
@@ -70,7 +78,7 @@ export function SubsComboBox() {
             <CommandGroup>
               {frameworks.map((framework) => (
                 <CommandItem
-                  className="hover:cursor-pointer hover:scale-110 transition-all duration-300"
+                  className={`hover:cursor-pointer hover:scale-110 transition-all duration-300 text-[0.8vw] ${commandItemClassName}`}
                   key={framework.value}
                   value={framework.value}
                   onSelect={(currentValue) => {
