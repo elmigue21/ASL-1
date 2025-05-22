@@ -23,7 +23,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
       >
         
         <img
-          src={isOpen ? "caret-up-24px.png": "caret-down-24px.png"}
+          src={isOpen ? "../caret-up-24px.png": "../caret-down-24px.png"}
           alt="arrow"
           className="w-4 h-4 transition-transform duration-200"
         />

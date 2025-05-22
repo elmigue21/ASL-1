@@ -5,10 +5,30 @@ import Image from "next/image";
 import { Subscription } from "@/types/subscription";
 import StepperList from "../../components/StepperList";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
+import DropdownButton from "@/app/components/DropdownButton";
 
 function ViewPage() {
   const { id } = useParams();
   const router = useRouter();
+
+  const [phoneInput, setPhoneInput] = useState("123124");
+  const [emailInput, setEmailInput] = useState("email@123.com");
+  const [phoneNumbers, setPhoneNumbers] = useState<string[]>([
+    "12345",
+    "232456",
+  ]);
+  const [emails, setEmails] = useState<string[]>([
+    "example@gmail.com",
+    "email@email.com",
+  ]);
+
+  const addPhoneNumber = (val: string) => {
+    setPhoneNumbers([...phoneNumbers, val]); // Add an empty string for a new phone number
+  };
+  const addEmail = (val: string) => {
+    setEmails([...emails, val]); // Add an empty string for a new phone number
+  };
 
   const [subscriberDetails, setSubscriberDetails] =
     useState<Subscription | null>(null);
@@ -132,7 +152,7 @@ return (
     <div className="w-auto h-[77vh] rounded-[0.60vw] shadow-2xl shadow-gray-950/20 py-[6vh] px-[2.5vw] relative border-2 border-slate-100">
       <button
         onClick={goToPrevSub}
-        className="absolute left-[2vw] top-[2vh] text-[2vh] flex gap-x-[1vw] cursor-pointer hover:bg-gray-100 p-[0.5vh] px-[0.5vw] rounded-sm"
+        className="absolute left-[2vw] top-[2vh] text-[2vh] flex gap-x-[1vw] items-center cursor-pointer hover:bg-gray-100 p-[0.5vh] px-[0.5vw] rounded-sm"
       >
         <Image
           src="/arrow-small-left.png"
@@ -145,7 +165,7 @@ return (
 
       <button
         onClick={goToNextSub}
-        className="absolute right-[2vw] top-[2vh] text-[2vh] flex gap-x-[1vw] cursor-pointer hover:bg-gray-100 py-[0.5vh] px-[0.5vw] rounded-sm"
+        className="absolute right-[2vw] top-[2vh] text-[2vh] flex gap-x-[1vw] items-center cursor-pointer hover:bg-gray-100 py-[0.5vh] px-[0.5vw] rounded-sm"
       >
         Next Profile
         <Image
@@ -204,7 +224,7 @@ return (
                   <input
                     value={subscriberDetails.last_name || ""}
                     onChange={(e) => handleChange("last_name", e.target.value)}
-                    className="text-[2vh] border px-2"
+                    className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                   />
                 ) : (
                   <div className="text-[2vh]">
@@ -221,7 +241,7 @@ return (
                   <input
                     value={subscriberDetails.first_name || ""}
                     onChange={(e) => handleChange("first_name", e.target.value)}
-                    className="text-[2vh] border px-2"
+                    className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                   />
                 ) : (
                   <div className="text-[2vh]">
@@ -237,24 +257,86 @@ return (
                 <div className="text-[2vh] font-medium text-slate-500">
                   Phone Number
                 </div>
-                <div className="overflow-y-auto h-[15vh] py-[1vh] w-8/9">
-                  <StepperList
-                    list={
-                      subscriberDetails.phone_numbers?.map((p) => p.phone) ?? []
-                    }
-                  />
-                </div>
+                {isEditing?(
+                  <>
+                  <div className="flex gap-1 w-8/9">
+                    <input 
+                     placeholder="Enter phone number"
+                     className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] text-[2vh] p-2"
+                     type="tel"
+                          pattern="[0-9]*"
+                          inputMode="numeric"
+                          maxLength={15}
+                     required/>
+                    <button className="h-[3vh] w-[12vw] px-2 text-white bg-[#1f1e1e] rounded-[0.40vw] text-[2vh] cursor-pointer hover:scale-102">Add</button>
+                  </div>
+                  <div className="overflow-y-auto h-auto py-[1vh] w-8/9">
+                      
+                    </div>
+                    </>
+                  ):(
+                    <div className="overflow-y-auto h-[15vh] py-[1vh] w-8/9">
+                      
+                    </div>
+                  )}
+                
               </div>
 
               <div className="flex-col">
                 <div className="text-[2vh] font-medium text-slate-500">
                   Email
                 </div>
-                <div className="overflow-y-auto h-[15vh] py-[1vh] w-8/9">
+                {isEditing?(
+                  <>
+                  <div className="flex gap-1 w-8/9">
+                    <input type="text" placeholder="Enter email" className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] text-[2vh] p-2" required/>
+                    <button 
+                      onClick={() => {
+                      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                      alert("clicked");
+                      if (emailInput && emailPattern.test(emailInput)) {
+                        addEmail(emailInput);
+                        setEmailInput("");
+                        toast("Email Added!", {
+                          description: "Added Successfully",
+                          style: {
+                            border: "1px solid black", // Add border color
+                            padding: "1rem", // Padding
+                            color: "red", // Text color
+                            fontWeight: "bold", // Font weight
+                            fontSize: "1rem", // Optional font size
+                          },
+                        });
+                      } else {
+                        toast.error("Invalid email", {
+                          description: "Please enter a valid email address",
+                          style: {
+                            backgroundColor: "red",
+                            color: "white",
+                          },
+                        });
+                      }
+                    }}
+                    className="h-[3vh] w-[12vw] text-white bg-[#1f1e1e] rounded-[0.40vw] text-[2vh] cursor-pointer hover:scale-102">Add</button>
+                  </div>
+                  <div className="overflow-y-auto h-auto py-[1vh] w-8/9">
+
+                  
+                  </div>
+                  </>
+                ):(
+                  <div className="overflow-y-auto h-[15vh] py-[1vh] w-8/9">
+
                   <StepperList
                     list={subscriberDetails.emails?.map((e) => e.email) ?? []}
                   />
-                </div>
+                  </div>
+                )
+              }
+                
+
+                
               </div>
             </div>
 
@@ -268,7 +350,7 @@ return (
                   onChange={(e) =>
                     handleChange("person_facebook_url", e.target.value)
                   }
-                  className="text-[2vh] border px-2"
+                  className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                 />
               ) : (
                 <a
@@ -292,7 +374,7 @@ return (
                   onChange={(e) =>
                     handleChange("person_linkedin_url", e.target.value)
                   }
-                  className="text-[2vh] border px-2"
+                  className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                 />
               ) : (
                 <a
@@ -320,7 +402,7 @@ return (
                   onChange={(e) =>
                     handleNestedChange(["address", "country"], e.target.value)
                   }
-                  className="text-[2vh] border px-2"
+                  className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                 />
               ) : (
                 <div className="text-[2vh]">
@@ -328,7 +410,7 @@ return (
                 </div>
               )}
             </div>
-            <div className="flex justify-between w-full mt-[1vh]">
+            <div className="px-[2vw] flex justify-between w-full mt-[1vh]">
               <div className="flex-col w-1/2">
                 <div className="text-[2vh] font-medium text-slate-500">
                   City
@@ -339,7 +421,7 @@ return (
                     onChange={(e) =>
                       handleNestedChange(["address", "city"], e.target.value)
                     }
-                    className="text-[2vh] border px-2"
+                    className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                   />
                 ) : (
                   <div className="text-[2vh]">
@@ -358,7 +440,7 @@ return (
                     onChange={(e) =>
                       handleNestedChange(["address", "state"], e.target.value)
                     }
-                    className="text-[2vh] border px-2"
+                    className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                   />
                 ) : (
                   <div className="text-[2vh]">
@@ -374,7 +456,7 @@ return (
                 <input
                   value={subscriberDetails.occupation || ""}
                   onChange={(e) => handleChange("occupation", e.target.value)}
-                  className="text-[2vh] border px-2"
+                  className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                 />
               ) : (
                 <div className="text-[2vh]">
@@ -389,7 +471,7 @@ return (
                 <input
                   value={subscriberDetails.industry || ""}
                   onChange={(e) => handleChange("industry", e.target.value)}
-                  className="text-[2vh] border px-2"
+                  className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                 />
               ) : (
                 <div className="text-[2vh]">
@@ -408,7 +490,7 @@ return (
                   onChange={(e) =>
                     handleNestedChange(["company", "name"], e.target.value)
                   }
-                  className="text-[2vh] border px-2"
+                  className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                 />
               ) : (
                 <div className="text-[2vh]">
@@ -426,7 +508,7 @@ return (
                   onChange={(e) =>
                     handleNestedChange(["company", "website"], e.target.value)
                   }
-                  className="text-[2vh] border px-2"
+                  className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                 />
               ) : (
                 <a
@@ -452,7 +534,7 @@ return (
                       e.target.value
                     )
                   }
-                  className="text-[2vh] border px-2"
+                  className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] p-2 text-[2vh]"
                 />
               ) : (
                 <a
@@ -466,7 +548,7 @@ return (
               )}{" "}
             </div>{" "}
           </div>
-<div className="absolute right-[2vw] bottom-[2vh] flex">
+<div className="absolute right-[1vw] bottom-[2vh] flex">
           <button
             onClick={() => {
               setIsEditing(!isEditing);
@@ -478,7 +560,8 @@ return (
           >
             {isEditing ? "Cancel Edit" : "Edit"}
           </button>
-          { isEditing ? <button className="flex text-[2.5vh] items-center cursor-pointer py-[0.5vh] px-[2vw] bg-green-400 hover:bg-green-200 rounded-full" onClick={()=>{submitEdit(); setIsEditing((prev)=>(!prev))}}>Save</button> :<></>}
+          { isEditing ? 
+          <button className="flex text-[2.5vh] items-center cursor-pointer py-[0.5vh] px-[2vw] bg-green-400 hover:bg-green-200 rounded-full" onClick={()=>{submitEdit(); setIsEditing((prev)=>(!prev))}}>Save</button> :<></>}
         </div>
         </div>
       ) : isFetching ? (
