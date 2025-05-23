@@ -7,6 +7,12 @@ import StepperList from "../../components/StepperList";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import DropdownButton from "@/app/components/DropdownButton";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 function ViewPage() {
   const { id } = useParams();
@@ -260,15 +266,76 @@ return (
                 {isEditing?(
                   <>
                   <div className="flex gap-1 w-8/9">
-                    <input 
+                    {/* <input 
                      placeholder="Enter phone number"
                      className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] text-[2vh] p-2"
                      type="tel"
                           pattern="[0-9]*"
                           inputMode="numeric"
                           maxLength={15}
-                     required/>
-                    <button className="h-[3vh] w-[12vw] px-2 text-white bg-[#1f1e1e] rounded-[0.40vw] text-[2vh] cursor-pointer hover:scale-102">Add</button>
+                     required/> */}
+
+                     <Popover>
+                      <div className="relative w-full">
+                        {/* <PopoverTrigger asChild> */}
+                          <div className="relative w-full">
+                            <input
+                              value={phoneInput}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                if (value.length > 15 || !/^\+?\d*$/.test(value)) {
+                                  return;
+                                }
+                                setPhoneInput(value);
+                              }}
+                              placeholder="Enter phone number"
+                              className="pr-6 h-[3vh] w-[12vw] text-[2vh] border-[rgba(0,0,0,0.5)] border rounded-[0.4vw] p-[1vw]"
+                              type="tel"
+                              pattern="[0-9]*"
+                              inputMode="numeric"
+                              maxLength={15}
+                            />
+                            <PopoverTrigger asChild>
+                              <div className="absolute top-1/2 right-[1vw] -translate-y-1/2 text-black cursor-pointer">
+                                ▼
+                              </div>
+                            </PopoverTrigger>
+                          </div>
+                        {/* </PopoverTrigger> */}
+                      </div>
+
+                      <PopoverContent className="w-[12vw] p-0 mx-[3vw]">
+                        <ScrollArea className="h-auto w-[12vw] rounded-md border p-2">
+                          <h4 className="text-sm font-semibold mb-2">NUMBERS</h4>
+                          <div className="space-y-1">
+                            {phoneNumbers.length > 0 ? (
+                              phoneNumbers.map((phone, index) => (
+                                <div
+                                  className="flex justify-between items-center"
+                                  key={index}
+                                >
+                                  <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
+                                    {phone}
+                                  </div>
+                                  <button
+                                                      
+                                    className={`flex items-center justify-center p-0 w-fit h-fit group cursor-pointer scale-50 flex-shrink-0 ml-auto`}>
+                                          <Image src="/circle-xmark.png" alt="Close" className="size-[2vw] block group-hover:hidden" width={30} height={30}/>
+                                          <Image src="/circle-xmark-fill-red.png" alt="Close (hover)" className="size-[2vw] hidden group-hover:block" width={30} height={30}/>
+                                        
+                                  </button>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-gray-400 text-sm">
+                                No numbers added
+                              </p>
+                            )}
+                          </div>
+                        </ScrollArea>
+                      </PopoverContent>
+                    </Popover>
+                    <button className="h-[4vh] w-[12vw] px-2 text-white bg-[#1f1e1e] rounded-[0.40vw] text-[2vh] cursor-pointer hover:scale-102">Add</button>
                   </div>
                   <div className="overflow-y-auto h-auto py-[1vh] w-8/9">
                       
@@ -289,7 +356,59 @@ return (
                 {isEditing?(
                   <>
                   <div className="flex gap-1 w-8/9">
-                    <input type="text" placeholder="Enter email" className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] text-[2vh] p-2" required/>
+                    {/* <input type="text" placeholder="Enter email" className="border border-[rgba(0,0,0,0.4)] h-[3vh] w-[12vw] text-[#121212] rounded-[0.40vw] text-[2vh] p-2" required/> */}
+                    <Popover>
+                      <div className="relative w-[12vw]">
+                        {/* <PopoverTrigger asChild> */}
+                          <div className="relative w-full">
+                            <input
+                              value={emailInput}
+                              onChange={(e) => {
+                                setEmailInput(e.target.value);
+                              }}
+                              placeholder="Enter email"
+                              className="pr-6 h-[3vh] w-[12vw] text-[2vh] border-[rgba(0,0,0,0.5)] border rounded-[0.4vw] p-[1vw]"
+                            />
+                            <PopoverTrigger asChild>
+                              <div className="absolute top-1/2 right-[1vw] -translate-y-1/2 text-black cursor-pointer">
+                                ▼
+                              </div>
+                            </PopoverTrigger>
+                          </div>
+                        {/* </PopoverTrigger> */}
+                      </div>
+    
+                      <PopoverContent className="w-[12vw] p-0 mx-[3vw]">
+                        <ScrollArea className="h-[auto] w-full rounded-md border p-2">
+                          <h4 className="text-sm font-semibold mb-2">EMAILS</h4>
+                          <div className="space-y-1">
+                            {emails.length > 0 ? (
+                              emails.map((email, index) => (
+                                <div
+                                  className="flex justify-between items-center"
+                                  key={index}
+                                >
+                                  <div className="whitespace-nowrap max-w-[15vw]">
+                                    {email}
+                                  </div>
+                                  <button
+                                                      
+                                    className={`flex items-center justify-center p-0 w-fit h-fit group cursor-pointer scale-50 flex-shrink-0 ml-auto`}>
+                                          <Image src="/circle-xmark.png" alt="Close" className="size-[2vw] block group-hover:hidden" width={30} height={30}/>
+                                          <Image src="/circle-xmark-fill-red.png" alt="Close (hover)" className="size-[2vw] hidden group-hover:block" width={30} height={30}/>
+                                        
+                                  </button>
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-gray-400 text-sm">
+                                No emails added
+                              </p>
+                            )}
+                          </div>
+                        </ScrollArea>
+                      </PopoverContent>
+                    </Popover>
                     <button 
                       onClick={() => {
                       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -318,7 +437,7 @@ return (
                         });
                       }
                     }}
-                    className="h-[3vh] w-[12vw] text-white bg-[#1f1e1e] rounded-[0.40vw] text-[2vh] cursor-pointer hover:scale-102">Add</button>
+                    className="h-[4vh] w-[12vw] text-white bg-[#1f1e1e] rounded-[0.40vw] text-[2vh] cursor-pointer hover:scale-102">Add</button>
                   </div>
                   <div className="overflow-y-auto h-auto py-[1vh] w-8/9">
 
