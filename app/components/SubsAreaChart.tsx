@@ -122,6 +122,31 @@ export function SubsAreaChart({
   // const [dateRange, setDateRange] = useState<"7d" | "1m" | "6m" | "1y">("7d");
   const { dateRange /*  setDateRange */ } = useNewSubDateRange();
 
+  // const fetchNewSubs = async () => {
+  //   const response = await fetch(
+  //     `${process.env.NEXT_PUBLIC_API_URL}/dashboard/newSubs/dateRange?dateRange=${dateRange}`,
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       credentials: "include",
+  //     }
+  //   );
+
+  //   const data = await response.json();
+  //   // console.log("NEW SUBS:", data);
+
+  //   const filled = normalizeData(data, dateRange);
+  //   console.log("normalized dataaa", filled);
+
+  //   console.log("datga", data);
+  //   setNewSubs(filled);
+  // };
+
+  //  const { dateRange, setDateRange } = useNewSubDateRange();
+
+useEffect(() => {
   const fetchNewSubs = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/dashboard/newSubs/dateRange?dateRange=${dateRange}`,
@@ -135,20 +160,12 @@ export function SubsAreaChart({
     );
 
     const data = await response.json();
-    // console.log("NEW SUBS:", data);
-
     const filled = normalizeData(data, dateRange);
-    console.log("normalized dataaa", filled);
-
-    console.log("datga", data);
     setNewSubs(filled);
   };
 
-  //  const { dateRange, setDateRange } = useNewSubDateRange();
-
-  useEffect(() => {
-    fetchNewSubs();
-  }, [dateRange]);
+  fetchNewSubs();
+}, [dateRange]);
   return (
     <Card className="shadow-none border-0">
       <CardHeader>

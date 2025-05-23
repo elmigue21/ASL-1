@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose
+  // DialogClose
 } from "@/components/ui/dialog";
 
 interface BackupData {
@@ -54,8 +54,10 @@ const BackupsTable = () => {
       );
       const data = await response.json();
       toast.success("Backup created successfully!");
+      console.log(data);
     } catch (error) {
       toast.error("Failed to create backup");
+      console.error(error)
     } finally {
       setIsAction(false);
       await getBackups();
@@ -84,8 +86,10 @@ const BackupsTable = () => {
       );
       const data = await response.json();
       toast.success("Backup restored successfully!");
+      console.log(data);
     } catch (error) {
       toast.error("Failed to restore backup");
+      console.error(error)
     } finally {
       setIsAction(false);
       await getBackups();
@@ -127,6 +131,7 @@ const BackupsTable = () => {
       await getBackups();
     } catch (error) {
       toast.error("Failed to delete backup");
+      console.error(error)
     } finally {
       setIsAction(false);
     }

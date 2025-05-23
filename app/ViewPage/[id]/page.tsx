@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Subscription } from "@/types/subscription";
@@ -22,47 +24,49 @@ function ViewPage() {
   const [phoneInput, setPhoneInput] = useState("123124");
   const [emailInput, setEmailInput] = useState("email@123.com");
 
-const addEmail = (email : Email) => {
-  if (!subscriberDetails) return;
-  setSubscriberDetails({
-    ...subscriberDetails,
-    emails: [...(subscriberDetails.emails || []), email],
-  });
-};
+  const addEmail = (email: Email) => {
+    if (!subscriberDetails) return;
+    setSubscriberDetails({
+      ...subscriberDetails,
+      emails: [...(subscriberDetails.emails || []), email],
+    });
+  };
 
-const removeEmail = (index: number) => {
-  if (!subscriberDetails) return;
-  setSubscriberDetails({
-    ...subscriberDetails,
-    emails: subscriberDetails.emails.filter((_, i) => i !== index),
-  });
-};
+  const removeEmail = (index: number) => {
+    if (!subscriberDetails) return;
+    setSubscriberDetails({
+      ...subscriberDetails,
+      emails: subscriberDetails.emails.filter((_, i) => i !== index),
+    });
+  };
 
-const addPhoneNumber = (val: string) => {
-  if (!subscriberDetails) return;
-  setSubscriberDetails({
-    ...subscriberDetails,
-    phone_numbers: [...(subscriberDetails.phone_numbers ?? []), { phone: val }],
-  });
-};
+  const addPhoneNumber = (val: string) => {
+    if (!subscriberDetails) return;
+    setSubscriberDetails({
+      ...subscriberDetails,
+      phone_numbers: [
+        ...(subscriberDetails.phone_numbers ?? []),
+        { phone: val },
+      ],
+    });
+  };
 
-const removePhoneNumber = (index: number) => {
-  if (!subscriberDetails) return;
-  setSubscriberDetails({
-    ...subscriberDetails,
-    phone_numbers: subscriberDetails.phone_numbers.filter(
-      (_, i) => i !== index
-    ),
-  });
-};
-
+  const removePhoneNumber = (index: number) => {
+    if (!subscriberDetails) return;
+    setSubscriberDetails({
+      ...subscriberDetails,
+      phone_numbers: subscriberDetails.phone_numbers.filter(
+        (_, i) => i !== index
+      ),
+    });
+  };
 
   const [subscriberDetails, setSubscriberDetails] =
     useState<Subscription | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const fetchSubscriberDetails = async () => {
+  const fetchSubscriberDetails = useCallback(async () => {
     const timeout = setTimeout(() => {
       console.error("Fetch took too long, aborting...");
       setIsFetching(false);
@@ -101,11 +105,11 @@ const removePhoneNumber = (index: number) => {
       clearTimeout(timeout);
       setIsFetching(false);
     }
-  };
+  }, [id]); // ✅ only re-create the function if `id` changes
 
   useEffect(() => {
     fetchSubscriberDetails();
-  }, []);
+  }, [fetchSubscriberDetails]); // ✅ no more warning
 
   const goToNextSub = () => {
     if (id) {
@@ -131,10 +135,12 @@ const removePhoneNumber = (index: number) => {
     setSubscriberDetails((prev) => {
       if (!prev) return prev;
       const updated = { ...prev };
-      let obj: any = updated;
+
+      let obj: any = updated; // 'any' here to bypass type conflicts; can refine later
       for (let i = 0; i < path.length - 1; i++) {
         obj = obj[path[i]];
       }
+
       obj[path[path.length - 1]] = value;
       return updated;
     });
@@ -350,38 +356,42 @@ const removePhoneNumber = (index: number) => {
                               </h4>
                               <div className="space-y-1">
                                 {subscriberDetails.phone_numbers.length > 0 ? (
-                                  subscriberDetails.phone_numbers.map((phone, index) => (
-                                    <div
-                                      className="flex justify-between items-center"
-                                      key={index}
-                                    >
+                                  subscriberDetails.phone_numbers.map(
+                                    (phone, index) => (
                                       <div
-                                        className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px] truncate"
-                                        title={phone.phone}
+                                        className="flex justify-between items-center"
+                                        key={index}
                                       >
-                                        {phone.phone}
+                                        <div
+                                          className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px] truncate"
+                                          title={phone.phone}
+                                        >
+                                          {phone.phone}
+                                        </div>
+                                        <button
+                                          className={`flex items-center justify-center p-0 w-fit h-fit group cursor-pointer scale-50 flex-shrink-0 ml-auto`}
+                                          onClick={() => {
+                                            removePhoneNumber(index);
+                                          }}
+                                        >
+                                          <Image
+                                            src="/circle-xmark.png"
+                                            alt="Close"
+                                            className="size-[2vw] block group-hover:hidden"
+                                            width={30}
+                                            height={30}
+                                          />
+                                          <Image
+                                            src="/circle-xmark-fill-red.png"
+                                            alt="Close (hover)"
+                                            className="size-[2vw] hidden group-hover:block"
+                                            width={30}
+                                            height={30}
+                                          />
+                                        </button>
                                       </div>
-                                      <button
-                                        className={`flex items-center justify-center p-0 w-fit h-fit group cursor-pointer scale-50 flex-shrink-0 ml-auto`}
-                                        onClick={()=>{removePhoneNumber(index)}}
-                                      >
-                                        <Image
-                                          src="/circle-xmark.png"
-                                          alt="Close"
-                                          className="size-[2vw] block group-hover:hidden"
-                                          width={30}
-                                          height={30}
-                                        />
-                                        <Image
-                                          src="/circle-xmark-fill-red.png"
-                                          alt="Close (hover)"
-                                          className="size-[2vw] hidden group-hover:block"
-                                          width={30}
-                                          height={30}
-                                        />
-                                      </button>
-                                    </div>
-                                  ))
+                                    )
+                                  )
                                 ) : (
                                   <p className="text-gray-400 text-sm">
                                     No numbers added
@@ -391,7 +401,12 @@ const removePhoneNumber = (index: number) => {
                             </ScrollArea>
                           </PopoverContent>
                         </Popover>
-                        <button className="h-[4vh] w-[12vw] px-2 text-white bg-[#1f1e1e] rounded-[0.40vw] text-[2vh] cursor-pointer hover:scale-102" onClick={()=>{addPhoneNumber(phone)}}>
+                        <button
+                          className="h-[4vh] w-[12vw] px-2 text-white bg-[#1f1e1e] rounded-[0.40vw] text-[2vh] cursor-pointer hover:scale-102"
+                          onClick={() => {
+                            addPhoneNumber(phoneInput);
+                          }}
+                        >
                           Add
                         </button>
                       </div>
@@ -438,38 +453,42 @@ const removePhoneNumber = (index: number) => {
                               </h4>
                               <div className="space-y-1">
                                 {subscriberDetails.emails.length > 0 ? (
-                                  subscriberDetails.emails.map((email, index) => (
-                                    <div
-                                      className="flex justify-between items-center"
-                                      key={index}
-                                    >
+                                  subscriberDetails.emails.map(
+                                    (email, index) => (
                                       <div
-                                        className="whitespace-nowrap max-w-[15vw] truncate"
-                                        title={email.email}
+                                        className="flex justify-between items-center"
+                                        key={index}
                                       >
-                                        {email.email}
+                                        <div
+                                          className="whitespace-nowrap max-w-[15vw] truncate"
+                                          title={email.email}
+                                        >
+                                          {email.email}
+                                        </div>
+                                        <button
+                                          className={`flex items-center justify-center p-0 w-fit h-fit group cursor-pointer scale-50 flex-shrink-0 ml-auto`}
+                                          onClick={() => {
+                                            removeEmail(index);
+                                          }}
+                                        >
+                                          <Image
+                                            src="/circle-xmark.png"
+                                            alt="Close"
+                                            className="size-[2vw] block group-hover:hidden"
+                                            width={30}
+                                            height={30}
+                                          />
+                                          <Image
+                                            src="/circle-xmark-fill-red.png"
+                                            alt="Close (hover)"
+                                            className="size-[2vw] hidden group-hover:block"
+                                            width={30}
+                                            height={30}
+                                          />
+                                        </button>
                                       </div>
-                                      <button
-                                        className={`flex items-center justify-center p-0 w-fit h-fit group cursor-pointer scale-50 flex-shrink-0 ml-auto`}
-                                        onClick={()=>{removeEmail(index)}}
-                                      >
-                                        <Image
-                                          src="/circle-xmark.png"
-                                          alt="Close"
-                                          className="size-[2vw] block group-hover:hidden"
-                                          width={30}
-                                          height={30}
-                                        />
-                                        <Image
-                                          src="/circle-xmark-fill-red.png"
-                                          alt="Close (hover)"
-                                          className="size-[2vw] hidden group-hover:block"
-                                          width={30}
-                                          height={30}
-                                        />
-                                      </button>
-                                    </div>
-                                  ))
+                                    )
+                                  )
                                 ) : (
                                   <p className="text-gray-400 text-sm">
                                     No emails added

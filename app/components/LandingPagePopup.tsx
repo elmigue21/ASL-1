@@ -39,7 +39,7 @@ type PersonForm = {
 
 const LandingPagePopup = ({ popupOpen, setPopupOpen }: LandingPagePopupProps) => {
 
-  if(!popupOpen) return null;
+
 const [formData, setFormData] = useState<PersonForm>({
   firstName: "",
   lastName: "",
@@ -168,12 +168,12 @@ const handleSubmit = async () => {
 };
 
 
-
+  if (!popupOpen) return null;
 
 return (
   <div className="w-3/4 fixed h-3/4 gap-y-4 flex flex-col justify-center bg-white border border-black rounded-2xl z-50 p-5">
     <div className="">
-      <h1 className="absolute top-5 left-5 font-bold text-[1.3vw] text-red-500">Subscribe</h1>
+      <h1 className="absolute top-5 left-5 font-bold text-[3vh] text-red-500">Subscribe</h1>
       <CloseButton
         onClick={() => {
           setPopupOpen(!popupOpen);

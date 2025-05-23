@@ -7,7 +7,7 @@ import React, { useState } from "react";
 
 import { Separator } from "@/components/ui/separator";
 import ReportsTab from "./ReportsTab";
-import Navbar from "../components/Navbar";
+// import Navbar from "../components/Navbar";
 import UploadTab from "./UploadTab";
 import BackupsTab from "./BackupsTab";
 

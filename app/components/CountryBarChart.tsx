@@ -1,7 +1,7 @@
 "use client";
 // import {supabase} from "@/lib/supabase";
 
-import { TrendingUp } from "lucide-react";
+// import { TrendingUp } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -28,12 +28,21 @@ import {
 // import { useState, useEffect } from "react";
 import Image from "next/image";
 
+/* const chartData = [
+  { month: "January", desktop: 186, mobile: 80 },
+  { month: "February", desktop: 305, mobile: 200 },
+  { month: "March", desktop: 237, mobile: 120 },
+  { month: "April", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "June", desktop: 214, mobile: 140 },
+]; */
+
 interface CountryDataProps{
   country: string;
   count: number;
 }
 
-import { usePopupContext } from "../context/PopupContext";
+// import { usePopupContext } from "../context/PopupContext";
 
 
 
@@ -47,52 +56,73 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-// export function CountryBarChart({ countryData,expandClickedAction }: { countryData: CountryDataProps[], expandClickedAction: () => void }) {
-  export function CountryBarChart({
-  countryData,
-  expandClickedAction,
-  titleClassName = "",
-  descriptionClassName = "",
-  labelClassName = "",
-  expandIconClassName = "",
-  chartContainerClassName = "",
-  cardContentClassName =""
-}: {
-  countryData: CountryDataProps[];
-  expandClickedAction: () => void;
-  titleClassName?: string;
-  descriptionClassName?: string;
-  labelClassName?: string;
-  expandIconClassName?: string,
-  chartContainerClassName?: string
-  cardContentClassName?: string
-}) {
+export function CountryBarChart({ countryData,expandClickedAction }: { countryData: CountryDataProps[], expandClickedAction: () => void }) {
+  /*   const [countryData, setCountryData] = useState<CountryDataProps[]>([]);
+  console.log("COUNTRY DATA ISSS", countryData)
+
+ const fetchCountryCount = async () => {
+   const { data: sessionData } = await supabase.auth.getSession();
+   const token = sessionData.session?.access_token;
+
+   const response = await fetch(
+     `${process.env.NEXT_PUBLIC_API_URL}/dashboard/countrycount`,
+     {
+       method: "GET",
+       headers: {
+         Authorization: `Bearer ${token}`, // ✅ Attach token in request
+         "Content-Type": "application/json",
+       },
+     }
+   );
+
+   let data = await response.json();
+   data = data
+     .map((item: CountryDataProps) => ({
+       ...item,
+       country: item.country?.trim() ? item.country : "N/A",
+     }))
+     .sort(
+       (
+         a: { country: string; count: number },
+         b: { country: string; count: number }
+       ) => b.count - a.count
+     ); // Sort numerically based on count
+
+   setCountryData(data);
+   console.log("Countries:", data);
+ };
+
+  useEffect(()=>{
+    fetchCountryCount();
+  },[]) */
+
+
+  // const { togglePopup } = usePopupContext();
   return (
     <Card className="shadow-none border-none">
       <CardHeader>
-        <CardTitle className={`relative flex items-center text-[1vw] ${titleClassName}`}>
+        <CardTitle className="relative">
           Subscribers by Country
           {/* <button onClick={()=>{console.log('qweqwe')}}>q</button> */}
-          <div className={`ml-auto relative w-[1vw] h-[2vh] ${expandIconClassName}`}>
-            <Image
-              src="/expand-arrows-alt.png"
-              alt="Expand"
-              fill
-              className="absolute right-2 top-2 hover:cursor-pointer"
-              onClick={() => {
-                console.log("qweqweqwe");
-                // togglePopup();
-                expandClickedAction();
-              }}
-            />
-          </div>
+          <Image
+            src="/expand-arrows-alt.png"
+            alt="Expand"
+            width={15}
+            height={15}
+            className="absolute right-2 top-2 hover:cursor-pointer"
+            onClick={() => {
+              console.log("qweqweqwe");
+              // togglePopup();
+              expandClickedAction();
+            }}
+          />
         </CardTitle>
-        <CardDescription className={`text-[0.8vw] ${descriptionClassName}`}>Top Subscriber Countries</CardDescription>
+        <CardDescription>Top Subscriber Countries</CardDescription>
       </CardHeader>
-      <CardContent className={`h-[40vh] overflow-hidden ${cardContentClassName}`}>
+      <CardContent className="h-[350px] overflow-y-scroll">
         <ChartContainer
           config={chartConfig}
-          className={`w-full text-[0.8vw] ${chartContainerClassName}`}
+          className=""
         >
           <BarChart
             accessibilityLayer
@@ -144,8 +174,8 @@ const chartConfig = {
                 dataKey="count"
                 position="right"
                 offset={8}
-                className={`fill-foreground text-[0.7vw] ${labelClassName}`}
-                // fontSize={12}
+                className="fill-foreground"
+                fontSize={12}
               />
             </Bar>
           </BarChart>

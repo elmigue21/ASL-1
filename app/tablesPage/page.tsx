@@ -1,7 +1,7 @@
 import React/* , { Suspense } */ from 'react'
 // import { SubscriptionsTable } from '../components/SubscriptionsTable'
 // import SubscriptionsTableMobile from '../components/SubscriptionsTableMobile'
-import Navbar from '../components/Navbar'
+// import Navbar from '../components/Navbar'
 // import NavbarMobile from '../components/NavbarMobile'
 import SubTable from '../components/SubsTable'
 import EmailWindow from '../components/EmailWindow'

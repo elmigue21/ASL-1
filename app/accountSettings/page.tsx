@@ -1,29 +1,29 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
+import React, { /* useRef, */ useState, useEffect } from "react";
+// import Navbar from "../components/Navbar";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // import { Button } from '@/components/ui/button';
-import ChangePassword from "../components/ChangePassword";
+// import ChangePassword from "../components/ChangePassword";
 import { ProfileUpdateDialog } from "./ProfileUpdateDialog";
 import { NameUpdateDialog } from "./NameUpdateDialog";
 import { ProfilePictureDialog } from "./ProfilePictureDialog";
 import { getPfp ,getName} from "@/utils/profileController";
 
-function page() {
+function Page() {
   const [pfp, setPfp] = useState("");
   const [name,setName] = useState("")
   useEffect(() => {
-    let fetchPfp = getPfp() ?? "";
-    let fetchName = getName() ?? "";
+    const fetchPfp = getPfp() ?? "";
+    const fetchName = getName() ?? "";
     setPfp(fetchPfp);
     setName(fetchName);
     console.log("PROFILE PICTURE", pfp);
-  }, []);
+  }, [pfp,name]);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleProfilePictureChange = async (file: File) => {
     try {
@@ -69,6 +69,7 @@ function page() {
       );
 
       const data = await response.json();
+      console.log(data)
     } catch (e) {
       console.error(e);
     }
@@ -89,6 +90,7 @@ function page() {
       );
 
       const data = await response.json();
+      console.log(data)
     } catch (e) {
       console.error(e);
     }
@@ -182,4 +184,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

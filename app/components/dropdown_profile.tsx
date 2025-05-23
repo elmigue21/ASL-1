@@ -28,16 +28,16 @@ export default function Dropdown_Profile() {
     // const profile = useAppSelector((state) => state.userInfo.profile);
   
   useEffect(()=>{
-    let fetchName = getName() ?? '';
-    let fetchRole = getRole() ?? '';
-    let fetchPfp = getPfp() ?? '';
+    const fetchName = getName() ?? '';
+    const fetchRole = getRole() ?? '';
+    const fetchPfp = getPfp() ?? '';
     setName(fetchName);
     setRole(fetchRole);
     setPfp(fetchPfp);
 
     console.log("PROFILE PICTURE",pfp)
 
-  },[])
+  },[pfp])
   
   return (
     <DropdownMenu>

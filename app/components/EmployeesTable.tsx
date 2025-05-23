@@ -8,9 +8,9 @@ import {
   ColumnDef,
 } from '@tanstack/react-table';
 
-import Image from 'next/image'
+// import Image from 'next/image'
 import DeleteIcon from '@/public/delete-user.svg';
-import { Delete } from 'lucide-react';
+// import { Delete } from 'lucide-react';
 
 
 interface Employee{
@@ -95,7 +95,7 @@ const columns = useMemo<ColumnDef<Employee>[]>(
       header: "",
       id:"actions",
       cell: ({ row }) => {
-        const employee = row.original;
+        // const employee = row.original;
         return (
           <>
           {

@@ -13,7 +13,7 @@ import { logout } from "@/utils/profileController";
 import { setOpenState } from "@/store/slices/emailWindowSlice";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
-import { ConfirmDialog } from "./ConfirmDialog";
+// import { ConfirmDialog } from "./ConfirmDialog";
 import { getRole } from "@/utils/profileController";
 interface NavbarProps {
   isAdmin: boolean;
@@ -42,7 +42,7 @@ const NavbarBoth = () => {
   return isMobile ? <NavbarMobile isAdmin={isAdmin}/> : <NavbarDesktop isAdmin={isAdmin}/>;
 };
 
-const NavbarMobile: React.FC<NavbarProps> = ({ isAdmin }) => {
+const NavbarMobile: React.FC<NavbarProps> = (/* { isAdmin } */) => {
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
 
@@ -192,9 +192,9 @@ const NavbarDesktop: React.FC<NavbarProps> = ({ isAdmin }) => {
   };
   // const dispatch = useDispatch();
 
-  const closeClicked = () => {
-    dispatch(setOpenState(!openState));
-  };
+  // const closeClicked = () => {
+  //   dispatch(setOpenState(!openState));
+  // };
 
   const router = useRouter();
   const pathname = usePathname();

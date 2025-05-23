@@ -4,14 +4,14 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 // import { DonutChart } from "../components/DonutChart";
 import { SubsAreaChart } from "../components/SubsAreaChart";
-import Navbar from "../components/Navbar";
+// import Navbar from "../components/Navbar";
 import DateDisplay from "../components/DateDisplay";
 import { useState, useEffect } from "react";
 import { CountryBarChart } from "../components/CountryBarChart";
 
 // import { supabase } from "../../lib/supabase";
 // import BarChartPopup from "./BarChartPopup";
-import { ConfirmDialog } from "../components/ConfirmDialog";
+// import { ConfirmDialog } from "../components/ConfirmDialog";
 import { PopupProvider } from "../context/PopupContext";
 
 import { NewSubDateRangeProvider } from "../context/NewSubDateRangeContext"; // Adjust the path if needed
@@ -244,12 +244,12 @@ function DashboardMobile(props: {
               <CountryBarChart
                 countryData={countryData.slice(0, 5)}
                 expandClickedAction={() => expandClicked()}
-                titleClassName="text-[5vw]"
-                descriptionClassName="text-[4vw]"
-                expandIconClassName="w-[4vw] h-[4vw]"
-                labelClassName="text-[3vw]"
-                chartContainerClassName="text-[4vw] font-medium"
-                cardContentClassName="h-[24vh]"
+                // titleClassName="text-[5vw]"
+                // descriptionClassName="text-[4vw]"
+                // expandIconClassName="w-[4vw] h-[4vw]"
+                // labelClassName="text-[3vw]"
+                // chartContainerClassName="text-[4vw] font-medium"
+                // cardContentClassName="h-[24vh]"
               />
               {/* <DonutChart chartData={countryData} chartHeightVH={30} innerRadiusVW={20} cardHeightVH={50} tspanFontSizeVH={2.5} cardHeaderFontSizeVH={2} cardPaddingVW={2}/> */}
             </div>
@@ -283,11 +283,11 @@ function DashboardMobile(props: {
           <CountryBarChart
             countryData={countryData}
             expandClickedAction={() => expandClicked()}
-            titleClassName="text-[5vw]"
-            descriptionClassName="text-[4vw]"
-            expandIconClassName="w-[4vw] h-[4vw]"
-            labelClassName="text-[3vw]"
-            chartContainerClassName="text-[4vw] font-medium"
+            // titleClassName="text-[5vw]"
+            // descriptionClassName="text-[4vw]"
+            // expandIconClassName="w-[4vw] h-[4vw]"
+            // labelClassName="text-[3vw]"
+            // chartContainerClassName="text-[4vw] font-medium"
           />
         </div>
         {/* </div> */}

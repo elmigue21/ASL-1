@@ -29,8 +29,8 @@ function EmailWindow() {
     (state: RootState) => state.SubscriptionSlice.selectedEmails
   );
 
-  // Phrases for suggestions
-  const phrases = [
+const phrases = React.useMemo(
+  () => [
     "Dear Colleagues,",
     "Hello everyone,",
     "Greetings,",
@@ -43,7 +43,10 @@ function EmailWindow() {
     "Dear Partners,",
     // ... (rest of your phrases)
     "If you require any clarification, please do not hesitate to contact me.",
-  ];
+  ],
+  []
+);
+
 
   // Filter suggestions based on last word typed
   useEffect(() => {
@@ -66,7 +69,7 @@ function EmailWindow() {
     );
     setSuggestions(filtered.slice(0, 5));
     setHighlightIndex(-1);
-  }, [message]);
+  }, [message, phrases]);
 
   // Refs to suggestion <li> elements
   const suggestionRefs = useRef<(HTMLLIElement | null)[]>([]);
@@ -218,7 +221,7 @@ function EmailWindow() {
           >
             {selectedEmails.length > 0 && (
               <div className="relative h-[90vh] w-[20vw]  top-0">
-                <div className="flex px-[3vh] pt-[2vw] pb-[1vh] bg-white shadow-sm w-full bg-white">
+                <div className="flex px-[3vh] pt-[2vw] pb-[1vh] bg-white shadow-sm w-full">
                   Send To:
                 </div>
                 <div className="flex overflow-y-auto gap-1 h-full touch-auto flex-col pb-[10vh] px-[1vw] bg-white">

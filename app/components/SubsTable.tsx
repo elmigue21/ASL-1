@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -52,12 +54,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Subscription } from "@/types/subscription";
 import { Email } from "@/types/email";
 
-import EmailWindow from "./EmailWindow";
+// import EmailWindow from "./EmailWindow";
 
 import { useSubscriptionsQuery } from "@/lib/hooks/useSubscriptionsQuery";
 import { Loader } from "lucide-react";
 import { Label } from "@/components/ui/label";
-
 
 type Pagination = {
   pageIndex: number;
@@ -87,95 +88,106 @@ const SubTable = () => {
   const isMobile = useMediaQuery("(max-width: 767px)");
   const isTallViewport = useMediaQuery("(min-height: 800px)");
 
+  const initialPageSize = isMobile ? 5 : isTallViewport ? 10 : 5;
 
-    const initialPageSize = isMobile ? 5 : isTallViewport ? 10 : 5;
+  // Pagination state with dynamic pageSize
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: initialPageSize,
+  });
 
-    // Pagination state with dynamic pageSize
-    const [pagination, setPagination] = React.useState({
-      pageIndex: 0,
+  const [appliedSearchBarValue, setAppliedSearchBarValue] = useState("");
+
+  React.useEffect(() => {
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: 0, // reset to first page on device change (optional)
       pageSize: initialPageSize,
-    });
+    }));
+  }, [initialPageSize]);
 
-    const [appliedSearchBarValue, setAppliedSearchBarValue]= useState("")
+  const {
+    subscriptions,
+    isLoading,
+    goToPage,
+    nextPage,
+    prevPage,
+    searchButtonClicked,
+    isFetching,
+    archiveRow,
+    archiveFilter,
+    setArchiveFilter,
+    verifiedFilter,
+    setVerifiedFilter,
+  } = useSubscriptionsQuery({
+    pagination,
+    setPagination,
+    appliedSearchBarValue,
+    //   searchButtonClicked,
+  });
 
-      React.useEffect(() => {
-        setPagination((prev) => ({
-          ...prev,
-          pageIndex: 0, // reset to first page on device change (optional)
-          pageSize: initialPageSize,
-        }));
-      }, [initialPageSize]);
-
-      const { subscriptions, isLoading, goToPage, nextPage, prevPage, searchButtonClicked ,isFetching,archiveRow,archiveFilter,setArchiveFilter,verifiedFilter,setVerifiedFilter} =
-        useSubscriptionsQuery({
-          pagination,
-          setPagination,
-          appliedSearchBarValue,
-        //   searchButtonClicked,
-        });
-
-    return isMobile ? (
-      <SubscriptionsTableMobile
-        subscriptions={subscriptions}
-        isLoading={isLoading}
-        pagination={pagination}
-        goToPage={goToPage}
-        nextPage={nextPage}
-        prevPage={prevPage}
-        setAppliedSearchBarValue={setAppliedSearchBarValue}
-        appliedSearchBarValue={appliedSearchBarValue}
-        searchButtonClicked={searchButtonClicked}
-        setPagination={setPagination}
-        isFetching={isFetching}
-        archiveRow={archiveRow}
-        verifiedFilter={verifiedFilter}
-        setVerifiedFilter={setVerifiedFilter}
-        archiveFilter={archiveFilter}
-        setArchiveFilter={setArchiveFilter}
-      />
-    ) : (
-      <SubscriptionsTableDesktop
-        subscriptions={subscriptions}
-        isLoading={isLoading}
-        pagination={pagination}
-        goToPage={goToPage}
-        nextPage={nextPage}
-        prevPage={prevPage}
-        setAppliedSearchBarValue={setAppliedSearchBarValue}
-        appliedSearchBarValue={appliedSearchBarValue}
-        searchButtonClicked={searchButtonClicked}
-        setPagination={setPagination}
-        isFetching={isFetching}
-        archiveRow={archiveRow}
-        verifiedFilter={verifiedFilter}
-        setVerifiedFilter={setVerifiedFilter}
-        archiveFilter={archiveFilter}
-        setArchiveFilter={setArchiveFilter}
-      />
-    );
+  return isMobile ? (
+    <SubscriptionsTableMobile
+      subscriptions={subscriptions}
+      isLoading={isLoading}
+      pagination={pagination}
+      goToPage={goToPage}
+      nextPage={nextPage}
+      prevPage={prevPage}
+      setAppliedSearchBarValue={setAppliedSearchBarValue}
+      appliedSearchBarValue={appliedSearchBarValue}
+      searchButtonClicked={searchButtonClicked}
+      setPagination={setPagination}
+      isFetching={isFetching}
+      archiveRow={archiveRow}
+      verifiedFilter={verifiedFilter}
+      setVerifiedFilter={setVerifiedFilter}
+      archiveFilter={archiveFilter}
+      setArchiveFilter={setArchiveFilter}
+    />
+  ) : (
+    <SubscriptionsTableDesktop
+      subscriptions={subscriptions}
+      isLoading={isLoading}
+      pagination={pagination}
+      goToPage={goToPage}
+      nextPage={nextPage}
+      prevPage={prevPage}
+      setAppliedSearchBarValue={setAppliedSearchBarValue}
+      appliedSearchBarValue={appliedSearchBarValue}
+      searchButtonClicked={searchButtonClicked}
+      setPagination={setPagination}
+      isFetching={isFetching}
+      archiveRow={archiveRow}
+      verifiedFilter={verifiedFilter}
+      setVerifiedFilter={setVerifiedFilter}
+      archiveFilter={archiveFilter}
+      setArchiveFilter={setArchiveFilter}
+    />
+  );
 };
 export default SubTable;
 
 const SubscriptionsTableMobile = ({
   subscriptions,
-  isLoading,
-  pagination,
-  goToPage,
+  // isLoading,
+  // pagination,
+  // goToPage,
   nextPage,
   prevPage,
   appliedSearchBarValue,
   setAppliedSearchBarValue,
-  searchButtonClicked,
-  setPagination,
-  isFetching,
-  archiveRow,
-  archiveFilter,
-  setArchiveFilter,
-  verifiedFilter,
-  setVerifiedFilter,
-}: SubscriptionsTableProps) => {
-  const [tableCount, setTableCount] = useState<number | null>(null);
-  const [pageCount, setPageCount] = useState<number>(0);
+}: // searchButtonClicked,
+// setPagination,
+// isFetching,
+// archiveRow,
+// archiveFilter,
+// setArchiveFilter,
+// verifiedFilter,
+// setVerifiedFilter,
+SubscriptionsTableProps) => {
+  // const [tableCount, setTableCount] = useState<number | null>(null);
+  // const [pageCount, setPageCount] = useState<number>(0);
 
   return (
     <>
@@ -283,30 +295,21 @@ function SubscriptionsTableDesktop({
       setPageCount(Math.ceil(totalCount / pagination.pageSize));
     };
     getTableCount();
-  }, [pagination.pageSize]);
+  }, [pagination.pageSize, appliedSearchBarValue]);
   useEffect(() => {
     console.log("pagecoutn", pageCount);
   }, [pageCount]);
 
-  const visiblePages = () => {
-    const pages = [];
-    const total = pageCount ? pageCount : 0;
-
-    const currentPage = pagination.pageIndex + 1; // adjust because pageIndex is 0-based
-
-    let start = Math.max(currentPage - 2, 1);
-    const end = Math.min(start + 4, total);
-
-    if (end - start < 4) {
-      start = Math.max(end - 4, 1);
-    }
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-    return pages;
-  };
-
+  const setSelectedEmails = React.useCallback(
+    (checkboxValue: boolean, emailObj: { email: string; id: number }) => {
+      if (checkboxValue) {
+        dispatch(addSelectedEmails(emailObj));
+      } else {
+        dispatch(removeSelectedEmails(emailObj));
+      }
+    },
+    [dispatch]
+  );
   const columns = React.useMemo<ColumnDef<Subscription>[]>(
     () => [
       {
@@ -507,7 +510,7 @@ function SubscriptionsTableDesktop({
                   onClick={(e) => {
                     e.stopPropagation();
                     // your delete logic here
-                    archiveRow(row.original.id)
+                    archiveRow(row.original.id);
                   }}
                   className="hover:cursor-pointer"
                 >
@@ -519,7 +522,7 @@ function SubscriptionsTableDesktop({
         },
       },
     ],
-    [selectedEmails, pagination.pageIndex]
+    [selectedEmails, pagination.pageIndex, archiveRow, pagination.pageSize]
   );
 
   const table = useReactTable({
@@ -546,26 +549,39 @@ function SubscriptionsTableDesktop({
       pagination,
     },
   });
+  const setAllSelectedSubscriptionIds: (checkboxValue: boolean) => void =
+    React.useCallback(
+      (checkboxValue: boolean) => {
+        const allRows = table.getRowModel().rows;
+        allRows.forEach(
+          (row: { original: { emails: { email: string; id: number }[] } }) => {
+            row.original.emails.forEach((email) => {
+              setSelectedEmails(checkboxValue, email);
+            });
+          }
+        );
+      },
+      [table, setSelectedEmails]
+    );
 
-  const setAllSelectedSubscriptionIds = (checkboxValue: boolean) => {
-    const allRows = table.getRowModel().rows;
-    allRows.map((row) => {
-      row.original.emails.map((email: { email: string; id: number }) => {
-        setSelectedEmails(checkboxValue, email);
-      });
-    });
+  const visiblePages = () => {
+    const pages = [];
+    const total = pageCount ? pageCount : 0;
+
+    const currentPage = pagination.pageIndex + 1; // adjust because pageIndex is 0-based
+
+    let start = Math.max(currentPage - 2, 1);
+    const end = Math.min(start + 4, total);
+
+    if (end - start < 4) {
+      start = Math.max(end - 4, 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    return pages;
   };
-
-  const setSelectedEmails = React.useCallback(
-    (checkboxValue: boolean, emailObj: { email: string; id: number }) => {
-      if (checkboxValue) {
-        dispatch(addSelectedEmails(emailObj));
-      } else {
-        dispatch(removeSelectedEmails(emailObj));
-      }
-    },
-    [dispatch]
-  );
 
   //   const searchButtonClicked = async () => {
   //     await queryClient.removeQueries({ queryKey: ["subscriptions"] });
@@ -576,7 +592,7 @@ function SubscriptionsTableDesktop({
 
   const [searchBarValue, setSearchBarValue] = useState("");
 
-  if (isLoading) return <Loader/>; // or a spinner/loading component
+  if (isLoading) return <Loader />; // or a spinner/loading component
 
   return (
     <div className="w-full">

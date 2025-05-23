@@ -10,7 +10,7 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
-  const [isClicked, setIsClicked] = useState(false);
+  // const [isClicked, setIsClicked] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
@@ -139,7 +139,7 @@ const RegisterPage = () => {
               handleSubmit();
             }}
             className="bg-[#1A3DB2]  rounded-full flex items-center justify-center text-white hover:cursor-pointer w-[10.6vw] h-[5.7vh] text-[1.58vw] mt-[2vh] active:scale-90 transition-all duration-300"
-            disabled={isClicked}
+            // disabled={isClicked}
           >
             Login
           </Button>

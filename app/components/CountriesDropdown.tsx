@@ -39,8 +39,8 @@ export function CountriesDropdown({ onSelectCountry }: CountriesDropdownProps) {
     getCountries();
   }, []);
 const handleSelect = (currentValue: string) => {
-  const selectedCountry =
-    countries.find((c) => c.name === currentValue) || null;
+  // const selectedCountry =
+  //   countries.find((c) => c.name === currentValue) || null;
   setValue(currentValue === value ? "" : currentValue);
   setOpen(false);
   onSelectCountry(currentValue); // sends value to parent

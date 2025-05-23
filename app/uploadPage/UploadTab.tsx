@@ -9,7 +9,7 @@ import {
   flexRender,
   ColumnDef,
   Row,
-  Table,
+  // Table,
 } from "@tanstack/react-table";
 import CloseButton from "../components/CloseButton";
 import { toastError } from "@/utils/toastError";
@@ -143,11 +143,11 @@ const handleGetSelectedData = async () => {
       const workbook = XLSX.read(binaryStr, { type: "binary" });
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
-      const rawJson = XLSX.utils.sheet_to_json<Record<string, any>>(sheet);
+      const rawJson = XLSX.utils.sheet_to_json<Record<string, string>>(sheet);
 
       // Only include target columns
       const filteredData = rawJson.map((row) => {
-        const filteredRow: Record<string, any> = {};
+        const filteredRow: Record<string, string> = {};
         TARGET_COLUMNS.forEach((col) => {
           filteredRow[col] = row[col] ?? ""; // default to empty if missing
         });
@@ -194,56 +194,56 @@ const handleGetSelectedData = async () => {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleUpload = async () => {
-    if (!file) {
-      alert("No file selected!");
-      return;
-    }
+  // const handleUpload = async () => {
+  //   if (!file) {
+  //     alert("No file selected!");
+  //     return;
+  //   }
 
-    setIsUploading(true);
+  //   setIsUploading(true);
 
-    const formData = new FormData();
-    formData.append("file", file);
+  //   const formData = new FormData();
+  //   formData.append("file", file);
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/upload/uploadFile`,
-        {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        }
-      );
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/upload/uploadFile`,
+  //       {
+  //         method: "POST",
+  //         body: formData,
+  //         credentials: "include",
+  //       }
+  //     );
 
-      const result = await response.json();
+  //     const result = await response.json();
 
-      if (!response.ok) throw new Error(result.error || "Upload failed");
-      console.log(result);
-      alert("Upload successful: " + result.message);
-    } catch (error) {
-      console.error("Upload error:", error);
-      alert("Upload failed");
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  //     if (!response.ok) throw new Error(result.error || "Upload failed");
+  //     console.log(result);
+  //     alert("Upload successful: " + result.message);
+  //   } catch (error) {
+  //     console.error("Upload error:", error);
+  //     alert("Upload failed");
+  //   } finally {
+  //     setIsUploading(false);
+  //   }
+  // };
 
-  const insertUpload = async () => {
-    try {
-      console.log(data);
+  // const insertUpload = async () => {
+  //   try {
+  //     console.log(data);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/upload/insertUpload`,
-        {
-          method: "POST",
-          // body: {},
-          credentials: "include",
-        }
-      );
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/upload/insertUpload`,
+  //       {
+  //         method: "POST",
+  //         // body: {},
+  //         credentials: "include",
+  //       }
+  //     );
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // };
 
   return (
     <div className="space-y-4 w-full">

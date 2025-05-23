@@ -10,12 +10,17 @@ import {
 import Image from "next/image";
 // import  TrashIcon from '@/public/trash-xmark.svg';
 import { Trash } from "lucide-react";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
+// import * as DialogPrimitive from "@radix-ui/react-dialog";
+// import { X } from "lucide-react";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "./ConfirmDialog";
+// import Error from "next/error";
+
+
+
+
 
 
 
@@ -64,7 +69,11 @@ interface ReportsData {
            if (!response.ok) {
              const errorText = await response.text(); // handle error response as text
              console.error(errorText)
-             throw new Error(errorText || "Export excel failed");
+           if (!response.ok) {
+             const errorText = await response.text();
+             console.error(errorText);
+           }
+
            }
 
            console.log("blob");
@@ -137,7 +146,7 @@ const ReportsTable = () => {
       if (!response.ok) {
         const errorData = await response.json();
         toast.error("error deleting file " + errorData)
-        throw new Error(errorData.error || "Failed to delete file");
+        console.error(errorData)
       }
 
       const data = await response.json();
@@ -145,7 +154,7 @@ const ReportsTable = () => {
       setIsDeleting(false);
       toast.success("Sucessfully deleted file!")
       return data;
-    } catch (error: any) {
+    } catch (error : unknown) {
       console.error("Error in deleteFile:", error);
       toast.error("error deleting file " + error)
       throw error;
@@ -169,7 +178,8 @@ const ReportsTable = () => {
         const errorText = await response.text(); // handle error response as text
         setIsAction(false);
         toast.error("Error exporting excel " + errorText)
-        throw new Error(errorText || "Export excel failed");
+       console.error(errorText)
+
       }
       const blob = await response.blob();
       const contentDisposition = response.headers.get("Content-Disposition");
@@ -211,7 +221,7 @@ const ReportsTable = () => {
         const errorText = await response.text(); // handle error response as text
         setIsAction(false);
         toast.error("Error generating pdf" + errorText)
-        throw new Error(errorText || "Export PDF failed");
+     console.error(errorText)
       }
       const blob = await response.blob();
       const contentDisposition = response.headers.get("Content-Disposition");
@@ -294,7 +304,7 @@ const ReportsTable = () => {
       accessorKey: "fileURL",
       header: "",
       cell: ({ row }) => {
-        const [open, setOpen] = useState(false);
+        // const [open, setOpen] = useState(false);
 
         const bucket =
           row.original.attachType === "report" ? "reports" : "excels";
