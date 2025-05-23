@@ -1,17 +1,17 @@
 // import { Subscript } from 'lucide-react'
 "use client";
-import React, { useRef, useState, useEffect } from "react";
+import React, { /* useRef, */ useState/* , useEffect  */} from "react";
 import Dropdown_Profile from "./dropdown_profile";
 import Link from "next/link";
 import { useDispatch } from "react-redux";
 import { setOpenState } from "@/store/slices/emailWindowSlice";
-import { logout } from "@/utils/auth";
+import { logout } from "@/utils/profileController";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 
-import { Toaster } from "sonner";
+// import { Toaster } from "sonner";
 import { usePathname } from "next/navigation";
-import { getName } from "@/utils/profileController";
+// import { getName } from "@/utils/profileController";
 import Image from "next/image";
 
 const Navbar: React.FC = () => {

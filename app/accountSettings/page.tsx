@@ -10,13 +10,16 @@ import ChangePassword from "../components/ChangePassword";
 import { ProfileUpdateDialog } from "./ProfileUpdateDialog";
 import { NameUpdateDialog } from "./NameUpdateDialog";
 import { ProfilePictureDialog } from "./ProfilePictureDialog";
-import { getPfp } from "@/utils/profileController";
+import { getPfp ,getName} from "@/utils/profileController";
 
 function page() {
   const [pfp, setPfp] = useState("");
+  const [name,setName] = useState("")
   useEffect(() => {
     let fetchPfp = getPfp() ?? "";
+    let fetchName = getName() ?? "";
     setPfp(fetchPfp);
+    setName(fetchName);
     console.log("PROFILE PICTURE", pfp);
   }, []);
 
@@ -132,7 +135,7 @@ function page() {
                   />
                 </div>
                 <p className="text-[2.5vh] text-black ml-[1vw] text-wrap break-words">
-                  User Name
+                  {name}
                 </p>
                 <Separator className="my-3 w-[18vw] h-[0.3vh]" />
 

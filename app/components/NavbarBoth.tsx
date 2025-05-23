@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 
 import useMediaQuery from "@/lib/hooks/useMediaQuery";
 import Dropdown_Profile from "./dropdown_profile";
-import { logout } from "@/utils/auth";
+import { logout } from "@/utils/profileController";
 import { setOpenState } from "@/store/slices/emailWindowSlice";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";

@@ -25,6 +25,7 @@ export function useAuthRedirect() {
           router.push("/loginPage");
         }
       } catch (error) {
+        console.error(error);
         router.push("/loginPage");
       }
     };

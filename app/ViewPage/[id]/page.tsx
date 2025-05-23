@@ -6,7 +6,7 @@ import { Subscription } from "@/types/subscription";
 import StepperList from "../../components/StepperList";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import DropdownButton from "@/app/components/DropdownButton";
+// import DropdownButton from "@/app/components/DropdownButton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Popover,
@@ -391,7 +391,7 @@ const removePhoneNumber = (index: number) => {
                             </ScrollArea>
                           </PopoverContent>
                         </Popover>
-                        <button className="h-[4vh] w-[12vw] px-2 text-white bg-[#1f1e1e] rounded-[0.40vw] text-[2vh] cursor-pointer hover:scale-102">
+                        <button className="h-[4vh] w-[12vw] px-2 text-white bg-[#1f1e1e] rounded-[0.40vw] text-[2vh] cursor-pointer hover:scale-102" onClick={()=>{addPhoneNumber(phone)}}>
                           Add
                         </button>
                       </div>
