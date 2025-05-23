@@ -67,7 +67,12 @@ const handleSubmit = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">{triggerLabel}</Button>
+        <img
+                    src="img\pen-square.png"
+                    alt="Edit Button"
+                    id="editAccEmail"
+                    className="h-[2vh] self-center cursor-pointer hover:scale-110 hover:bg-[rgba(0,0,0,0.25)] rounded-[0.3vh]"
+                  > {triggerLabel}</img>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
