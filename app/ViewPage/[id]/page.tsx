@@ -314,11 +314,10 @@ return (
                                   className="flex justify-between items-center"
                                   key={index}
                                 >
-                                  <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
+                                  <div className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px] truncate" title={phone}>
                                     {phone}
                                   </div>
-                                  <button
-                                                      
+                                  <button       
                                     className={`flex items-center justify-center p-0 w-fit h-fit group cursor-pointer scale-50 flex-shrink-0 ml-auto`}>
                                           <Image src="/circle-xmark.png" alt="Close" className="size-[2vw] block group-hover:hidden" width={30} height={30}/>
                                           <Image src="/circle-xmark-fill-red.png" alt="Close (hover)" className="size-[2vw] hidden group-hover:block" width={30} height={30}/>
@@ -388,7 +387,7 @@ return (
                                   className="flex justify-between items-center"
                                   key={index}
                                 >
-                                  <div className="whitespace-nowrap max-w-[15vw]">
+                                  <div className="whitespace-nowrap max-w-[15vw] truncate" title={email}>
                                     {email}
                                   </div>
                                   <button
