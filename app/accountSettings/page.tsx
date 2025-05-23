@@ -71,48 +71,47 @@ function page() {
     }
   };
 
-  const handleChangeName = async (first_name:string, last_name:string) =>{
-
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/profile/changeName`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ first_name,last_name }),
-              credentials: "include",
-            }
-          );
-
-          const data = await response.json();
-        } catch (e) {
-          console.error(e);
+  const handleChangeName = async (first_name: string, last_name: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/profile/changeName`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ first_name, last_name }),
+          credentials: "include",
         }
-  }
+      );
+
+      const data = await response.json();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <>
-      {/* <Navbar/> */}
       <div className="z-45 absolute top-[11vh] left-[8.35vw] w-[90vw] h-[60vh]">
         <div className="place-self-center">
           <div
             style={{ fontFamily: "Inter, sans-serif" }}
             className="items-center mt-2 relative w-8/9"
           >
-            <h1 className="text-[6vh] font-medium text-blue-900 relative left-[2vw]">
-              ACCOUNT SETTINGS
-            </h1>
+            <div className="font-bold text-[#1E2E80] text-[1.60vw]">
+              Account Settings
+            </div>
           </div>
-          <Card className="w-[75vw] h-[70vh] shadow-[0_50px_50px_20px_rgba(0,0,0,0.05) p-[1vw]">
+          <Card className="w-[25vw] h-[70vh] shadow-[0_50px_50px_20px_rgba(0,0,0,0.05) p-[1vw]">
             <div className="flex h-full w-full">
-              <ProfilePictureDialog
-                onConfirmAction={(file) => {
-                  handleProfilePictureChange(file);
-                }}
-              />
-              <div className="w-[20vw] flex-vertical px-[1vw]">
+              <div className="w-[25vw] flex-vertical px-[1vw] ml-[1vw]">
+                <ProfilePictureDialog
+                  onConfirmAction={(file) => {
+                    handleProfilePictureChange(file);
+                  }}
+                />
+
                 <Avatar className="h-[15vh] w-[15vh] object-cover  rounded-full my-[4vh]">
                   <AvatarImage src={pfp || "/user.png"} alt="@shadcn" />
                   <AvatarFallback>CN</AvatarFallback>
@@ -159,21 +158,18 @@ function page() {
                 <p className="text-[2.5vh] text-black ml-[1vw] text-wrap break-words">
                   user@email.com
                 </p>
-              </div>
-
-              <Separator orientation="vertical" className="mx-3 w-[0.1vw]" />
-
-              <div className="h-full w-full content-center">
-                <ProfileUpdateDialog
-                  field="password"
-                  label="password"
-                  action={() => {
-                    console.log("submit");
-                  }}
-                  retype
-                  placeholder="Input password"
-                />
-                {/* <ChangePassword widthPercentage={25} /> */}
+                <Separator className="my-3 w-[18vw] h-[0.3vh]" />
+                <div className=" content-center mt-[5vh]">
+                  <ProfileUpdateDialog
+                    field="password"
+                    label="password"
+                    action={() => {
+                      console.log("submit");
+                    }}
+                    retype
+                    placeholder="Input password"
+                  />
+                </div>
               </div>
             </div>
           </Card>
