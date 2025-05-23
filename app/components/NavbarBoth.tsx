@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -14,12 +14,21 @@ import { setOpenState } from "@/store/slices/emailWindowSlice";
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { getRole } from "@/utils/profileController";
+interface NavbarProps {
+  isAdmin: boolean;
+}
 
 const NavbarBoth = () => {
   const isMobile = useMediaQuery("(max-width: 767px)");
 
   const pathname = usePathname();
 
+  const [isAdmin,setIsAdmin] = useState(false)
+  useEffect(()=>{
+    const fetchRole = getRole();
+    setIsAdmin(fetchRole === "admin")
+  },[])
   // Return nothing on specific routes
   if (
     pathname === "/loginPage" ||
@@ -30,10 +39,10 @@ const NavbarBoth = () => {
     return null;
   }
 
-  return isMobile ? <NavbarMobile /> : <NavbarDesktop />;
+  return isMobile ? <NavbarMobile isAdmin={isAdmin}/> : <NavbarDesktop isAdmin={isAdmin}/>;
 };
 
-const NavbarMobile = () => {
+const NavbarMobile: React.FC<NavbarProps> = ({ isAdmin }) => {
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
 
@@ -170,7 +179,7 @@ const NavbarMobile = () => {
   );
 };
 
-const NavbarDesktop: React.FC = () => {
+const NavbarDesktop: React.FC<NavbarProps> = ({ isAdmin }) => {
   //   const dispatch = useDispatch();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -394,30 +403,32 @@ const NavbarDesktop: React.FC = () => {
               <h2 className="items-center mt-[0.50vh]">Email</h2>
             </div>
           </div>
-
-<Link href="/admin">
-            <div
-              className={`items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] transition-all duration-300 hover:cursor-pointer ${
-                isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
-              }`}
-            >
-              {" "}
-              <div className=" relative h-[3.73vh] w-[1.8vw]">
-                <Image src="/admin-alt.png" alt="Admin" fill />
-              </div>
+          {isAdmin ? (
+            <Link href="/admin">
               <div
-                className={`transition-all duration-100 ease-in-out ${
-                  isOpen ? "block" : "hidden"
+                className={`items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] transition-all duration-300 hover:cursor-pointer ${
+                  isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
                 }`}
               >
-                <h2 className="items-center mt-[0.50vh]">Admin</h2>
+                {" "}
+                <div className=" relative h-[3.73vh] w-[1.8vw]">
+                  <Image src="/admin-alt.png" alt="Admin" fill />
+                </div>
+                <div
+                  className={`transition-all duration-100 ease-in-out ${
+                    isOpen ? "block" : "hidden"
+                  }`}
+                >
+                  <h2 className="items-center mt-[0.50vh]">Admin</h2>
+                </div>
               </div>
-            </div>
-          </Link>
-          
+            </Link>
+          ) : (
+            <></>
+          )}
           <div className="transition-all duration-300">
             <div
-            // if not admin = mt-[9vh]
+              // if not admin = mt-[9vh]
               className={`mt-[2vh] items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] hover:cursor-pointer ${
                 isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
               }`}

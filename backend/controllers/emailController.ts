@@ -54,7 +54,9 @@ export const sendEmails: RequestHandler = async (req, res) => {
       throw new Error(error.message);
     }
 
-    const { emailSubject, emailText, emailHtml, fromName } = req.body;
+    
+    console.log("BODY:", req.body);
+
 
     // Extract attachments from multer
     const attachments = (req.files as Express.Multer.File[] | undefined) ?? [];
@@ -67,32 +69,50 @@ export const sendEmails: RequestHandler = async (req, res) => {
       res.status(500).json({ message: "Email secret not configured" });
       return;
     }
+const cleanBody = Object.assign({}, req.body);
+console.log("cleanBody:", cleanBody);
 
+const emailSubject = cleanBody.emailSubject;
+
+
+
+
+const emailHtml = cleanBody.emailHtml;
+const fromName = cleanBody.fromName;
+
+const emailText = cleanBody.emailText;
     const emailPromises = data.map((email) => {
       // Assert that email has subscriber_id (even if Email interface doesn't define it)
       const emailWithSubscriber = email as typeof email & {
         subscriber_id: number;
       };
-
+// const { emailText } = JSON.parse(JSON.stringify(req.body));
       const payload = {
         emailId: emailWithSubscriber.id,
         subscriberId: emailWithSubscriber.subscriber_id,
       };
       const token = jwt.sign(payload, EMAIL_SECRET, { expiresIn: "30d" });
 
+      console.log("emailtext",emailText)
       const unsubscribeUrl = `${process.env.NEXT_PUBLIC_URL}/unsubscribe?token=${token}`;
-      const mailOptions = {
-        from: `${fromName} <companyemail@example.com>`,
-        to: emailWithSubscriber.email,
-        subject: emailSubject,
-        text: emailText,
-        html: `${emailHtml}<br/><br/><p>If you want to unsubscribe, click <a href="${unsubscribeUrl}">here</a>.</p>`,
-        attachments: attachments.map((file) => ({
-          filename: file.originalname,
-          content: file.buffer,
-          contentType: file.mimetype,
-        })),
-      };
+const mailOptions = {
+  from: `${fromName} <companyemail@example.com>`,
+  to: emailWithSubscriber.email,
+  subject: emailSubject,
+  // Remove `text` field
+  html: `
+    <div>
+      <p>${emailText}</p>
+      <br/><br/>
+      <p>If you want to unsubscribe, click <a href="${unsubscribeUrl}">here</a>.</p>
+    </div>
+  `,
+  attachments: attachments.map((file) => ({
+    filename: file.originalname,
+    content: file.buffer,
+    contentType: file.mimetype,
+  })),
+};
 
       return transporter
         .sendMail(mailOptions)

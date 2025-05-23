@@ -9,7 +9,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();
 
 // router.get("/", getAllSubscriptions);
-router.post("/sendEmails", upload.array("attachments"),sendEmails);
+router.post("/sendEmails", upload.any(),sendEmails);
 // router.get("/verifyEmail", verifyEmail);
 
 
