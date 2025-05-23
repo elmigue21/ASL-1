@@ -357,9 +357,9 @@ const removePhoneNumber = (index: number) => {
                                     >
                                       <div
                                         className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px] truncate"
-                                        title={phone}
+                                        title={phone.phone}
                                       >
-                                        {phone}
+                                        {phone.phone}
                                       </div>
                                       <button
                                         className={`flex items-center justify-center p-0 w-fit h-fit group cursor-pointer scale-50 flex-shrink-0 ml-auto`}
