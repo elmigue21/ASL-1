@@ -139,7 +139,7 @@ return (
             onClick={() => {
               handleSubmit();
             }}
-            className="bg-[#1A3DB2]  rounded-full flex items-center justify-center text-white hover:cursor-pointer xsm:w-[22.81vw] xsm:h-[6vh] xsm:text-[4vw] xsm:mt-[4vh] sm:w-[32.81vw] sm:h-[6vh] sm:text-[5vw] sm:mt-[6vh] md:w-[28.81vw] md:h-[5.5vh] md:text-[4vw] md:mt-[6vh] xl:w-[10.6vw] xl:h-[5.7vh] xl:text-[1.58vw] xl:mt-[9vh] active:scale-90 transition-all duration-300"
+            className="bg-[#1A3DB2] rounded-full flex items-center justify-center text-white hover:cursor-pointer xsm:w-[22.81vw] xsm:h-[6vh] xsm:text-[4vw] xsm:mt-[4vh] sm:w-[32.81vw] sm:h-[6vh] sm:text-[5vw] sm:mt-[6vh] md:w-[28.81vw] md:h-[5.5vh] md:text-[4vw] md:mt-[6vh] xl:w-[10.6vw] xl:h-[5.7vh] xl:text-[1.58vw] xl:mt-[9vh] active:scale-90 transition-all duration-300"
             disabled={isClicked}
           >
             Login
@@ -213,7 +213,7 @@ return (
             onClick={() => {
               handleSubmit();
             }}
-            className="bg-[#1A3DB2]  rounded-full flex items-center justify-center text-white hover:cursor-pointer xsm:w-[22.81vw] xsm:h-[6vh] xsm:text-[4vw] xsm:mt-[4vh] sm:w-[32.81vw] sm:h-[6vh] sm:text-[5vw] sm:mt-[6vh] md:w-[28.81vw] md:h-[5.5vh] md:text-[4vw] md:mt-[6vh] xl:w-[10.6vw] xl:h-[5.7vh] xl:text-[1.58vw] xl:mt-[9vh] active:scale-90 transition-all duration-300"
+            className="bg-[#1A3DB2]  rounded-full flex items-center justify-center text-white hover:cursor-pointer xsm:w-[22.81vw] xsm:h-[6vh] xsm:text-[4vw] xsm:mt-[4vh] sm:w-[32.81vw] sm:h-[6vh] sm:text-[5vw] sm:mt-[6vh] md:w-[28.81vw] md:h-[5.5vh] md:text-[4vh] md:mt-[6vh] xl:w-[10.6vw] xl:h-[5.7vh] xl:text-[1.58vw] xl:mt-[9vh] active:scale-90 transition-all duration-300"
             disabled={isClicked}
           >
             Login
