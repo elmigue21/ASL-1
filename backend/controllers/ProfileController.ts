@@ -70,14 +70,16 @@ import { createClient } from "@supabase/supabase-js";
 
 
 
-export const changeProfilePicture = async (req: AuthenticatedRequest, res: Response) => {
-
-    const supabaseUser = (req as AuthenticatedRequest).supabaseUser;
+export const changeProfilePicture = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const supabaseUser = req.supabaseUser;
   if (!supabaseUser) {
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
-    if (!req.user) {
+  if (!req.user) {
     res.status(401).json({ error: "no req.user" });
     return;
   }
@@ -90,8 +92,9 @@ export const changeProfilePicture = async (req: AuthenticatedRequest, res: Respo
 
   try {
     const userId = req.user.id;
-    const filename = `${userId}`;
+      const filename = `${userId}-${Date.now()}`; // Same filename to overwrite
 
+    // Upload file, overwrite existing with same filename
     const { error: uploadError } = await supabaseUser.storage
       .from("pfp")
       .upload(filename, file.buffer, {
@@ -103,16 +106,19 @@ export const changeProfilePicture = async (req: AuthenticatedRequest, res: Respo
       res.status(500).json({ error: "Failed to upload image" });
       return;
     }
+
+    // Get public URL for the file (same URL each time)
     const { data: pfpData } = supabaseUser.storage
       .from("pfp")
       .getPublicUrl(filename);
     const publicURL = pfpData.publicUrl;
+
+    // Update user profile with new picture URL
     const { data: profileData, error: dbError } = await supabaseUser
       .from("profiles")
       .update({ profile_picture: publicURL })
       .eq("id", userId)
       .select("*");
-    console.log("profile data", profileData);
 
     if (dbError) {
       console.error("DB update error:", dbError.message);
@@ -128,6 +134,7 @@ export const changeProfilePicture = async (req: AuthenticatedRequest, res: Respo
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 export const changeName = async (req: AuthenticatedRequest, res: Response) => {
   console.log("🔧 changeName endpoint hit");

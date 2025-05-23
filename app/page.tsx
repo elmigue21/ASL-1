@@ -10,9 +10,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import CloseButton from "./CloseButton";
+import CloseButton from "./components/CloseButton";
 import { toast } from "sonner";
-import { CountriesDropdown } from "./CountriesDropdown";
+import { CountriesDropdown } from "./components/CountriesDropdown";
 
 
 import LandingPagePopup from './components/LandingPagePopup';

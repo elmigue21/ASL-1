@@ -57,6 +57,7 @@ import EmailWindow from "./EmailWindow";
 
 import { useSubscriptionsQuery } from "@/lib/hooks/useSubscriptionsQuery";
 import { Loader } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 import DoubleLeftAngle from "@/public/angle-double-small-left.svg"
 import DoubleRightAngle from "@/public/angle-double-small-right.svg"
@@ -82,6 +83,11 @@ type SubscriptionsTableProps = {
   searchButtonClicked: () => void;
   setPagination: React.Dispatch<React.SetStateAction<Pagination>>;
   isFetching: boolean;
+  archiveRow: (id: string | number) => void;
+  archiveFilter: boolean;
+  setArchiveFilter: (val: boolean) => void;
+  verifiedFilter: boolean;
+  setVerifiedFilter: (val: boolean) => void;
 };
 
 
@@ -110,7 +116,7 @@ const SubTable = () => {
         }));
       }, [initialPageSize]);
 
-      const { subscriptions, isLoading, goToPage, nextPage, prevPage, searchButtonClicked ,isFetching} =
+      const { subscriptions, isLoading, goToPage, nextPage, prevPage, searchButtonClicked ,isFetching,archiveRow,archiveFilter,setArchiveFilter,verifiedFilter,setVerifiedFilter} =
         useSubscriptionsQuery({
           pagination,
           setPagination,
@@ -133,6 +139,11 @@ const SubTable = () => {
         searchButtonClicked={searchButtonClicked}
         setPagination={setPagination}
         isFetching={isFetching}
+        archiveRow={archiveRow}
+        verifiedFilter={verifiedFilter}
+        setVerifiedFilter={setVerifiedFilter}
+        archiveFilter={archiveFilter}
+        setArchiveFilter={setArchiveFilter}
       />
     ) : (
 
@@ -163,6 +174,11 @@ const SubTable = () => {
         searchButtonClicked={searchButtonClicked}
         setPagination={setPagination}
         isFetching={isFetching}
+        archiveRow={archiveRow}
+        verifiedFilter={verifiedFilter}
+        setVerifiedFilter={setVerifiedFilter}
+        archiveFilter={archiveFilter}
+        setArchiveFilter={setArchiveFilter}
       />
     );
 };
@@ -180,9 +196,12 @@ const SubscriptionsTableMobile = ({
   searchButtonClicked,
   setPagination,
   isFetching,
+  archiveRow,
+  archiveFilter,
+  setArchiveFilter,
+  verifiedFilter,
+  setVerifiedFilter,
 }: SubscriptionsTableProps) => {
-
-
   const [tableCount, setTableCount] = useState<number | null>(null);
   const [pageCount, setPageCount] = useState<number>(0);
 
@@ -254,6 +273,11 @@ function SubscriptionsTableDesktopEmail({
   searchButtonClicked,
   setPagination,
   isFetching,
+  archiveRow,
+  archiveFilter,
+  setArchiveFilter,
+  verifiedFilter,
+  setVerifiedFilter,
 }: SubscriptionsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   
@@ -1043,23 +1067,24 @@ function SubscriptionsTableDesktop({
                   </DropdownMenuItem>
                 </Link>
 
-                <Link href="/editPage">
+                {/* <Link href="/editPage">
                   <DropdownMenuItem
                     onClick={(e) => e.stopPropagation()}
                     className="hover:cursor-pointer"
                   >
                     Edit Details
                   </DropdownMenuItem>
-                </Link>
+                </Link> */}
 
                 <DropdownMenuItem
                   onClick={(e) => {
                     e.stopPropagation();
                     // your delete logic here
+                    archiveRow(row.original.id)
                   }}
                   className="hover:cursor-pointer"
                 >
-                  Delete
+                  Archive
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -1119,13 +1144,32 @@ function SubscriptionsTableDesktop({
   //     await queryClient.removeQueries({ queryKey: ["subscriptions"] });
   //     setPagination({ pageIndex: 1, pageSize: 10 });
   //   };
+  //     const [archiveFilter, setArchiveFilter] = useState<boolean>(false);
+  // const [verifiedFilter, setVerifiedFilter] = useState<boolean>(true);
 
   const [searchBarValue, setSearchBarValue] = useState("");
 
   if (isLoading) return <Loader/>; // or a spinner/loading component
 
   return (
-    <div className="w-full z-50">
+    <div className="w-full">
+      <div className="flex space-x-4 items-center">
+        <Label htmlFor="archiveFilter">Show Archived</Label>
+        <Checkbox
+          id="archiveFilter"
+          checked={archiveFilter}
+          onCheckedChange={(checked) => setArchiveFilter(Boolean(checked))}
+          className="border border-black hover:cursor-pointer"
+        />
+
+        <Label htmlFor="verifiedFilter">Show Verified</Label>
+        <Checkbox
+          id="verifiedFilter"
+          checked={verifiedFilter}
+          onCheckedChange={(checked) => setVerifiedFilter(Boolean(checked))}
+          className="border border-black hover:cursor-pointer"
+        />
+      </div>
       <div className="flex items-center py-4">
         <Input
           placeholder="Search by name..."

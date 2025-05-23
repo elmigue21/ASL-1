@@ -394,9 +394,31 @@ const NavbarDesktop: React.FC = () => {
               <h2 className="items-center mt-[0.50vh]">Email</h2>
             </div>
           </div>
+
+<Link href="/admin">
+            <div
+              className={`items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] transition-all duration-300 hover:cursor-pointer ${
+                isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
+              }`}
+            >
+              {" "}
+              <div className=" relative h-[3.73vh] w-[1.8vw]">
+                <Image src="/admin-alt.png" alt="Admin" fill />
+              </div>
+              <div
+                className={`transition-all duration-100 ease-in-out ${
+                  isOpen ? "block" : "hidden"
+                }`}
+              >
+                <h2 className="items-center mt-[0.50vh]">Admin</h2>
+              </div>
+            </div>
+          </Link>
+          
           <div className="transition-all duration-300">
             <div
-              className={`mt-[9vh] items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] hover:cursor-pointer ${
+            // if not admin = mt-[9vh]
+              className={`mt-[2vh] items-center h-[10vh] w-full hover:scale-80 rounded-xl hover:bg-[#2a58ad] hover:cursor-pointer ${
                 isOpen ? "grid grid-cols-2 px-[2vw] " : "flex justify-center"
               }`}
               onClick={() => {

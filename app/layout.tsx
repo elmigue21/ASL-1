@@ -8,6 +8,13 @@ import NavbarBoth from "./components/NavbarBoth";
 import { useAuthRedirect } from "@/lib/hooks/useAuthRedirect";
 import { useState } from "react";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // Create a QueryClient instance
 const queryClient = new QueryClient();
@@ -31,7 +38,7 @@ useAuthRedirect();
           <body
           // className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
-            <NavbarBoth/>
+            <NavbarBoth />
             {/* <EmailWindow /> */}
             {children}
             <Toaster richColors position="bottom-center" />
