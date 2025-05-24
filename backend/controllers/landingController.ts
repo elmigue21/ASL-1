@@ -207,7 +207,7 @@ try {
     );
 
     const mailOptions = {
-      from: "gueljohnc@gmail.com",
+      from: process.env.EMAIL_CLIENT,
       to: emailToCheck,
       subject: "Confirmation Email",
       text: `Thank you for signing up! Please confirm your email by clicking the following link: ${confirmationUrl}`,
