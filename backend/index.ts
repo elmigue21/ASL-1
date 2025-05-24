@@ -43,7 +43,7 @@ const app = express();
 app.use(cookieParser());
 
 
-
+app.set("trust proxy", true);
 
 app.use(
   cors({
