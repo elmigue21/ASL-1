@@ -79,32 +79,26 @@ interface AddAccProps {
 }
 
 function AddAccPage() {
-  const [firstName, setFirstName] = useState("Firsttt");
-  const [lastName, setLastName] = useState("Lasttt");
-  const [personLinkedIn, setPersonLinkedIn] = useState("linkedin.com");
-  const [personFacebook, setPersonFacebook] = useState("facebook.com");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [personLinkedIn, setPersonLinkedIn] = useState("");
+  const [personFacebook, setPersonFacebook] = useState("");
 
-  const [phoneNumbers, setPhoneNumbers] = useState<string[]>([
-    "12345",
-    "232456",
-  ]);
-  const [emails, setEmails] = useState<string[]>([
-    "example@gmail.com",
-    "email@email.com",
-  ]);
+  const [phoneNumbers, setPhoneNumbers] = useState<string[]>([]);
+  const [emails, setEmails] = useState<string[]>([]);
 
-  const [country, setCountry] = useState("Philippines");
-  const [state, setState] = useState("NCR");
-  const [city, setCity] = useState("Manila");
+  const [country, setCountry] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
 
-  const [occupation, setOccupation] = useState("Developer");
-  const [industry, setIndustry] = useState("TECH");
-  const [company, setCompany] = useState("Google");
-  const [companyLinkedIn, setCompanyLinkedIn] = useState("linkedin.com");
-  const [companyWebsite, setCompanyWebsite] = useState("facebook.com");
+  const [occupation, setOccupation] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [company, setCompany] = useState("");
+  const [companyLinkedIn, setCompanyLinkedIn] = useState("");
+  const [companyWebsite, setCompanyWebsite] = useState("");
 
-  const [phoneInput, setPhoneInput] = useState("123124");
-  const [emailInput, setEmailInput] = useState("email@123.com");
+  const [phoneInput, setPhoneInput] = useState("");
+  const [emailInput, setEmailInput] = useState("");
 
   const addPhoneNumber = (val: string) => {
     setPhoneNumbers([...phoneNumbers, val]); // Add an empty string for a new phone number

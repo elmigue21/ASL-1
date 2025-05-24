@@ -1,12 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export function useAuthRedirect() {
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
+    // Skip auth check on public routes
+    const publicRoutes = ["/", "/loginPage","/confirm","/unsubscribe"];
+    if (publicRoutes.includes(pathname)) return;
+
     const checkAuth = async () => {
       try {
         const response = await fetch(
@@ -31,7 +36,7 @@ export function useAuthRedirect() {
     };
 
     checkAuth();
-  }, [router]);
+  }, [pathname, router]);
 
-  return null; // No UI to render
+  return null;
 }

@@ -66,6 +66,7 @@ const handleChange = <K extends keyof PersonForm>(
   setFormData((prev) => ({ ...prev, [key]: value }));
 };
 const handlePhoneNumberChange = (value: string) => {
+  if(value.length > 15) return;
   setFormData((prev) => ({
     ...prev,
     phoneNumbers: [value, ...prev.phoneNumbers.slice(1)],
@@ -149,22 +150,7 @@ const handleSubmit = async () => {
   const data = await response.json();
   console.log(data);
 
-  console.log({
-    firstName,
-    lastName,
-    phoneNumbers, // Include current input
-    emails,
-    facebook,
-    linkedIn,
-    country,
-    city,
-    state,
-    occupation,
-    industry,
-    company,
-    companyWebsite,
-    companyLinkedIn,
-  });
+  toast.success('Confirmation email sent!')
 };
 
 

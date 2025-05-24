@@ -96,7 +96,7 @@ const emailText = cleanBody.emailText;
       console.log("emailtext",emailText)
       const unsubscribeUrl = `${process.env.NEXT_PUBLIC_URL}/unsubscribe?token=${token}`;
 const mailOptions = {
-  from: `${fromName} <companyemail@example.com>`,
+  from: process.env.EMAIL_CLIENT,
   to: emailWithSubscriber.email,
   subject: emailSubject,
   // Remove `text` field
