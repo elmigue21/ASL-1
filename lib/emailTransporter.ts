@@ -11,9 +11,6 @@ console.log('Loading env TRANSPORTER from:', envPath);
 // Load it
 dotenv.config({ path: envPath });
 
-console.log("TRANSPORTER Email:", process.env.EMAIL_CLIENT);
-console.log("TRANSPORTER Password:", process.env.EMAIL_CLIENT_PASSWORD);
-
 export const transporter = nodemailer.createTransport({
   host: "smtp.office365.com",
   port: 587,
