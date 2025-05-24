@@ -19,8 +19,8 @@ export function useSubscriptionsQuery({
 }: UseSubscriptionsQueryParams) {
   const queryClient = useQueryClient();
 
-      const [archiveFilter, setArchiveFilter] = useState<boolean>(false);
-    const [verifiedFilter, setVerifiedFilter] = useState<boolean>(true);
+      const [archiveFilter, setArchiveFilter] = useState<boolean>(true);
+    const [verifiedFilter, setVerifiedFilter] = useState<boolean>(false);
 
   const fetchSubscriptions = async () => {
     const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/table`);
