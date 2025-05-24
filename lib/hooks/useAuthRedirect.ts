@@ -9,8 +9,10 @@ export function useAuthRedirect() {
 
   useEffect(() => {
     // Skip auth check on public routes
-    const publicRoutes = ["/", "/loginPage","/confirm","/unsubscribe"];
-    if (publicRoutes.includes(pathname)) return;
+    const normalizedPath = pathname.replace(/\/+$/, ""); // remove trailing slash
+    const publicRoutes = ["", "/", "/loginPage", "/confirm", "/unsubscribe"];
+
+    if (publicRoutes.includes(normalizedPath)) return;
 
     const checkAuth = async () => {
       try {
