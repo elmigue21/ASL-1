@@ -10,8 +10,8 @@ import useMediaQuery from '@/lib/hooks/useMediaQuery'
 
 function LoginPage() {
   //  const router = useRouter();
-  const [email, setEmail] = useState("user@example.com");
-  const [password, setPassword] = useState("12345");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isClicked, setIsClicked] = useState(false);
 
     useEffect(() => {
