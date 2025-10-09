@@ -1,15 +1,5 @@
 import { NextResponse/* , NextRequest */ } from "next/server";
 
-export const config = {
-  matcher: [
-    "/loginPage",
-    "/dashboardPage",
-    "/regisPage",
-    "/tablesPage",
-    "/uploadPage",
-    "/admin/:path*",
-  ],
-};
 
 // const JWT_SECRET = process.env.SUPABASE_JWT_SECRET;
 
