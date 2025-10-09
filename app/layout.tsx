@@ -1,5 +1,5 @@
 'use client'
-import "./globals.css";
+// import "./globals.css";
 import { Provider } from "react-redux";
 import {store} from "@/store/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
