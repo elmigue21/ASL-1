@@ -1,4 +1,4 @@
-// import { NextResponse, NextRequest } from "next/server";
+import { NextResponse/* , NextRequest */ } from "next/server";
 
 export const config = {
   matcher: [
@@ -14,6 +14,7 @@ export const config = {
 // const JWT_SECRET = process.env.SUPABASE_JWT_SECRET;
 
 export async function middleware() {
+   return NextResponse.next();
   // const { jwtVerify } = await import("jose");
 
   // const token = request.cookies.get("access_token")?.value;
